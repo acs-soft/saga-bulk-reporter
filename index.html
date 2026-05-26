@@ -13,6 +13,10 @@
     <meta property="og:url" content="https://acs-soft.github.io/saga-bulk-reporter/">
 
     <title>Saga Bulk Reporter — ACS Soft</title>
+
+    <!-- Lightbox for screenshots (click to view at full resolution). -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+
     <style>
         /* ========================================
            SWISS/INTERNATIONAL DESIGN SYSTEM
@@ -235,8 +239,8 @@
            HERO
            ======================================== */
         .hero {
-            padding-top: 160px;
-            padding-bottom: 96px;
+            padding-top: 140px;
+            padding-bottom: 64px;
             border-bottom: 1px solid var(--gray-200);
         }
 
@@ -319,10 +323,25 @@
 
         .hero__screenshot {
             width: 100%;
-            height: auto;
+            aspect-ratio: 3 / 2;
+            object-fit: contain;
             display: block;
             border: 1px solid var(--gray-200);
             background-color: var(--gray-100);
+            cursor: zoom-in;
+            transition: opacity var(--transition-fast);
+        }
+
+        .hero__screenshot:hover {
+            opacity: 0.92;
+        }
+
+        /* GLightbox anchor wraps the screenshot — keep it transparent so the
+           image is the only visible thing in its slot. */
+        .hero__visual a.glightbox,
+        .step a.glightbox {
+            display: block;
+            text-decoration: none;
         }
 
         .hero__screenshot-placeholder {
@@ -341,8 +360,8 @@
            SECTION
            ======================================== */
         .section {
-            padding-top: 96px;
-            padding-bottom: 96px;
+            padding-top: 64px;
+            padding-bottom: 64px;
         }
 
         .section--gray {
@@ -373,7 +392,7 @@
 
         .section__header {
             max-width: 560px;
-            margin-bottom: 64px;
+            margin-bottom: 40px;
         }
 
         .section__header--center {
@@ -393,14 +412,14 @@
         .steps {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 48px;
+            gap: 32px;
             counter-reset: step;
         }
 
         .step {
             counter-increment: step;
             position: relative;
-            padding-top: 48px;
+            padding-top: 32px;
             border-top: 2px solid var(--gray-200);
         }
 
@@ -432,10 +451,17 @@
         .step__screenshot {
             margin-top: 24px;
             width: 100%;
-            height: auto;
+            aspect-ratio: 3 / 2;
+            object-fit: contain;
             display: block;
             border: 1px solid var(--gray-200);
-            background-color: var(--white);
+            background-color: var(--gray-100);
+            cursor: zoom-in;
+            transition: opacity var(--transition-fast);
+        }
+
+        .step__screenshot:hover {
+            opacity: 0.92;
         }
 
         .step__screenshot-placeholder {
@@ -915,12 +941,15 @@
                     </div>
                 </div>
                 <div class="hero__visual">
-                    <img
-                        src="images/screenshot-1.png"
-                        alt="Captura de ecran a aplicației Saga Bulk Reporter &mdash; interfața principală"
-                        class="hero__screenshot"
-                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-                    >
+                    <a href="images/screenshot-1.png" class="glightbox" data-gallery="screenshots"
+                       data-title="Saga Bulk Reporter &mdash; interfața principală">
+                        <img
+                            src="images/screenshot-1.png"
+                            alt="Captura de ecran a aplicației Saga Bulk Reporter &mdash; interfața principală"
+                            class="hero__screenshot"
+                            onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
+                        >
+                    </a>
                     <div class="hero__screenshot-placeholder" style="display:none">
                         Captură de ecran &mdash; interfața aplicației
                     </div>
@@ -945,12 +974,15 @@
                     <p class="step__description">
                         Aplicația citește direct folderul Saga și listează toate firmele disponibile. Bifați firmele pentru care doriți să generați rapoarte.
                     </p>
-                    <img
-                        src="images/screenshot-1.png"
-                        alt="Pasul 1 — Selectarea firmelor din Saga"
-                        class="step__screenshot"
-                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-                    >
+                    <a href="images/screenshot-1.png" class="glightbox" data-gallery="screenshots"
+                       data-title="Pasul 1 &mdash; Selectarea firmelor din Saga">
+                        <img
+                            src="images/screenshot-1.png"
+                            alt="Pasul 1 — Selectarea firmelor din Saga"
+                            class="step__screenshot"
+                            onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
+                        >
+                    </a>
                     <div class="step__screenshot-placeholder" style="display:none">
                         Captură — selectare firme
                     </div>
@@ -961,12 +993,15 @@
                     <p class="step__description">
                         Bifați rapoartele dorite (balanțe, jurnal, registre etc.) și intervalul de luni. Aplicația se ocupă de combinațiile firmă × lună × raport.
                     </p>
-                    <img
-                        src="images/screenshot-2.png"
-                        alt="Pasul 2 — Alegerea rapoartelor și a perioadei"
-                        class="step__screenshot"
-                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-                    >
+                    <a href="images/screenshot-2.png" class="glightbox" data-gallery="screenshots"
+                       data-title="Pasul 2 &mdash; Alegerea rapoartelor și a perioadei">
+                        <img
+                            src="images/screenshot-2.png"
+                            alt="Pasul 2 — Alegerea rapoartelor și a perioadei"
+                            class="step__screenshot"
+                            onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
+                        >
+                    </a>
                     <div class="step__screenshot-placeholder" style="display:none">
                         Captură — rapoarte și perioadă
                     </div>
@@ -977,12 +1012,15 @@
                     <p class="step__description">
                         Un singur click pornește generarea. Fișierele apar organizate pe firmă/an/lună în CSV, JSON, XLSX sau PDF &mdash; gata de arhivat sau trimis mai departe.
                     </p>
-                    <img
-                        src="images/screenshot-3.png"
-                        alt="Pasul 3 — Rapoartele generate, organizate pe firmă/an/lună"
-                        class="step__screenshot"
-                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-                    >
+                    <a href="images/screenshot-3.png" class="glightbox" data-gallery="screenshots"
+                       data-title="Pasul 3 &mdash; Rapoartele generate, organizate pe firmă/an/lună">
+                        <img
+                            src="images/screenshot-3.png"
+                            alt="Pasul 3 — Rapoartele generate, organizate pe firmă/an/lună"
+                            class="step__screenshot"
+                            onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
+                        >
+                    </a>
                     <div class="step__screenshot-placeholder" style="display:none">
                         Captură — fișiere exportate
                     </div>
@@ -1175,6 +1213,12 @@
             </div>
         </div>
     </footer>
+
+    <!-- Lightbox initialization: click any screenshot → full-resolution modal. -->
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+    <script>
+        GLightbox({ selector: '.glightbox', loop: true });
+    </script>
 
 </body>
 </html>
