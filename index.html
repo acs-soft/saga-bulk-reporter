@@ -323,7 +323,7 @@
 
         .hero__screenshot {
             width: 100%;
-            aspect-ratio: 3 / 2;
+            aspect-ratio: 5 / 4;
             object-fit: contain;
             display: block;
             border: 1px solid var(--gray-200);
@@ -414,6 +414,10 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 32px;
             counter-reset: step;
+            /* The 01/02/03 numerals are absolutely positioned above each
+               .step, lifted by translateY(-100%) at text-4xl (~67px). Give
+               the grid extra top margin so they clear the section subtitle. */
+            margin-top: 56px;
         }
 
         .step {
@@ -451,7 +455,7 @@
         .step__screenshot {
             margin-top: 24px;
             width: 100%;
-            aspect-ratio: 3 / 2;
+            aspect-ratio: 5 / 4;
             object-fit: contain;
             display: block;
             border: 1px solid var(--gray-200);
