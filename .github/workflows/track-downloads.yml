@@ -1,0 +1,53 @@
+name: Track downloads
+
+# Logs the cumulative GitHub Releases download count to metrics/downloads.csv
+# once a day, so we keep a time series the Releases API itself does not store
+# (the API only exposes the current running total per asset).
+
+on:
+  schedule:
+    - cron: '0 6 * * *'      # every day at 06:00 UTC
+  workflow_dispatch:          # manual "Run workflow" button
+
+permissions:
+  contents: write             # required to commit the updated CSV back
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Append today's total to the CSV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Sum download_count across every asset of every release (all pages).
+          counts=$(gh api --paginate "repos/${{ github.repository }}/releases" \
+            --jq '.[].assets[].download_count')
+          total=$(printf '%s\n' "$counts" | awk '{ s += $1 } END { print s + 0 }')
+          today=$(date -u +%Y-%m-%d)
+
+          file=metrics/downloads.csv
+          mkdir -p metrics
+          [ -f "$file" ] || echo "date,total_downloads" > "$file"
+
+          # Idempotent: drop any existing row for today, then add the fresh one
+          # (so a manual re-run on the same day overwrites rather than dupes).
+          { grep -v "^${today}," "$file" || true; } > "$file.tmp"
+          mv "$file.tmp" "$file"
+          echo "${today},${total}" >> "$file"
+
+          echo "Logged ${total} downloads for ${today}."
+
+      - name: Commit if the CSV changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add metrics/downloads.csv
+          if git diff --cached --quiet; then
+            echo "No change to commit."
+          else
+            git commit -m "chore: log total downloads"
+            git push
+          fi
