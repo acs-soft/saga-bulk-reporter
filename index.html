@@ -317,15 +317,42 @@
             letter-spacing: 0.01em;
         }
 
-        .hero__downloads {
-            display: inline-block;
-            margin-top: 20px;
+        .hero__cta-row {
+            display: flex;
+            align-items: stretch;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
-        .hero__downloads img {
-            display: block;
-            height: 20px;
-            width: auto;
+        .hero__stat {
+            display: none;          /* revealed by JS once the count loads */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px;
+            border: 1px solid var(--gray-200);
+            background-color: var(--gray-50);
+            line-height: 1;
+        }
+
+        .hero__stat.is-visible {
+            display: flex;
+        }
+
+        .hero__stat-value {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--black);
+            letter-spacing: -0.02em;
+        }
+
+        .hero__stat-label {
+            margin-top: 5px;
+            font-size: var(--text-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--blue-500);
         }
 
         .hero__visual {
@@ -948,21 +975,18 @@
                         Generați 10 rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x &mdash; pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
                     </p>
                     <div class="hero__actions">
-                        <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.15.0.exe" class="btn-primary">
-                            Descarcă gratuit
-                            <span class="btn-primary__arrow">&rarr;</span>
-                        </a>
+                        <div class="hero__cta-row">
+                            <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.15.0.exe" class="btn-primary">
+                                Descarcă gratuit
+                                <span class="btn-primary__arrow">&rarr;</span>
+                            </a>
+                            <div class="hero__stat" id="downloadStat" title="Total descărcări din toate versiunile">
+                                <span class="hero__stat-value" id="downloadCount"></span>
+                                <span class="hero__stat-label">descărcări</span>
+                            </div>
+                        </div>
                         <span class="hero__meta">Versiune 1.15.0 &bull; Windows 10/11 &bull; 14 zile gratuit</span>
                     </div>
-                    <a class="hero__downloads"
-                       href="https://github.com/acs-soft/saga-bulk-reporter/releases"
-                       target="_blank" rel="noopener"
-                       title="Total descărcări din toate versiunile">
-                        <img
-                            src="https://img.shields.io/github/downloads/acs-soft/saga-bulk-reporter/total?style=flat-square&label=desc%C4%83rc%C4%83ri&labelColor=171717&color=0066CC"
-                            alt="Total descărcări"
-                            loading="lazy">
-                    </a>
                 </div>
                 <div class="hero__visual">
                     <a href="images/screenshot-1.png" class="glightbox" data-gallery="screenshots"
@@ -1242,6 +1266,31 @@
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
     <script>
         GLightbox({ selector: '.glightbox', loop: true });
+
+        // Live total downloads across all GitHub releases — native hero stat.
+        // On any failure (network, rate limit, zero) the badge simply stays hidden.
+        (function () {
+            var stat = document.getElementById('downloadStat');
+            var valueEl = document.getElementById('downloadCount');
+            if (!stat || !valueEl) return;
+
+            fetch('https://api.github.com/repos/acs-soft/saga-bulk-reporter/releases?per_page=100', {
+                headers: { 'Accept': 'application/vnd.github+json' }
+            })
+                .then(function (res) { return res.ok ? res.json() : Promise.reject(res.status); })
+                .then(function (releases) {
+                    var total = releases.reduce(function (sum, rel) {
+                        return sum + (rel.assets || []).reduce(function (s, a) {
+                            return s + (a.download_count || 0);
+                        }, 0);
+                    }, 0);
+                    if (total > 0) {
+                        valueEl.textContent = total.toLocaleString('ro-RO');
+                        stat.classList.add('is-visible');
+                    }
+                })
+                .catch(function () { /* leave the stat hidden */ });
+        })();
     </script>
 
 </body>
