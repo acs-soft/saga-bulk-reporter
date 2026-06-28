@@ -12,6 +12,11 @@ on:
       - 'brand/_src/**'
       - '.github/workflows/track-downloads.yml'
   workflow_dispatch:
+  # Callable from other workflows in this repo (e.g. track-downloads after it
+  # commits a fresh metrics/downloads.json). A commit pushed with the default
+  # GITHUB_TOKEN does NOT trigger the `push` event above, so those workflows
+  # must invoke this one directly via `uses:` instead of relying on the push.
+  workflow_call:
 
 # Never let two deploys race; a newer push supersedes an in-flight one.
 concurrency:
@@ -22,7 +27,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # Always deploy the current tip of main. When called via workflow_call
+      # right after a commit, the run's github.sha still points at the OLD tip,
+      # so pin the branch explicitly to pick up the just-pushed file.
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Configure SSH
         run: |
