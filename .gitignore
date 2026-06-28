@@ -4,3 +4,6 @@
 *.swp
 *.tmp
 .claude/
+
+# Regenerable render intermediates (output of brand/_src/build-assets.js)
+brand/_src/*.html
