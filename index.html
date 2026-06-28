@@ -1277,23 +1277,19 @@
     <script>
         GLightbox({ selector: '.glightbox', loop: true });
 
-        // Live total downloads across all GitHub releases — native hero stat.
-        // On any failure (network, rate limit, zero) the badge simply stays hidden.
+        // Total downloads across all GitHub releases — native hero stat.
+        // Served same-origin from metrics/downloads.json, which the daily
+        // "Track downloads" workflow refreshes (no per-visitor GitHub API call,
+        // so no rate limits). On any failure or zero the badge stays hidden.
         (function () {
             var stat = document.getElementById('downloadStat');
             var valueEl = document.getElementById('downloadCount');
             if (!stat || !valueEl) return;
 
-            fetch('https://api.github.com/repos/acs-soft/saga-bulk-reporter/releases?per_page=100', {
-                headers: { 'Accept': 'application/vnd.github+json' }
-            })
+            fetch('metrics/downloads.json', { cache: 'no-cache' })
                 .then(function (res) { return res.ok ? res.json() : Promise.reject(res.status); })
-                .then(function (releases) {
-                    var total = releases.reduce(function (sum, rel) {
-                        return sum + (rel.assets || []).reduce(function (s, a) {
-                            return s + (a.download_count || 0);
-                        }, 0);
-                    }, 0);
+                .then(function (data) {
+                    var total = (data && data.total) || 0;
                     if (total > 0) {
                         valueEl.textContent = total.toLocaleString('ro-RO');
                         stat.classList.add('is-visible');

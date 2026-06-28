@@ -38,13 +38,17 @@ jobs:
           mv "$file.tmp" "$file"
           echo "${today},${total}" >> "$file"
 
+          # The landing page reads this same-origin (no per-visitor GitHub API
+          # call). Deploying this commit refreshes the number live on the site.
+          printf '{"date":"%s","total":%s}\n' "$today" "$total" > metrics/downloads.json
+
           echo "Logged ${total} downloads for ${today}."
 
-      - name: Commit if the CSV changed
+      - name: Commit if the metrics changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add metrics/downloads.csv
+          git add metrics/downloads.csv metrics/downloads.json
           if git diff --cached --quiet; then
             echo "No change to commit."
           else
