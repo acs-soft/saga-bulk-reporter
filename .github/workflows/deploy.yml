@@ -10,6 +10,7 @@ on:
     paths-ignore:
       - 'README.md'
       - 'brand/_src/**'
+      - 'marketing/**'
       - '.github/workflows/track-downloads.yml'
   workflow_dispatch:
   # Callable from other workflows in this repo (e.g. track-downloads after it
@@ -47,6 +48,7 @@ jobs:
             --exclude='.git' \
             --exclude='.github' \
             --exclude='brand/_src' \
+            --exclude='marketing' \
             --exclude='.gitignore' \
             --exclude='README.md' \
             -e "ssh -i ~/.ssh/deploy_key -o UserKnownHostsFile=~/.ssh/known_hosts" \
