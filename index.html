@@ -1213,8 +1213,8 @@
                 <div class="pricing__card">
                     <div class="pricing__badge">Licență anuală</div>
                     <div class="pricing__amount">
-                        <span class="pricing__value">X</span>
-                        <span class="pricing__period">lei / an</span>
+                        <span class="pricing__value">399</span>
+                        <span class="pricing__period">RON / an</span>
                     </div>
                     <div class="pricing__trial">14 zile gratuit &mdash; fără card bancar</div>
                     <div class="pricing__divider"></div>
@@ -1311,6 +1311,19 @@
                 })
                 .catch(function () { /* leave the stat hidden */ });
         })();
+
+        // Meta Pixel conversion: fire a Lead event whenever a visitor clicks an
+        // installer download link (header, hero, pricing or final CTA). Capture
+        // phase so it still fires as the click kicks off the download/navigation.
+        document.addEventListener('click', function (e) {
+            var link = e.target.closest && e.target.closest('a[href*="SagaBulkReporter-Setup"]');
+            if (link && typeof window.fbq === 'function') {
+                fbq('track', 'Lead', {
+                    content_name: 'SagaBulkReporter-Setup',
+                    content_category: 'installer-download'
+                });
+            }
+        }, true);
     </script>
 
 </body>
