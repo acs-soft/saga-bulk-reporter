@@ -4,19 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Facebook Pixel Code -->
+    <!-- Facebook Pixel — loaded ONLY after cookie consent (GDPR / ePrivacy) -->
     <script>
-        !function (f, b, e, v, n, t, s) {
-            if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments) };
-            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0;
-            t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s)
-        }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '996863876559271');
-        fbq('track', 'PageView');
+        window.PIXEL_ID = '996863876559271';
+        window.pixelReady = false;
+
+        // Loads fbevents.js and fires PageView. Nothing contacts
+        // connect.facebook.net until this runs — called on Accept, or
+        // immediately for a returning visitor who already accepted.
+        function loadPixel() {
+            if (window.pixelReady) return;
+            !function (f, b, e, v, n, t, s) {
+                if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments) };
+                if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0;
+                t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s)
+            }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', window.PIXEL_ID);
+            fbq('track', 'PageView');
+            window.pixelReady = true;
+        }
+
+        if (localStorage.getItem('cookie_consent') === 'granted') loadPixel();
     </script>
-    <noscript><img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=996863876559271&ev=PageView&noscript=1" /></noscript>
     <!-- End Facebook Pixel Code -->
+    <!-- The Lead listener near </body> guards on window.fbq, so it stays a
+         no-op until consent loads the Pixel — no change needed there. -->
     <meta name="description"
           content="Generator de rapoarte bulk pentru Saga 3.x: balanțe, jurnal, registru casă/bancă și mai multe — pentru zeci de firme și luni dintr-o singură rulare.">
 
@@ -962,6 +974,69 @@
                 padding-bottom: 56px;
             }
         }
+
+        /* Cookie consent banner — gates the Facebook Pixel (GDPR / ePrivacy). */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: var(--gutter);
+            padding: 20px var(--gutter);
+            background: var(--gray-900);
+            color: var(--gray-100);
+            font-size: var(--text-sm);
+            line-height: 1.5;
+        }
+
+        /* Without this, display:flex above would beat the [hidden] attribute
+           and the banner would stay visible even after a choice was made. */
+        .cookie-banner[hidden] {
+            display: none;
+        }
+
+        .cookie-banner__text {
+            max-width: 640px;
+            margin: 0;
+        }
+
+        .cookie-banner__text a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .cookie-banner__actions {
+            display: flex;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .cookie-banner .btn-ghost {
+            background: transparent;
+            color: var(--gray-300);
+            border: 1px solid var(--gray-600);
+            padding: 10px 20px;
+            border-radius: 4px;
+            font: inherit;
+            cursor: pointer;
+            transition: color var(--transition-fast), border-color var(--transition-fast);
+        }
+
+        .cookie-banner .btn-ghost:hover {
+            color: #fff;
+            border-color: var(--gray-300);
+        }
+
+        .cookie-banner .btn-primary {
+            padding: 10px 20px;
+            font-family: inherit;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -1281,7 +1356,8 @@
                 <a href="mailto:contact@bulkreporter.ro" class="footer__link">contact@bulkreporter.ro</a>
             </div>
             <div class="footer__links">
-                <a href="#" class="footer__link">Termeni și condiții</a>
+                <a href="/confidentialitate.html" class="footer__link">Politica de confidențialitate</a>
+                <a href="/termeni.html" class="footer__link">Termeni și condiții</a>
             </div>
         </div>
     </footer>
@@ -1324,6 +1400,35 @@
                 });
             }
         }, true);
+    </script>
+
+    <!-- Cookie consent banner — gates the Facebook Pixel (GDPR / ePrivacy). -->
+    <div id="cookie-banner" class="cookie-banner" hidden>
+        <p class="cookie-banner__text">
+            Folosim cookie-uri de la Meta (Facebook Pixel) pentru a măsura eficiența
+            campaniilor noastre publicitare. Detalii în
+            <a href="/confidentialitate.html">Politica de confidențialitate</a>.
+        </p>
+        <div class="cookie-banner__actions">
+            <button id="cookie-reject" class="btn-ghost" type="button">Refuz</button>
+            <button id="cookie-accept" class="btn-primary" type="button">Accept</button>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var banner = document.getElementById('cookie-banner');
+            // Show only if the visitor hasn't chosen yet (granted OR denied).
+            if (!localStorage.getItem('cookie_consent')) banner.hidden = false;
+            document.getElementById('cookie-accept').addEventListener('click', function () {
+                localStorage.setItem('cookie_consent', 'granted');
+                banner.hidden = true;
+                loadPixel();   // fires PageView now that consent is given
+            });
+            document.getElementById('cookie-reject').addEventListener('click', function () {
+                localStorage.setItem('cookie_consent', 'denied');
+                banner.hidden = true;
+            });
+        })();
     </script>
 
 </body>
