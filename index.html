@@ -9,11 +9,39 @@
         window.PIXEL_ID = '996863876559271';
         window.pixelReady = false;
 
+        // Campaign attribution: stash utm_* / fbclid from the landing URL into
+        // localStorage AFTER consent, so a later Lead/Contact event carries the
+        // campaign that brought the visitor. Last campaign click wins; a later
+        // param-less visit keeps the stored value. Channel-agnostic — works for
+        // Facebook ads today and email/other UTM-tagged links later.
+        function captureAttribution() {
+            try {
+                var KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid'];
+                var params = new URLSearchParams(window.location.search);
+                var attr = {}, found = false;
+                KEYS.forEach(function (k) {
+                    var v = params.get(k);
+                    if (v) { attr[k] = v.slice(0, 200); found = true; }   // cap length defensively
+                });
+                if (found) localStorage.setItem('attribution', JSON.stringify(attr));
+            } catch (e) { /* localStorage / URL API unavailable — skip */ }
+        }
+
+        // Merge any stored attribution into a Pixel event payload (mutates + returns it).
+        function withAttribution(data) {
+            try {
+                var attr = JSON.parse(localStorage.getItem('attribution')) || {};
+                for (var k in attr) { if (attr.hasOwnProperty(k)) data[k] = attr[k]; }
+            } catch (e) { /* no / invalid attribution — send as-is */ }
+            return data;
+        }
+
         // Loads fbevents.js and fires PageView. Nothing contacts
         // connect.facebook.net until this runs — called on Accept, or
         // immediately for a returning visitor who already accepted.
         function loadPixel() {
             if (window.pixelReady) return;
+            captureAttribution();   // record campaign params now that we have consent
             !function (f, b, e, v, n, t, s) {
                 if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments) };
                 if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0;
@@ -1414,16 +1442,23 @@
                 .catch(function () { /* leave the stat hidden */ });
         })();
 
-        // Meta Pixel conversion: fire a Lead event whenever a visitor clicks an
-        // installer download link (header, hero, pricing or final CTA). Capture
-        // phase so it still fires as the click kicks off the download/navigation.
+        // Meta Pixel conversions, enriched with captured campaign attribution:
+        //   Lead    — click on any installer download link (header/hero/pricing/CTA)
+        //   Contact — click on the contact email (mailto)
+        // Capture phase so the event still fires as the click kicks off the
+        // download / mail-client handoff.
         document.addEventListener('click', function (e) {
-            var link = e.target.closest && e.target.closest('a[href*="SagaBulkReporter-Setup"]');
-            if (link && typeof window.fbq === 'function') {
-                fbq('track', 'Lead', {
+            if (!e.target.closest || typeof window.fbq !== 'function') return;
+            if (e.target.closest('a[href*="SagaBulkReporter-Setup"]')) {
+                fbq('track', 'Lead', withAttribution({
                     content_name: 'SagaBulkReporter-Setup',
                     content_category: 'installer-download'
-                });
+                }));
+            } else if (e.target.closest('a[href^="mailto:"]')) {
+                fbq('track', 'Contact', withAttribution({
+                    content_name: 'contact-email',
+                    content_category: 'email'
+                }));
             }
         }, true);
     </script>
