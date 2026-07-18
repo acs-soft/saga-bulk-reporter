@@ -52,7 +52,24 @@
             window.pixelReady = true;
         }
 
-        if (localStorage.getItem('cookie_consent') === 'granted') loadPixel();
+        // Loads PostHog (EU Cloud) and captures the pageview — SAME consent gate
+        // as the Pixel. autocapture off + identified_only keeps it to the
+        // visit->download funnel rather than recording every interaction.
+        window.posthogReady = false;
+        function loadPostHog() {
+            if (window.posthogReady) return;
+            window.posthogReady = true;
+            !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "), n = 0; n < o.length; n++) g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+            posthog.init('phc_ytL4wrmhWpsw8PFUJCkbXNszZP7E25AFALqUSuA3TweB', {
+                api_host: 'https://eu.i.posthog.com',
+                person_profiles: 'identified_only',
+                autocapture: false,
+                capture_pageview: true,
+                capture_pageleave: true
+            });
+        }
+
+        if (localStorage.getItem('cookie_consent') === 'granted') { loadPixel(); loadPostHog(); }
     </script>
     <!-- End Facebook Pixel Code -->
     <!-- The Lead listener near </body> guards on window.fbq, so it stays a
@@ -1442,32 +1459,39 @@
                 .catch(function () { /* leave the stat hidden */ });
         })();
 
-        // Meta Pixel conversions, enriched with captured campaign attribution:
-        //   Lead    — click on any installer download link (header/hero/pricing/CTA)
-        //   Contact — click on the contact email (mailto)
-        // Capture phase so the event still fires as the click kicks off the
-        // download / mail-client handoff.
+        // Conversion events (Meta Pixel + PostHog), enriched with captured
+        // campaign attribution:
+        //   download — installer download link (header/hero/pricing/CTA)
+        //   contact  — the contact email (mailto)
+        // Capture phase so events still fire as the click kicks off the download
+        // / mail-client handoff. Each tracker is guarded independently — both
+        // load together on consent, so neither fires before Accept.
         document.addEventListener('click', function (e) {
-            if (!e.target.closest || typeof window.fbq !== 'function') return;
-            if (e.target.closest('a[href*="SagaBulkReporter-Setup"]')) {
-                fbq('track', 'Lead', withAttribution({
+            if (!e.target.closest) return;
+            var download = e.target.closest('a[href*="SagaBulkReporter-Setup"]');
+            var mail = download ? null : e.target.closest('a[href^="mailto:"]');
+            if (download) {
+                if (window.fbq) fbq('track', 'Lead', withAttribution({
                     content_name: 'SagaBulkReporter-Setup',
                     content_category: 'installer-download'
                 }));
-            } else if (e.target.closest('a[href^="mailto:"]')) {
-                fbq('track', 'Contact', withAttribution({
+                if (window.posthog) posthog.capture('download_click', withAttribution({}));
+            } else if (mail) {
+                if (window.fbq) fbq('track', 'Contact', withAttribution({
                     content_name: 'contact-email',
                     content_category: 'email'
                 }));
+                if (window.posthog) posthog.capture('contact_click', withAttribution({}));
             }
         }, true);
     </script>
 
-    <!-- Cookie consent banner — gates the Facebook Pixel (GDPR / ePrivacy). -->
+    <!-- Cookie consent banner — gates the Facebook Pixel + PostHog (GDPR / ePrivacy). -->
     <div id="cookie-banner" class="cookie-banner" hidden>
         <p class="cookie-banner__text">
-            Folosim cookie-uri de la Meta (Facebook Pixel) pentru a măsura eficiența
-            campaniilor noastre publicitare. Detalii în
+            Folosim cookie-uri de la Meta (Facebook Pixel) și un serviciu de analiză
+            web (PostHog) pentru a măsura eficiența campaniilor și a înțelege cum este
+            folosit site-ul. Detalii în
             <a href="/confidentialitate.html">Politica de confidențialitate</a>.
         </p>
         <div class="cookie-banner__actions">
@@ -1483,7 +1507,8 @@
             document.getElementById('cookie-accept').addEventListener('click', function () {
                 localStorage.setItem('cookie_consent', 'granted');
                 banner.hidden = true;
-                loadPixel();   // fires PageView now that consent is given
+                loadPixel();     // Meta Pixel PageView now that consent is given
+                loadPostHog();   // PostHog pageview — same consent
             });
             document.getElementById('cookie-reject').addEventListener('click', function () {
                 localStorage.setItem('cookie_consent', 'denied');
