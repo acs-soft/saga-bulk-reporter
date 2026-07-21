@@ -47,9 +47,15 @@ jobs:
           # The CSVs are the durable time series behind the counters and are
           # kept in git, but nothing on the site reads them -- the page fetches
           # only metrics/*.json. Serving them would publish the daily growth
-          # curve, so they stay out of the web root. --delete removes any copy
-          # already deployed.
-          rsync -az --delete \
+          # curve, so they stay out of the web root.
+          #
+          # --delete-excluded is required, not decorative: plain --delete
+          # deliberately PROTECTS excluded files already on the receiver, so
+          # --exclude alone would stop future uploads while leaving the
+          # previously deployed CSVs in place and still publicly served.
+          # Note this also means anything added to --exclude below will be
+          # deleted from the web root on the next deploy.
+          rsync -az --delete --delete-excluded \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='brand/_src' \
