@@ -7,3 +7,6 @@
 
 # Regenerable render intermediates (output of brand/_src/build-assets.js)
 brand/_src/*.html
+
+# Internal marketing research — kept out of this repo because it is public.
+marketing/
