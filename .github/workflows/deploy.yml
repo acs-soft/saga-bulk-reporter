@@ -44,11 +44,17 @@ jobs:
 
       - name: Rsync site to server
         run: |
+          # The CSVs are the durable time series behind the counters and are
+          # kept in git, but nothing on the site reads them -- the page fetches
+          # only metrics/*.json. Serving them would publish the daily growth
+          # curve, so they stay out of the web root. --delete removes any copy
+          # already deployed.
           rsync -az --delete \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='brand/_src' \
             --exclude='marketing' \
+            --exclude='*.csv' \
             --exclude='.gitignore' \
             --exclude='README.md' \
             -e "ssh -i ~/.ssh/deploy_key -o UserKnownHostsFile=~/.ssh/known_hosts" \
