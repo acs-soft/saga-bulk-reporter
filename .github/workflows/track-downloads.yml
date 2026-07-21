@@ -1,15 +1,22 @@
 name: Track downloads
 
-# Logs two daily counters that the landing page shows as hero stats:
+# Refreshes the two counters the landing page shows as hero stats:
 #   metrics/downloads.* — cumulative GitHub Releases downloads
 #   metrics/usage.*     — cumulative `report_run` events from PostHog
 # Both are kept as a CSV time series because neither source stores one for us:
 # the Releases API only exposes a running total, and PostHog's free-tier event
 # retention eventually ages out the raw events behind the count.
+#
+# Running more than once a day does not distort that series: each run drops the
+# existing row for today before appending, so the CSV stays one row per day and
+# only the JSON the page reads gets fresher.
 
 on:
   schedule:
-    - cron: '0 6 * * *'      # every day at 06:00 UTC
+    # Every 4 hours (00/04/08/12/16/20 UTC). GitHub queues scheduled runs and
+    # can delay them by an hour or more, which is harmless at this spacing but
+    # is why an hourly schedule would not reliably deliver 24 runs.
+    - cron: '0 */4 * * *'
   workflow_dispatch:          # manual "Run workflow" button
 
 permissions:
