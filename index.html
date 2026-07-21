@@ -404,22 +404,33 @@
             letter-spacing: 0.01em;
         }
 
-        .hero__cta-row {
+        /* Usage counters sit under the hero screenshot and together span its
+           full width. Each is flex: 1, so if one number fails to load the
+           other stretches across the row instead of leaving a hole. */
+        .hero__stats {
             display: flex;
-            align-items: stretch;
             gap: 16px;
-            flex-wrap: wrap;
+            margin-top: 16px;
         }
 
         .hero__stat {
             display: none;          /* revealed by JS once the count loads */
+            flex: 1;
             flex-direction: column;
-            justify-content: center;
+            /* Top-anchored, not centred: the two cards stretch to a shared
+               height, so anchoring the numbers to the same top offset keeps
+               them on one line even when only the longer label wraps. */
+            justify-content: flex-start;
             align-items: center;
-            padding: 0 20px;
+            padding: 12px 8px;
+            /* Lets the number size itself against this card's width (cqw)
+               rather than the viewport — the card is narrower at 1024px than
+               at 768px, so viewport units would size it wrong. */
+            container-type: inline-size;
             border: 1px solid var(--gray-200);
             background-color: var(--gray-50);
             line-height: 1;
+            text-align: center;
         }
 
         .hero__stat.is-visible {
@@ -427,28 +438,43 @@
         }
 
         .hero__stat-value {
-            font-size: var(--text-lg);
-            font-weight: 700;
+            /* Static fallback first for browsers without container units. */
+            font-size: var(--text-4xl);
+            /* Fills the card and shrinks to fit on narrow screens, so a future
+               4-digit download count cannot overflow its box on a phone. */
+            font-size: clamp(2rem, 30cqw, var(--text-4xl));
+            font-weight: 800;
             color: var(--black);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
+            /* Fixed-width digits so the number does not jitter sideways while
+               it counts up. */
+            font-variant-numeric: tabular-nums;
         }
 
         .hero__stat-label {
-            margin-top: 5px;
+            margin-top: 6px;
             font-size: var(--text-xs);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: var(--blue-500);
+            line-height: 1.4;
         }
 
         .hero__visual {
             position: relative;
+            /* Ride the top of the grid row rather than centring against the
+               text column, so the screenshot sits higher up the fold. */
+            align-self: start;
+            margin-top: 48px;
         }
 
         .hero__screenshot {
             width: 100%;
-            aspect-ratio: 5 / 4;
+            /* Matches the asset's native 1410x1150 so `contain` letterboxes
+               nothing — the visible image then lines up edge-to-edge with the
+               counters below it. Reserves the space to avoid layout shift. */
+            aspect-ratio: 141 / 115;
             object-fit: contain;
             display: block;
             border: 1px solid var(--gray-200);
@@ -1125,20 +1151,10 @@
                         Generați 15 rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x &mdash; pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
                     </p>
                     <div class="hero__actions">
-                        <div class="hero__cta-row">
-                            <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.22.0.exe" class="btn-primary">
-                                Descarcă gratuit
-                                <span class="btn-primary__arrow">&rarr;</span>
-                            </a>
-                            <div class="hero__stat" id="downloadStat" title="Total descărcări din toate versiunile">
-                                <span class="hero__stat-value" id="downloadCount"></span>
-                                <span class="hero__stat-label">descărcări</span>
-                            </div>
-                            <div class="hero__stat" id="reportStat" title="Total rapoarte generate de utilizatori">
-                                <span class="hero__stat-value" id="reportCount"></span>
-                                <span class="hero__stat-label">rapoarte</span>
-                            </div>
-                        </div>
+                        <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.22.0.exe" class="btn-primary">
+                            Descarcă gratuit
+                            <span class="btn-primary__arrow">&rarr;</span>
+                        </a>
                         <span class="hero__meta">Versiune 1.22.0 &bull; Windows 10/11 &bull; 14 zile gratuit</span>
                     </div>
                 </div>
@@ -1154,6 +1170,16 @@
                     </a>
                     <div class="hero__screenshot-placeholder" style="display:none">
                         Captură de ecran &mdash; interfața aplicației
+                    </div>
+                    <div class="hero__stats">
+                        <div class="hero__stat" id="downloadStat" title="Total descărcări din toate versiunile">
+                            <span class="hero__stat-value" id="downloadCount">0</span>
+                            <span class="hero__stat-label">descărcări de aplicație</span>
+                        </div>
+                        <div class="hero__stat" id="reportStat" title="Total rapoarte generate de utilizatori">
+                            <span class="hero__stat-value" id="reportCount">0</span>
+                            <span class="hero__stat-label">rapoarte rulate</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1449,6 +1475,28 @@
         // show regardless of cookie consent. On any failure or zero the badge
         // stays hidden rather than rendering a placeholder.
         (function () {
+            var reduceMotion = window.matchMedia
+                && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // Counts up from zero and eases into the final number. Cubic
+            // ease-out covers most of the distance in the first few hundred ms,
+            // so it reads as a quick spin that settles rather than a crawl.
+            function countUp(el, target) {
+                if (reduceMotion || !window.requestAnimationFrame) {
+                    el.textContent = target.toLocaleString('ro-RO');
+                    return;
+                }
+                var duration = 1100;
+                var started = null;
+                requestAnimationFrame(function step(now) {
+                    if (started === null) started = now;
+                    var progress = Math.min((now - started) / duration, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = Math.round(target * eased).toLocaleString('ro-RO');
+                    if (progress < 1) requestAnimationFrame(step);
+                });
+            }
+
             function showStat(statId, valueId, url, key) {
                 var stat = document.getElementById(statId);
                 var valueEl = document.getElementById(valueId);
@@ -1459,8 +1507,10 @@
                     .then(function (data) {
                         var total = (data && data[key]) || 0;
                         if (total > 0) {
-                            valueEl.textContent = total.toLocaleString('ro-RO');
+                            // Reveal before animating — counting up inside a
+                            // display:none box would finish unseen.
                             stat.classList.add('is-visible');
+                            countUp(valueEl, total);
                         }
                     })
                     .catch(function () { /* leave the stat hidden */ });
