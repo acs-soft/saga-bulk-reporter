@@ -1134,6 +1134,10 @@
                                 <span class="hero__stat-value" id="downloadCount"></span>
                                 <span class="hero__stat-label">descărcări</span>
                             </div>
+                            <div class="hero__stat" id="reportStat" title="Total rapoarte generate de utilizatori">
+                                <span class="hero__stat-value" id="reportCount"></span>
+                                <span class="hero__stat-label">rapoarte</span>
+                            </div>
                         </div>
                         <span class="hero__meta">Versiune 1.22.0 &bull; Windows 10/11 &bull; 14 zile gratuit</span>
                     </div>
@@ -1438,25 +1442,32 @@
     <script>
         GLightbox({ selector: '.glightbox', loop: true });
 
-        // Total downloads across all GitHub releases — native hero stat.
-        // Served same-origin from metrics/downloads.json, which the daily
-        // "Track downloads" workflow refreshes (no per-visitor GitHub API call,
-        // so no rate limits). On any failure or zero the badge stays hidden.
+        // Hero stats — total downloads (GitHub Releases) and total reports
+        // generated (PostHog). Both are served same-origin from JSON that the
+        // daily "Track downloads" workflow refreshes, so there is no
+        // per-visitor third-party API call: no rate limits, and the numbers
+        // show regardless of cookie consent. On any failure or zero the badge
+        // stays hidden rather than rendering a placeholder.
         (function () {
-            var stat = document.getElementById('downloadStat');
-            var valueEl = document.getElementById('downloadCount');
-            if (!stat || !valueEl) return;
+            function showStat(statId, valueId, url, key) {
+                var stat = document.getElementById(statId);
+                var valueEl = document.getElementById(valueId);
+                if (!stat || !valueEl) return;
 
-            fetch('metrics/downloads.json', { cache: 'no-cache' })
-                .then(function (res) { return res.ok ? res.json() : Promise.reject(res.status); })
-                .then(function (data) {
-                    var total = (data && data.total) || 0;
-                    if (total > 0) {
-                        valueEl.textContent = total.toLocaleString('ro-RO');
-                        stat.classList.add('is-visible');
-                    }
-                })
-                .catch(function () { /* leave the stat hidden */ });
+                fetch(url, { cache: 'no-cache' })
+                    .then(function (res) { return res.ok ? res.json() : Promise.reject(res.status); })
+                    .then(function (data) {
+                        var total = (data && data[key]) || 0;
+                        if (total > 0) {
+                            valueEl.textContent = total.toLocaleString('ro-RO');
+                            stat.classList.add('is-visible');
+                        }
+                    })
+                    .catch(function () { /* leave the stat hidden */ });
+            }
+
+            showStat('downloadStat', 'downloadCount', 'metrics/downloads.json', 'total');
+            showStat('reportStat', 'reportCount', 'metrics/usage.json', 'reports');
         })();
 
         // Conversion events (Meta Pixel + PostHog), enriched with captured

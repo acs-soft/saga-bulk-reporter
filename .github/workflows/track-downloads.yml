@@ -1,8 +1,11 @@
 name: Track downloads
 
-# Logs the cumulative GitHub Releases download count to metrics/downloads.csv
-# once a day, so we keep a time series the Releases API itself does not store
-# (the API only exposes the current running total per asset).
+# Logs two daily counters that the landing page shows as hero stats:
+#   metrics/downloads.* — cumulative GitHub Releases downloads
+#   metrics/usage.*     — cumulative `report_run` events from PostHog
+# Both are kept as a CSV time series because neither source stores one for us:
+# the Releases API only exposes a running total, and PostHog's free-tier event
+# retention eventually ages out the raw events behind the count.
 
 on:
   schedule:
@@ -46,17 +49,79 @@ jobs:
 
           echo "Logged ${total} downloads for ${today}."
 
+      - name: Append today's report count to the CSV
+        env:
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          POSTHOG_PROJECT_ID: ${{ secrets.POSTHOG_PROJECT_ID }}
+        run: |
+          # Reads the all-time `report_run` count from PostHog (EU cloud). This
+          # needs a PERSONAL API key with the `query:read` scope — the phc_ key
+          # embedded in index.html is ingest-only and cannot read anything back.
+          #
+          # Every failure path below exits 0 without touching metrics/usage.*,
+          # so a PostHog outage leaves the live badge showing the last good
+          # number instead of dropping it to zero or hiding it.
+          if [ -z "$POSTHOG_API_KEY" ] || [ -z "$POSTHOG_PROJECT_ID" ]; then
+            echo "PostHog secrets not configured — skipping report count."
+            exit 0
+          fi
+
+          # NOTE: PostHog's "filter out internal and test users" toggle is a UI
+          # setting backed by project-level test-account filters; it does NOT
+          # apply to raw HogQL. To exclude your own machines, add a clause here:
+          #   AND distinct_id NOT IN ('id-a', 'id-b')
+          body=$(jq -n --arg q "SELECT count() FROM events WHERE event = 'report_run'" \
+            '{query: {kind: "HogQLQuery", query: $q}}')
+
+          http=$(curl -sS -o resp.json -w '%{http_code}' \
+            -X POST "https://eu.posthog.com/api/projects/${POSTHOG_PROJECT_ID}/query/" \
+            -H "Authorization: Bearer ${POSTHOG_API_KEY}" \
+            -H 'Content-Type: application/json' \
+            -d "$body") || { echo "PostHog request failed — keeping previous count."; exit 0; }
+
+          if [ "$http" != "200" ]; then
+            echo "PostHog query returned HTTP ${http} — keeping previous count."
+            cat resp.json
+            exit 0
+          fi
+
+          reports=$(jq -r '.results[0][0] // empty' resp.json)
+          case "$reports" in
+            ''|*[!0-9]*)
+              echo "Unexpected PostHog response — keeping previous count."
+              cat resp.json
+              exit 0
+              ;;
+          esac
+
+          today=$(date -u +%Y-%m-%d)
+          file=metrics/usage.csv
+          mkdir -p metrics
+          [ -f "$file" ] || echo "date,reports_run" > "$file"
+
+          # Idempotent, same as the downloads CSV above: drop today's row first
+          # so a manual re-run overwrites rather than duplicates.
+          { grep -v "^${today}," "$file" || true; } > "$file.tmp"
+          mv "$file.tmp" "$file"
+          echo "${today},${reports}" >> "$file"
+
+          printf '{"date":"%s","reports":%s}\n' "$today" "$reports" > metrics/usage.json
+          rm -f resp.json
+
+          echo "Logged ${reports} reports run for ${today}."
+
       - name: Commit if the metrics changed
         id: commit
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add metrics/downloads.csv metrics/downloads.json
+          git add metrics/usage.csv metrics/usage.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No change to commit."
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "chore: log total downloads"
+            git commit -m "chore: log usage metrics"
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
