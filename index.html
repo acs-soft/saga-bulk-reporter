@@ -1114,6 +1114,298 @@
             font-family: inherit;
             cursor: pointer;
         }
+
+        /* ===== SmartScreen guide =====
+           Overlay shown when a download link is clicked. On Windows the click is
+           NOT prevented — the installer download starts exactly as before and the
+           existing download_click / Lead events fire unchanged. The guide is
+           purely additive; see the handler near </body>. */
+        .ss {
+            position: fixed;
+            inset: 0;
+            z-index: 1100;             /* above the cookie banner (1000) */
+            display: flex;
+            justify-content: center;
+            padding: var(--gutter);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+        /* Same reason as .cookie-banner[hidden]: display:flex would otherwise
+           beat the [hidden] attribute and the overlay would never close. */
+        .ss[hidden] {
+            display: none;
+        }
+
+        .ss__backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.65);
+        }
+
+        .ss__panel {
+            position: relative;
+            width: 100%;
+            max-width: 720px;
+            margin: auto;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            padding: 32px;
+        }
+
+        .ss__close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--gray-500);
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            transition: color var(--transition-fast), border-color var(--transition-fast);
+        }
+
+        .ss__close:hover {
+            color: var(--black);
+            border-color: var(--gray-200);
+        }
+
+        .ss__title {
+            margin-top: 10px;
+            font-size: var(--text-xl);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+        }
+
+        .ss__lede {
+            margin-top: 12px;
+            font-size: var(--text-base);
+            color: var(--gray-600);
+            line-height: 1.55;
+        }
+
+        .ss__lede a {
+            color: var(--blue-500);
+            font-weight: 600;
+        }
+
+        .ss__steps {
+            margin-top: 22px;
+            padding: 0;
+            list-style: none;
+            counter-reset: ss;
+        }
+
+        .ss__step {
+            display: grid;
+            grid-template-columns: 32px 1fr;
+            gap: 14px;
+            padding: 16px 0;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .ss__step-n {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--blue-500);
+            color: #fff;
+            font-size: var(--text-sm);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .ss__step h3 {
+            font-size: var(--text-md);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .ss__step p {
+            margin-top: 5px;
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            line-height: 1.55;
+        }
+
+        .ss__step b {
+            color: var(--black);
+        }
+
+        .ss__step i {
+            color: var(--gray-500);
+            font-style: normal;
+        }
+
+        /* --- Dialog mock-ups ---
+           Recreated in CSS rather than screenshotted: no image assets to keep in
+           sync with Windows, crisp at any DPI, and the highlight ring on the
+           button the user must press is a real element rather than a drawn box.
+           Deliberately close-but-not-identical to the real dialog — enough to be
+           recognised mid-panic, not a forgery of a Microsoft UI. */
+        .ss__mock {
+            margin-top: 12px;
+            border: 1px solid var(--gray-300);
+            background: var(--gray-50);
+            padding: 12px 14px;
+            font-size: var(--text-sm);
+            line-height: 1.45;
+        }
+
+        .ss__mock-title {
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .ss__mock-text {
+            margin-top: 6px;
+            color: var(--gray-600);
+        }
+
+        .ss__mock-file {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: var(--text-xs);
+            color: var(--gray-800);
+            word-break: break-all;
+        }
+
+        .ss__mock-actions {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .ss__mock-btn {
+            display: inline-block;
+            padding: 7px 14px;
+            border: 1px solid var(--gray-400);
+            background: var(--white);
+            color: var(--gray-700);
+            font-size: var(--text-xs);
+            font-weight: 600;
+        }
+
+        .ss__mock-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: var(--blue-600);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        /* The one element the user has to press. */
+        .ss__mock-btn.is-target,
+        .ss__mock-link.is-target {
+            border-color: var(--blue-500);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.25);
+            color: var(--blue-700);
+            background: var(--white);
+        }
+
+        .ss__block {
+            margin-top: 22px;
+            border-top: 1px solid var(--gray-200);
+            padding-top: 20px;
+        }
+
+        .ss__block h3 {
+            font-size: var(--text-xs);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--blue-500);
+        }
+
+        .ss__list {
+            margin-top: 12px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .ss__list li {
+            position: relative;
+            padding-left: 18px;
+            margin-top: 8px;
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        .ss__list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 9px;
+            width: 6px;
+            height: 6px;
+            background: var(--blue-500);
+        }
+
+        .ss__list b {
+            color: var(--black);
+        }
+
+        .ss__actions {
+            margin-top: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .ss__ghost {
+            padding: 12px 22px;
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+            font: inherit;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color var(--transition-fast), color var(--transition-fast);
+        }
+
+        .ss__ghost:hover {
+            border-color: var(--gray-500);
+            color: var(--black);
+        }
+
+        /* Variant switch: the panel carries data-variant, so the desktop guide and
+           the phone notice are one component rather than two overlays to keep in
+           step. */
+        .ss[data-variant="mobile"] .ss--win,
+        .ss[data-variant="windows"] .ss--mob {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            .ss__panel {
+                padding: 24px 18px;
+            }
+
+            .ss__step {
+                grid-template-columns: 28px 1fr;
+                gap: 12px;
+                padding: 14px 0;
+            }
+
+            .ss__step-n {
+                width: 28px;
+                height: 28px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1544,11 +1836,23 @@
             var download = e.target.closest('a[href*="SagaBulkReporter-Setup"]');
             var mail = download ? null : e.target.closest('a[href^="mailto:"]');
             if (download) {
+                // The retry link inside the SmartScreen guide points at the same
+                // installer URL, so it matches the selector above. Count it as a
+                // fallback and return: firing Lead again would report two
+                // conversions for one visitor and skew the campaign's
+                // optimisation signal.
+                if (download.hasAttribute('data-ss-fallback')) {
+                    if (window.posthog) posthog.capture('fallback_download_click', withAttribution({}));
+                    return;
+                }
                 if (window.fbq) fbq('track', 'Lead', withAttribution({
                     content_name: 'SagaBulkReporter-Setup',
                     content_category: 'installer-download'
                 }));
                 if (window.posthog) posthog.capture('download_click', withAttribution({}));
+                // Additive: the click is not prevented on Windows, so the download
+                // starts exactly as it did before the guide existed.
+                if (window.smartScreenGuide) window.smartScreenGuide.open(e);
             } else if (mail) {
                 if (window.fbq) fbq('track', 'Contact', withAttribution({
                     content_name: 'contact-email',
@@ -1557,6 +1861,205 @@
                 if (window.posthog) posthog.capture('contact_click', withAttribution({}));
             }
         }, true);
+    </script>
+
+    <!-- SmartScreen guide — opened by the download click handler above. Windows
+         SmartScreen blocks unsigned installers, and the warning is where most
+         downloads are abandoned; this explains it before the user meets it.
+         Delete this block once the installer is Authenticode-signed. -->
+    <div id="ss-guide" class="ss" data-variant="windows" hidden>
+        <div class="ss__backdrop" data-ss-close></div>
+        <div class="ss__panel" role="dialog" aria-modal="true" aria-labelledby="ss-title" tabindex="-1">
+            <button class="ss__close" type="button" data-ss-close aria-label="Închide">&times;</button>
+
+            <!-- ---------- Windows ---------- -->
+            <div class="ss--win">
+                <div class="label">Descărcarea a început</div>
+                <h2 class="ss__title" id="ss-title">Windows va afișa un avertisment. Este normal.</h2>
+                <p class="ss__lede">
+                    Instalatorul nu este încă semnat digital, așa că Windows nu îl recunoaște și
+                    vă avertizează. Mai jos aveți pașii prin care îl deschideți în siguranță.
+                    <br>
+                    Dacă descărcarea nu a pornit,
+                    <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.23.0.exe" data-ss-fallback>apăsați aici</a>.
+                </p>
+
+                <ol class="ss__steps">
+                    <li class="ss__step">
+                        <div class="ss__step-n">1</div>
+                        <div>
+                            <h3>Dacă browserul oprește fișierul</h3>
+                            <p>
+                                Chrome și Edge blochează uneori fișierele noi. În bara de descărcări
+                                apăsați <b>Păstrare</b> <i>(Keep)</i>. În Edge, opțiunea este în
+                                meniul <b>&hellip;</b> din dreptul fișierului.
+                            </p>
+                            <div class="ss__mock">
+                                <div class="ss__mock-file">SagaBulkReporter-Setup-1.23.0.exe</div>
+                                <div class="ss__mock-text">Fișierul nu este descărcat frecvent și poate fi periculos.</div>
+                                <div class="ss__mock-actions">
+                                    <span class="ss__mock-btn">Renunțare</span>
+                                    <span class="ss__mock-btn is-target">Păstrare</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="ss__step">
+                        <div class="ss__step-n">2</div>
+                        <div>
+                            <h3>Apăsați „Mai multe informații”</h3>
+                            <p>
+                                Deschideți fișierul descărcat. Dacă apare fereastra albastră de
+                                protecție, apăsați pe textul <b>Mai multe informații</b>
+                                <i>(More info)</i>. Nu apăsați „Nu executați”.
+                            </p>
+                            <div class="ss__mock">
+                                <div class="ss__mock-title">Windows a protejat PC-ul dvs.</div>
+                                <div class="ss__mock-text">
+                                    Microsoft Defender SmartScreen a împiedicat pornirea unei
+                                    aplicații nerecunoscute.
+                                </div>
+                                <span class="ss__mock-link is-target">Mai multe informații</span>
+                                <div class="ss__mock-actions">
+                                    <span class="ss__mock-btn">Nu executați</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="ss__step">
+                        <div class="ss__step-n">3</div>
+                        <div>
+                            <h3>Apăsați „Executare oricum”</h3>
+                            <p>
+                                După primul pas apare un buton nou, jos în aceeași fereastră:
+                                <b>Executare oricum</b> <i>(Run anyway)</i>. Instalarea pornește normal.
+                            </p>
+                            <div class="ss__mock">
+                                <div class="ss__mock-title">Windows a protejat PC-ul dvs.</div>
+                                <div class="ss__mock-text">
+                                    Aplicație: <span class="ss__mock-file">SagaBulkReporter-Setup-1.23.0.exe</span><br>
+                                    Editor: Editor necunoscut
+                                </div>
+                                <div class="ss__mock-actions">
+                                    <span class="ss__mock-btn is-target">Executare oricum</span>
+                                    <span class="ss__mock-btn">Nu executați</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+
+                <div class="ss__block">
+                    <h3>De ce apare avertismentul</h3>
+                    <ul class="ss__list">
+                        <li><b>Nu este un virus.</b> Windows avertizează pentru orice program nou care nu are încă un certificat de semnare &mdash; nu pentru că ar fi găsit ceva în fișier.</li>
+                        <li><b>Datele rămân la dumneavoastră.</b> Aplicația citește bazele Saga local, de pe calculatorul dumneavoastră. Nimic nu se încarcă în cloud.</li>
+                        <li><b>Descărcarea vine direct de la sursă</b> &mdash; de pe GitHub, din pagina oficială de versiuni a aplicației.</li>
+                    </ul>
+                </div>
+
+                <div class="ss__block">
+                    <h3>Ce urmează după instalare</h3>
+                    <ul class="ss__list">
+                        <li>Deschideți aplicația de pe desktop.</li>
+                        <li>Parcurgeți configurarea rapidă &mdash; durează sub 2 minute.</li>
+                        <li>Începe perioada de test de <b>14 zile, fără card bancar</b>.</li>
+                    </ul>
+                </div>
+
+                <div class="ss__actions">
+                    <button class="ss__ghost" type="button" data-ss-close>Am înțeles</button>
+                </div>
+            </div>
+
+            <!-- ---------- Phone / tablet ---------- -->
+            <div class="ss--mob">
+                <div class="label">Descărcare</div>
+                <h2 class="ss__title">Aplicația se instalează pe un calculator cu Windows</h2>
+                <p class="ss__lede">
+                    Saga Bulk Reporter citește bazele de date Saga 3.x direct de pe calculatorul
+                    pe care rulează, așa că nu poate fi instalată pe telefon sau tabletă.
+                    Deschideți acest link pe laptopul sau PC-ul dumneavoastră.
+                </p>
+                <div class="ss__actions">
+                    <button class="ss__ghost" type="button" id="ss-copy">Copiază linkul</button>
+                    <a class="ss__ghost" href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.23.0.exe" data-ss-fallback>Descarcă totuși</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Opened from the download click handler above. Everything here is
+        // best-effort: if it throws, the download has already started regardless.
+        (function () {
+            var guide = document.getElementById('ss-guide');
+            if (!guide) return;
+
+            var panel = guide.querySelector('.ss__panel');
+            var openedAt = 0;
+            var lastFocus = null;
+            var variant = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mobile' : 'windows';
+
+            function focusable() {
+                return Array.prototype.filter.call(
+                    panel.querySelectorAll('a[href], button:not([disabled])'),
+                    function (el) { return el.offsetParent !== null; });
+            }
+
+            function onKey(e) {
+                if (e.key === 'Escape') { close(); return; }
+                if (e.key !== 'Tab') return;
+                // Keep focus inside the dialog while it is modal.
+                var items = focusable();
+                if (!items.length) return;
+                var first = items[0], last = items[items.length - 1];
+                if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+            }
+
+            function open(e) {
+                // On a phone the .exe is useless, so this is the one case where the
+                // download is suppressed — "Descarcă totuși" is still offered inside.
+                if (variant === 'mobile' && e && e.preventDefault) e.preventDefault();
+
+                guide.setAttribute('data-variant', variant);
+                lastFocus = document.activeElement;
+                guide.hidden = false;
+                document.body.style.overflow = 'hidden';
+                panel.focus();
+                document.addEventListener('keydown', onKey, true);
+                openedAt = Date.now();
+
+                if (window.posthog) posthog.capture('smartscreen_guide_shown', withAttribution({ variant: variant }));
+            }
+
+            function close() {
+                if (guide.hidden) return;
+                guide.hidden = true;
+                document.body.style.overflow = '';
+                document.removeEventListener('keydown', onKey, true);
+                if (lastFocus && lastFocus.focus) lastFocus.focus();
+
+                // Dwell separates "read it" from "dismissed it instantly", which is
+                // the only read we get on whether the guide is doing anything.
+                if (window.posthog) posthog.capture('smartscreen_guide_closed', withAttribution({
+                    variant: variant,
+                    dwell_seconds: Math.round((Date.now() - openedAt) / 1000)
+                }));
+            }
+
+            guide.addEventListener('click', function (e) {
+                if (e.target.closest('[data-ss-close]')) close();
+            });
+
+            var copy = document.getElementById('ss-copy');
+            if (copy) copy.addEventListener('click', function () {
+                var done = function () { copy.textContent = 'Link copiat'; };
+                if (navigator.clipboard) navigator.clipboard.writeText(window.location.href).then(done, function () { });
+            });
+
+            window.smartScreenGuide = { open: open, close: close };
+        })();
     </script>
 
     <!-- Cookie consent banner — gates the Facebook Pixel + PostHog (GDPR / ePrivacy). -->
