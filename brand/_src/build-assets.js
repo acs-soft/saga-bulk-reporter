@@ -133,7 +133,7 @@ const og = page(1200, 630, `
     <div class="eyebrow">Generator de rapoarte · Saga 3.x</div>
     <h1>Rapoarte bulk<br>din Saga</h1>
     <hr class="rule">
-    <p>10 rapoarte — multi-firmă, multi-lună, dintr-o singură rulare.</p>
+    <p>18 rapoarte — multi-firmă, multi-lună, dintr-o singură rulare.</p>
     <div class="foot">bulkreporter.ro<i>·</i>Windows 10/11</div>
   </div>
   <div class="hero">${mark('light')}</div>
@@ -162,7 +162,7 @@ const postAnnounce = page(1080, 1080, `
   <div class="bg">${mark('onblue')}</div>
   <div class="lockup lockup--onblue sig">${mark('onblue')}<div class="wm"><b>Saga Bulk Reporter</b><small>ACS Soft</small></div></div>
   <div class="pill">Noutate</div>
-  <h1>10 rapoarte contabile,<br>multi-firmă,<br>dintr-o singură rulare.</h1>
+  <h1>18 rapoarte contabile,<br>multi-firmă,<br>dintr-o singură rulare.</h1>
   <hr class="rule">
   <div class="foot">Descarcă gratuit<i>·</i>14 zile<i>·</i>bulkreporter.ro</div>
 </div>`);
