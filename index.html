@@ -1115,12 +1115,13 @@
             cursor: pointer;
         }
 
-        /* ===== SmartScreen guide =====
-           Overlay shown when a download link is clicked. On Windows the click is
-           NOT prevented — the installer download starts exactly as before and the
-           existing download_click / Lead events fire unchanged. The guide is
-           purely additive; see the handler near </body>. */
-        .ss {
+        /* ===== Modal overlay shell =====
+           Shared chrome for the two overlays near </body>: the SmartScreen guide
+           and the send-to-device bridge. Deliberately a separate section — the
+           guide is deleted once the installer is signed, and the bridge is the
+           only handoff a phone gets, so it has to outlive that deletion. Anything
+           reusable belongs here; the guide's own rules stay in its own section. */
+        .ovl {
             position: fixed;
             inset: 0;
             z-index: 1100;             /* above the cookie banner (1000) */
@@ -1133,17 +1134,24 @@
 
         /* Same reason as .cookie-banner[hidden]: display:flex would otherwise
            beat the [hidden] attribute and the overlay would never close. */
-        .ss[hidden] {
+        .ovl[hidden] {
             display: none;
         }
 
-        .ss__backdrop {
+        /* Same trap one level down: .btn-primary sets display, which outranks the
+           UA stylesheet's [hidden] rule, so the share button would stay visible on
+           browsers with no share sheet — the one place it must not appear. */
+        .ovl [hidden] {
+            display: none;
+        }
+
+        .ovl__backdrop {
             position: fixed;
             inset: 0;
             background: rgba(10, 10, 10, 0.65);
         }
 
-        .ss__panel {
+        .ovl__panel {
             position: relative;
             width: 100%;
             max-width: 720px;
@@ -1153,7 +1161,7 @@
             padding: 32px;
         }
 
-        .ss__close {
+        .ovl__close {
             position: absolute;
             top: 12px;
             right: 12px;
@@ -1171,12 +1179,12 @@
             transition: color var(--transition-fast), border-color var(--transition-fast);
         }
 
-        .ss__close:hover {
+        .ovl__close:hover {
             color: var(--black);
             border-color: var(--gray-200);
         }
 
-        .ss__title {
+        .ovl__title {
             margin-top: 10px;
             font-size: var(--text-xl);
             font-weight: 700;
@@ -1184,18 +1192,80 @@
             line-height: 1.15;
         }
 
-        .ss__lede {
+        .ovl__lede {
             margin-top: 12px;
             font-size: var(--text-base);
             color: var(--gray-600);
             line-height: 1.55;
         }
 
-        .ss__lede a {
+        .ovl__lede a {
             color: var(--blue-500);
             font-weight: 600;
         }
 
+        .ovl__actions {
+            margin-top: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Used on both <button> and <a>, so the anchor defaults have to be undone
+           or it sits underlined and left-aligned beside the real buttons. */
+        .ovl__ghost {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 12px 22px;
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+            font: inherit;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color var(--transition-fast), color var(--transition-fast);
+        }
+
+        .ovl__ghost:hover {
+            border-color: var(--gray-500);
+            color: var(--black);
+        }
+
+        /* .btn-primary is declared for the page's <a> CTAs, which inherit the
+           body font; a <button> does not, so restate it here. */
+        .ovl .btn-primary {
+            font-family: inherit;
+            justify-content: center;
+        }
+
+        @media (max-width: 640px) {
+            .ovl__panel {
+                padding: 24px 18px;
+            }
+
+            /* Thumb-reachable full-width stack: this is the phone handoff, and
+               a share sheet missed by a mis-tap is a lost visitor. */
+            .ovl__actions--stack {
+                display: grid;
+                gap: 10px;
+            }
+
+            .ovl__actions--stack > * {
+                width: 100%;
+            }
+        }
+
+        /* ===== SmartScreen guide =====
+           Overlay shown when a Windows download link is clicked. The click is
+           NOT prevented — the installer download starts exactly as before and the
+           existing download_click / Lead events fire unchanged. The guide is
+           purely additive; see the handler near </body>.
+           DELETE THIS SECTION once the installer is Authenticode-signed. It is
+           self-contained: nothing outside it uses .ss__*. */
         .ss__steps {
             margin-top: 22px;
             padding: 0;
@@ -1357,44 +1427,7 @@
             color: var(--black);
         }
 
-        .ss__actions {
-            margin-top: 22px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .ss__ghost {
-            padding: 12px 22px;
-            background: transparent;
-            border: 1px solid var(--gray-300);
-            color: var(--gray-700);
-            font: inherit;
-            font-size: var(--text-sm);
-            font-weight: 600;
-            cursor: pointer;
-            transition: border-color var(--transition-fast), color var(--transition-fast);
-        }
-
-        .ss__ghost:hover {
-            border-color: var(--gray-500);
-            color: var(--black);
-        }
-
-        /* Variant switch: the panel carries data-variant, so the desktop guide and
-           the phone notice are one component rather than two overlays to keep in
-           step. */
-        .ss[data-variant="mobile"] .ss--win,
-        .ss[data-variant="windows"] .ss--mob {
-            display: none;
-        }
-
         @media (max-width: 640px) {
-            .ss__panel {
-                padding: 24px 18px;
-            }
-
             .ss__step {
                 grid-template-columns: 28px 1fr;
                 gap: 12px;
@@ -1406,6 +1439,7 @@
                 height: 28px;
             }
         }
+        /* ===== end SmartScreen guide ===== */
 
         /* ===== Click feedback =====
            A click on a download / contact link used to produce no visible change,
@@ -1433,7 +1467,7 @@
             left: 50%;
             bottom: 28px;
             transform: translate(-50%, 12px);
-            z-index: 1200;             /* above the SmartScreen guide (1100) */
+            z-index: 1200;             /* above the modal overlays (1100) */
             display: flex;
             align-items: center;
             gap: 14px;
@@ -1991,6 +2025,65 @@
             return true;
         }
 
+        // Modal plumbing shared by the two overlays near </body> — focus trap,
+        // Escape, scroll lock, backdrop close. It lives here, not inside either
+        // of them, because the SmartScreen guide is deleted when the installer
+        // is signed and the send-to-device bridge must keep working afterwards.
+        // Anything specific to one panel goes in that panel's hooks.
+        function createOverlay(id, hooks) {
+            var root = document.getElementById(id);
+            if (!root) return null;
+            var panel = root.querySelector('.ovl__panel');
+            var lastFocus = null;
+            hooks = hooks || {};
+
+            function focusable() {
+                return Array.prototype.filter.call(
+                    panel.querySelectorAll('a[href], button:not([disabled])'),
+                    function (el) { return el.offsetParent !== null; });
+            }
+
+            function onKey(e) {
+                if (e.key === 'Escape') { close(); return; }
+                if (e.key !== 'Tab') return;
+                // Keep focus inside the dialog while it is modal.
+                var items = focusable();
+                if (!items.length) return;
+                var first = items[0], last = items[items.length - 1];
+                if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+            }
+
+            // Returns false when already open, so a stray second click cannot
+            // re-fire the panel's shown event or restart its dwell clock.
+            function open() {
+                if (!root.hidden) return false;
+                lastFocus = document.activeElement;
+                root.hidden = false;
+                document.body.style.overflow = 'hidden';
+                panel.focus();
+                document.addEventListener('keydown', onKey, true);
+                if (hooks.onOpen) hooks.onOpen();
+                return true;
+            }
+
+            function close() {
+                if (root.hidden) return false;
+                root.hidden = true;
+                document.body.style.overflow = '';
+                document.removeEventListener('keydown', onKey, true);
+                if (lastFocus && lastFocus.focus) lastFocus.focus();
+                if (hooks.onClose) hooks.onClose();
+                return true;
+            }
+
+            root.addEventListener('click', function (e) {
+                if (e.target.closest('[data-ovl-close]')) close();
+            });
+
+            return { open: open, close: close };
+        }
+
         // Conversion events (Meta Pixel + PostHog), enriched with captured
         // campaign attribution:
         //   download — installer download link (header/hero/pricing/CTA)
@@ -2008,7 +2101,7 @@
                 // fallback and return: firing Lead again would report two
                 // conversions for one visitor and skew the campaign's
                 // optimisation signal.
-                if (download.hasAttribute('data-ss-fallback')) {
+                if (download.hasAttribute('data-fallback-download')) {
                     lockBriefly(download);
                     if (window.posthog && firstInWindow('fallback_download')) {
                         posthog.capture('fallback_download_click', withAttribution({}));
@@ -2031,11 +2124,20 @@
                     // is not a download. Segment it in PostHog with $device_type.
                     if (window.posthog) posthog.capture('download_click', withAttribution({}));
                 }
-                // Additive: the click is not prevented on Windows, so the download
-                // starts exactly as it did before the guide existed. The guide is
-                // the loud feedback while it exists; when it is deleted on signing,
-                // the lock above stays as the minimum — do not remove it with the guide.
-                if (window.smartScreenGuide) window.smartScreenGuide.open(e);
+                // Two different problems, so two different panels.
+                // Windows: additive only — the click is not prevented, the download
+                // starts exactly as it did before the guide existed, and the guide
+                // is the loud feedback while it exists. When it is deleted on
+                // signing the lock above stays as the minimum; do not remove it too.
+                // Phone/tablet: the .exe cannot run, so this is the one case where
+                // the download is suppressed and the bridge offers a way to move
+                // the link to a machine that can install it.
+                if (isDesktopPlatform()) {
+                    if (window.smartScreenGuide) window.smartScreenGuide.open();
+                } else if (window.deviceBridge) {
+                    e.preventDefault();
+                    window.deviceBridge.open();
+                }
             } else if (mail) {
                 lockBriefly(mail, 2000);
                 if ((window.fbq || window.posthog) && firstInWindow('contact')) {
@@ -2066,206 +2168,252 @@
          SmartScreen blocks unsigned installers, and the warning is where most
          downloads are abandoned; this explains it before the user meets it.
          Delete this block once the installer is Authenticode-signed. -->
-    <div id="ss-guide" class="ss" data-variant="windows" hidden>
-        <div class="ss__backdrop" data-ss-close></div>
-        <div class="ss__panel" role="dialog" aria-modal="true" aria-labelledby="ss-title" tabindex="-1">
-            <button class="ss__close" type="button" data-ss-close aria-label="Închide">&times;</button>
+    <div id="ss-guide" class="ovl" hidden>
+        <div class="ovl__backdrop" data-ovl-close></div>
+        <div class="ovl__panel" role="dialog" aria-modal="true" aria-labelledby="ss-title" tabindex="-1">
+            <button class="ovl__close" type="button" data-ovl-close aria-label="Închide">&times;</button>
 
-            <!-- ---------- Windows ---------- -->
-            <div class="ss--win">
-                <div class="label">Descărcarea a început</div>
-                <h2 class="ss__title" id="ss-title">Windows va afișa un avertisment. Este normal.</h2>
-                <p class="ss__lede">
-                    Instalatorul nu este încă semnat digital, așa că Windows nu îl recunoaște și
-                    vă avertizează. Mai jos aveți pașii prin care îl deschideți în siguranță.
-                    <br>
-                    Dacă descărcarea nu a pornit,
-                    <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.23.0.exe" data-ss-fallback>apăsați aici</a>.
-                </p>
+            <div class="label">Descărcarea a început</div>
+            <h2 class="ovl__title" id="ss-title">Windows va afișa un avertisment. Este normal.</h2>
+            <p class="ovl__lede">
+                Instalatorul nu este încă semnat digital, așa că Windows nu îl recunoaște și
+                vă avertizează. Mai jos aveți pașii prin care îl deschideți în siguranță.
+                <br>
+                Dacă descărcarea nu a pornit,
+                <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.23.0.exe" data-fallback-download>apăsați aici</a>.
+            </p>
 
-                <ol class="ss__steps">
-                    <li class="ss__step">
-                        <div class="ss__step-n">1</div>
-                        <div>
-                            <h3>Dacă browserul oprește fișierul</h3>
-                            <p>
-                                Chrome și Edge blochează uneori fișierele noi. În bara de descărcări
-                                apăsați <b>Păstrare</b> <i>(Keep)</i>. În Edge, opțiunea este în
-                                meniul <b>&hellip;</b> din dreptul fișierului.
-                            </p>
-                            <div class="ss__mock">
-                                <div class="ss__mock-file">SagaBulkReporter-Setup-1.23.0.exe</div>
-                                <div class="ss__mock-text">Fișierul nu este descărcat frecvent și poate fi periculos.</div>
-                                <div class="ss__mock-actions">
-                                    <span class="ss__mock-btn">Renunțare</span>
-                                    <span class="ss__mock-btn is-target">Păstrare</span>
-                                </div>
+            <ol class="ss__steps">
+                <li class="ss__step">
+                    <div class="ss__step-n">1</div>
+                    <div>
+                        <h3>Dacă browserul oprește fișierul</h3>
+                        <p>
+                            Chrome și Edge blochează uneori fișierele noi. În bara de descărcări
+                            apăsați <b>Păstrare</b> <i>(Keep)</i>. În Edge, opțiunea este în
+                            meniul <b>&hellip;</b> din dreptul fișierului.
+                        </p>
+                        <div class="ss__mock">
+                            <div class="ss__mock-file">SagaBulkReporter-Setup-1.23.0.exe</div>
+                            <div class="ss__mock-text">Fișierul nu este descărcat frecvent și poate fi periculos.</div>
+                            <div class="ss__mock-actions">
+                                <span class="ss__mock-btn">Renunțare</span>
+                                <span class="ss__mock-btn is-target">Păstrare</span>
                             </div>
                         </div>
-                    </li>
-                    <li class="ss__step">
-                        <div class="ss__step-n">2</div>
-                        <div>
-                            <h3>Apăsați „Mai multe informații”</h3>
-                            <p>
-                                Deschideți fișierul descărcat. Dacă apare fereastra albastră de
-                                protecție, apăsați pe textul <b>Mai multe informații</b>
-                                <i>(More info)</i>. Nu apăsați „Nu se execută”.
-                            </p>
-                            <div class="ss__mock">
-                                <div class="ss__mock-title">Windows v-a protejat computerul</div>
-                                <div class="ss__mock-text">
-                                    Microsoft Defender SmartScreen a împiedicat pornirea unei
-                                    aplicații nerecunoscute. Rularea acestei aplicații poate pune
-                                    PC-ul la risc.
-                                </div>
-                                <span class="ss__mock-link is-target">Mai multe informații</span>
-                                <div class="ss__mock-actions">
-                                    <span class="ss__mock-btn">Nu se execută</span>
-                                </div>
+                    </div>
+                </li>
+                <li class="ss__step">
+                    <div class="ss__step-n">2</div>
+                    <div>
+                        <h3>Apăsați „Mai multe informații”</h3>
+                        <p>
+                            Deschideți fișierul descărcat. Dacă apare fereastra albastră de
+                            protecție, apăsați pe textul <b>Mai multe informații</b>
+                            <i>(More info)</i>. Nu apăsați „Nu se execută”.
+                        </p>
+                        <div class="ss__mock">
+                            <div class="ss__mock-title">Windows v-a protejat computerul</div>
+                            <div class="ss__mock-text">
+                                Microsoft Defender SmartScreen a împiedicat pornirea unei
+                                aplicații nerecunoscute. Rularea acestei aplicații poate pune
+                                PC-ul la risc.
+                            </div>
+                            <span class="ss__mock-link is-target">Mai multe informații</span>
+                            <div class="ss__mock-actions">
+                                <span class="ss__mock-btn">Nu se execută</span>
                             </div>
                         </div>
-                    </li>
-                    <li class="ss__step">
-                        <div class="ss__step-n">3</div>
-                        <div>
-                            <h3>Apăsați „Executați oricum”</h3>
-                            <p>
-                                După primul pas apare un buton nou, jos în aceeași fereastră:
-                                <b>Executați oricum</b> <i>(Run anyway)</i>. Instalarea pornește normal.
-                            </p>
-                            <div class="ss__mock">
-                                <div class="ss__mock-title">Windows v-a protejat computerul</div>
-                                <div class="ss__mock-text">
-                                    Aplicație: <span class="ss__mock-file">SagaBulkReporter-Setup-1.23.0.exe</span><br>
-                                    Editor: Editor necunoscut
-                                </div>
-                                <div class="ss__mock-actions">
-                                    <span class="ss__mock-btn is-target">Executați oricum</span>
-                                    <span class="ss__mock-btn">Nu se execută</span>
-                                </div>
+                    </div>
+                </li>
+                <li class="ss__step">
+                    <div class="ss__step-n">3</div>
+                    <div>
+                        <h3>Apăsați „Executați oricum”</h3>
+                        <p>
+                            După primul pas apare un buton nou, jos în aceeași fereastră:
+                            <b>Executați oricum</b> <i>(Run anyway)</i>. Instalarea pornește normal.
+                        </p>
+                        <div class="ss__mock">
+                            <div class="ss__mock-title">Windows v-a protejat computerul</div>
+                            <div class="ss__mock-text">
+                                Aplicație: <span class="ss__mock-file">SagaBulkReporter-Setup-1.23.0.exe</span><br>
+                                Editor: Editor necunoscut
+                            </div>
+                            <div class="ss__mock-actions">
+                                <span class="ss__mock-btn is-target">Executați oricum</span>
+                                <span class="ss__mock-btn">Nu se execută</span>
                             </div>
                         </div>
-                    </li>
-                </ol>
+                    </div>
+                </li>
+            </ol>
 
-                <div class="ss__block">
-                    <h3>De ce apare avertismentul</h3>
-                    <ul class="ss__list">
-                        <li><b>Nu este un virus.</b> Windows avertizează pentru orice program nou care nu are încă un certificat de semnare &mdash; nu pentru că ar fi găsit ceva în fișier.</li>
-                        <li><b>Datele rămân la dumneavoastră.</b> Aplicația citește bazele Saga local, de pe calculatorul dumneavoastră. Nimic nu se încarcă în cloud.</li>
-                        <li><b>Descărcarea vine direct de la sursă</b> &mdash; de pe GitHub, din pagina oficială de versiuni a aplicației.</li>
-                    </ul>
-                </div>
-
-                <div class="ss__block">
-                    <h3>Ce urmează după instalare</h3>
-                    <ul class="ss__list">
-                        <li>Deschideți aplicația de pe desktop.</li>
-                        <li>Parcurgeți configurarea rapidă &mdash; durează sub 2 minute.</li>
-                        <li>Începe perioada de test de <b>14 zile, fără card bancar</b>.</li>
-                    </ul>
-                </div>
-
-                <div class="ss__actions">
-                    <button class="ss__ghost" type="button" data-ss-close>Am înțeles</button>
-                </div>
+            <div class="ss__block">
+                <h3>De ce apare avertismentul</h3>
+                <ul class="ss__list">
+                    <li><b>Nu este un virus.</b> Windows avertizează pentru orice program nou care nu are încă un certificat de semnare &mdash; nu pentru că ar fi găsit ceva în fișier.</li>
+                    <li><b>Datele rămân la dumneavoastră.</b> Aplicația citește bazele Saga local, de pe calculatorul dumneavoastră. Nimic nu se încarcă în cloud.</li>
+                    <li><b>Descărcarea vine direct de la sursă</b> &mdash; de pe GitHub, din pagina oficială de versiuni a aplicației.</li>
+                </ul>
             </div>
 
-            <!-- ---------- Phone / tablet ---------- -->
-            <div class="ss--mob">
-                <div class="label">Descărcare</div>
-                <h2 class="ss__title">Aplicația se instalează pe un calculator cu Windows</h2>
-                <p class="ss__lede">
-                    Saga Bulk Reporter citește bazele de date Saga 3.x direct de pe calculatorul
-                    pe care rulează, așa că nu poate fi instalată pe telefon sau tabletă.
-                    Deschideți acest link pe laptopul sau PC-ul dumneavoastră.
-                </p>
-                <div class="ss__actions">
-                    <button class="ss__ghost" type="button" id="ss-copy">Copiază linkul</button>
-                    <a class="ss__ghost" href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.23.0.exe" data-ss-fallback>Descarcă totuși</a>
-                </div>
+            <div class="ss__block">
+                <h3>Ce urmează după instalare</h3>
+                <ul class="ss__list">
+                    <li>Deschideți aplicația de pe desktop.</li>
+                    <li>Parcurgeți configurarea rapidă &mdash; durează sub 2 minute.</li>
+                    <li>Începe perioada de test de <b>14 zile, fără card bancar</b>.</li>
+                </ul>
+            </div>
+
+            <div class="ovl__actions">
+                <button class="ovl__ghost" type="button" data-ovl-close>Am înțeles</button>
             </div>
         </div>
     </div>
     <script>
-        // Opened from the download click handler above. Everything here is
-        // best-effort: if it throws, the download has already started regardless.
+        // Opened from the download click handler above, on Windows only. Everything
+        // here is best-effort: if it throws, the download has already started
+        // regardless. The variant property is kept on both events so this series
+        // stays comparable with the data recorded before the phone panel moved out
+        // into its own overlay; it is now always "windows".
         (function () {
-            var guide = document.getElementById('ss-guide');
-            if (!guide) return;
-
-            var panel = guide.querySelector('.ss__panel');
             var openedAt = 0;
-            var lastFocus = null;
-            // Shared with the conversion handler above, so the panel a visitor sees
-            // and the conversion Meta is told about can never disagree.
-            var variant = isDesktopPlatform() ? 'windows' : 'mobile';
+            var guide = createOverlay('ss-guide', {
+                onOpen: function () {
+                    openedAt = Date.now();
+                    if (window.posthog) posthog.capture('smartscreen_guide_shown', withAttribution({ variant: 'windows' }));
+                },
+                onClose: function () {
+                    // Dwell separates "read it" from "dismissed it instantly", which is
+                    // the only read we get on whether the guide is doing anything.
+                    if (window.posthog) posthog.capture('smartscreen_guide_closed', withAttribution({
+                        variant: 'windows',
+                        dwell_seconds: Math.round((Date.now() - openedAt) / 1000)
+                    }));
+                }
+            });
+            if (guide) window.smartScreenGuide = guide;
+        })();
+    </script>
+    <!-- ===== end SmartScreen guide ===== -->
 
-            function focusable() {
-                return Array.prototype.filter.call(
-                    panel.querySelectorAll('a[href], button:not([disabled])'),
-                    function (el) { return el.offsetParent !== null; });
+    <!-- Send-to-device bridge — the phone/tablet counterpart to the download
+         click. A Windows .exe cannot run here, so the download is suppressed and
+         the visitor is offered a one-tap way to move the link to a machine that
+         can install it. NOT part of the SmartScreen guide above and NOT deleted
+         with it: signing an installer does not make it run on a phone, so the
+         mismatch this solves outlives the guide entirely. -->
+    <div id="device-bridge" class="ovl" hidden>
+        <div class="ovl__backdrop" data-ovl-close></div>
+        <div class="ovl__panel" role="dialog" aria-modal="true" aria-labelledby="db-title" tabindex="-1">
+            <button class="ovl__close" type="button" data-ovl-close aria-label="Închide">&times;</button>
+
+            <div class="label">Descărcare</div>
+            <h2 class="ovl__title" id="db-title">Aplicația se instalează pe un calculator cu Windows</h2>
+            <p class="ovl__lede">
+                Saga Bulk Reporter citește bazele de date Saga 3.x direct de pe calculatorul
+                pe care rulează, așa că nu poate fi instalată pe telefon sau tabletă.
+                Trimiteți-vă linkul acum, ca să îl aveți la îndemână când ajungeți la birou.
+            </p>
+            <div class="ovl__actions ovl__actions--stack">
+                <!-- Revealed by the script below only where navigator.share exists.
+                     Hidden by default so a browser without it never shows a button
+                     that would do nothing. -->
+                <button class="btn-primary" type="button" id="db-share" hidden>Trimite pe alt dispozitiv</button>
+                <button class="ovl__ghost" type="button" id="db-copy">Copiază linkul</button>
+                <a class="ovl__ghost" href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.23.0.exe" data-fallback-download>Descarcă totuși</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Opened from the download click handler above, on phones and tablets.
+        (function () {
+            var shareBtn = document.getElementById('db-share');
+            var copyBtn = document.getElementById('db-copy');
+            var copyLabel = copyBtn ? copyBtn.textContent : '';
+
+            // Feature detection, never a UA test: the in-app webviews this traffic
+            // arrives in do not advertise themselves reliably, and whether the share
+            // sheet exists is exactly what we need to know.
+            var canShare = typeof navigator.share === 'function';
+            if (canShare && shareBtn) shareBtn.hidden = false;
+
+            var bridge = createOverlay('device-bridge', {
+                onOpen: function () {
+                    if (copyBtn) copyBtn.textContent = copyLabel;   // reset after a previous visit
+                    // The denominator for the outcomes below: how many phone visitors
+                    // saw the panel, and how many of them were offered the share sheet
+                    // at all. Without it, a low share rate cannot be told apart from
+                    // a browser that never showed the button.
+                    if (window.posthog) posthog.capture('device_bridge_shown', withAttribution({
+                        share_supported: canShare
+                    }));
+                }
+            });
+            if (!bridge) return;
+
+            // One event per outcome, not per tap: repeated taps that keep ending the
+            // same way are one intent, but a visitor who cancels the share sheet and
+            // then copies instead has genuinely done two different things, and which
+            // path they fall back to is the whole point of measuring this.
+            function record(outcome) {
+                if (!(window.fbq || window.posthog)) return;
+                if (!firstInWindow('share_to_device:' + outcome)) return;
+                if (window.posthog) posthog.capture('share_to_device', withAttribution({ outcome: outcome }));
+                // Meta only hears about outcomes where the link actually left the
+                // phone. This is the honest mobile signal that replaces the Lead
+                // removed in 239572c — a dismissed sheet is not a conversion.
+                if (window.fbq && (outcome === 'shared' || outcome === 'copied' || outcome === 'unsupported')) {
+                    fbq('trackCustom', 'ShareToDevice', withAttribution({
+                        content_name: 'send-to-device',
+                        outcome: outcome
+                    }));
+                }
             }
 
-            function onKey(e) {
-                if (e.key === 'Escape') { close(); return; }
-                if (e.key !== 'Tab') return;
-                // Keep focus inside the dialog while it is modal.
-                var items = focusable();
-                if (!items.length) return;
-                var first = items[0], last = items[items.length - 1];
-                if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-                else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+            function copyLink(outcome) {
+                if (!navigator.clipboard) {
+                    showToast('Copiați linkul din bara de adrese: ' + window.location.href);
+                    return;
+                }
+                navigator.clipboard.writeText(window.location.href).then(function () {
+                    if (copyBtn) copyBtn.textContent = 'Link copiat';
+                    record(outcome);
+                }, function () {
+                    showToast('Copiați linkul din bara de adrese: ' + window.location.href);
+                });
             }
 
-            function open(e) {
-                // On a phone the .exe is useless, so this is the one case where the
-                // download is suppressed — "Descarcă totuși" is still offered inside.
-                if (variant === 'mobile' && e && e.preventDefault) e.preventDefault();
-
-                // Already open: re-running would fire a second smartscreen_guide_shown
-                // and reset openedAt, so the dwell on close would be measured from the
-                // last stray click rather than from when the guide actually appeared.
-                if (!guide.hidden) return;
-
-                guide.setAttribute('data-variant', variant);
-                lastFocus = document.activeElement;
-                guide.hidden = false;
-                document.body.style.overflow = 'hidden';
-                panel.focus();
-                document.addEventListener('keydown', onKey, true);
-                openedAt = Date.now();
-
-                if (window.posthog) posthog.capture('smartscreen_guide_shown', withAttribution({ variant: variant }));
-            }
-
-            function close() {
-                if (guide.hidden) return;
-                guide.hidden = true;
-                document.body.style.overflow = '';
-                document.removeEventListener('keydown', onKey, true);
-                if (lastFocus && lastFocus.focus) lastFocus.focus();
-
-                // Dwell separates "read it" from "dismissed it instantly", which is
-                // the only read we get on whether the guide is doing anything.
-                if (window.posthog) posthog.capture('smartscreen_guide_closed', withAttribution({
-                    variant: variant,
-                    dwell_seconds: Math.round((Date.now() - openedAt) / 1000)
-                }));
-            }
-
-            guide.addEventListener('click', function (e) {
-                if (e.target.closest('[data-ss-close]')) close();
+            if (shareBtn) shareBtn.addEventListener('click', function () {
+                lockBriefly(shareBtn);
+                navigator.share({
+                    title: 'Saga Bulk Reporter',
+                    text: 'Rapoarte Saga pentru tot portofoliul de firme, dintr-o singură rulare.',
+                    url: window.location.href
+                }).then(function () {
+                    record('shared');
+                }, function (err) {
+                    // A cancelled share sheet rejects exactly like a failure does.
+                    // AbortError is the visitor backing out, which is a normal
+                    // outcome; anything else means the platform refused to open the
+                    // sheet at all — likely an in-app webview — so fall through to
+                    // the clipboard rather than leaving them with nothing.
+                    if (err && err.name === 'AbortError') { record('dismissed'); return; }
+                    record('failed');
+                    copyLink('copied');
+                });
             });
 
-            var copy = document.getElementById('ss-copy');
-            if (copy) copy.addEventListener('click', function () {
-                var done = function () { copy.textContent = 'Link copiat'; };
-                if (navigator.clipboard) navigator.clipboard.writeText(window.location.href).then(done, function () { });
+            if (copyBtn) copyBtn.addEventListener('click', function () {
+                lockBriefly(copyBtn);
+                // Separating these two says whether copy is a deliberate preference
+                // or the only thing this browser offered.
+                copyLink(canShare ? 'copied' : 'unsupported');
             });
 
-            window.smartScreenGuide = { open: open, close: close };
+            window.deviceBridge = bridge;
         })();
     </script>
 
