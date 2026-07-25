@@ -1406,6 +1406,110 @@
                 height: 28px;
             }
         }
+
+        /* ===== Click feedback =====
+           A click on a download / contact link used to produce no visible change,
+           so visitors clicked again. Measured before this shipped: 2.28
+           download_click events per person, and one visitor who tapped the mailto
+           link 46 times in 17 seconds because nothing happened.
+
+           Two parts, deliberately independent of the SmartScreen guide — that
+           guide is temporary and gets deleted when the installer is signed, and
+           the feedback must not leave with it:
+             .is-busy  — the clicked control dims and stops taking pointer events
+                         for a moment, so a reflex second click cannot land.
+             .toast    — confirms what happened. For the mailto this also carries
+                         the address, because on Android a mailto: with no mail app
+                         configured fails silently and the visitor is left with
+                         nothing to act on. */
+        .is-busy {
+            pointer-events: none;
+            opacity: 0.65;
+            transition: opacity var(--transition-fast);
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 28px;
+            transform: translate(-50%, 12px);
+            z-index: 1200;             /* above the SmartScreen guide (1100) */
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            max-width: min(560px, calc(100vw - 32px));
+            padding: 14px 18px;
+            background: var(--gray-900);
+            color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+            font-size: var(--text-sm);
+            line-height: 1.45;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-fast),
+                        transform var(--transition-fast),
+                        visibility var(--transition-fast);
+        }
+
+        .toast.is-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, 0);
+        }
+
+        .toast__text {
+            flex: 1;
+        }
+
+        .toast__action {
+            flex-shrink: 0;
+            padding: 7px 14px;
+            background: transparent;
+            color: var(--white);
+            border: 1px solid var(--gray-600);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: var(--text-xs);
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: border-color var(--transition-fast),
+                        background var(--transition-fast);
+        }
+
+        .toast__action:hover {
+            background: var(--gray-800);
+            border-color: var(--gray-400);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .toast {
+                transition: opacity var(--transition-fast),
+                            visibility var(--transition-fast);
+                transform: translate(-50%, 0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .toast {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+                max-width: none;
+                transform: translateY(12px);
+            }
+
+            .toast.is-visible {
+                transform: translateY(0);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .toast {
+                    transform: translateY(0);
+                }
+            }
+        }
     </style>
 </head>
 <body>
@@ -1824,6 +1928,59 @@
             showStat('reportStat', 'reportCount', 'metrics/usage.json', 'reports');
         })();
 
+        // Toast + click-lock. Both exist because a click on a download or contact
+        // link produced no visible change, so visitors clicked again: 2.28
+        // download_click events per person, and one visitor who tapped the mailto
+        // link 46 times in 17 seconds.
+        var toastTimer = null;
+        function showToast(message, actionLabel, onAction) {
+            var toast = document.getElementById('toast');
+            var text = document.getElementById('toast-text');
+            var action = document.getElementById('toast-action');
+            if (!toast || !text || !action) return;
+
+            text.textContent = message;
+            if (actionLabel) {
+                action.textContent = actionLabel;
+                action.hidden = false;
+                action.onclick = onAction;
+            } else {
+                action.hidden = true;
+                action.onclick = null;
+            }
+
+            toast.classList.add('is-visible');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function () {
+                toast.classList.remove('is-visible');
+            }, actionLabel ? 9000 : 4500);
+        }
+
+        // Stops the reflex second click from landing at all. Purely visual +
+        // pointer-events; the click that triggered it has already dispatched, so
+        // the download / mail handoff proceeds untouched.
+        function lockBriefly(el, ms) {
+            if (!el || el.classList.contains('is-busy')) return;
+            el.classList.add('is-busy');
+            setTimeout(function () { el.classList.remove('is-busy'); }, ms || 1200);
+        }
+
+        // One intent, one event. Repeat clicks inside this window are the same
+        // person re-trying, not new demand — counting them corrupts the metric and,
+        // for Lead, feeds Meta a conversion signal that never happened. 30s clears
+        // every observed burst (the worst spanned 17s) while a genuine return
+        // visit minutes or days later still counts.
+        // Callers check for a tracker before calling this, so a click made before
+        // consent does not burn the window for the first click made after it.
+        var CLICK_WINDOW_MS = 30000;
+        var lastFired = {};
+        function firstInWindow(key) {
+            var now = Date.now();
+            if (lastFired[key] && now - lastFired[key] < CLICK_WINDOW_MS) return false;
+            lastFired[key] = now;
+            return true;
+        }
+
         // Conversion events (Meta Pixel + PostHog), enriched with captured
         // campaign attribution:
         //   download — installer download link (header/hero/pricing/CTA)
@@ -1842,23 +1999,47 @@
                 // conversions for one visitor and skew the campaign's
                 // optimisation signal.
                 if (download.hasAttribute('data-ss-fallback')) {
-                    if (window.posthog) posthog.capture('fallback_download_click', withAttribution({}));
+                    lockBriefly(download);
+                    if (window.posthog && firstInWindow('fallback_download')) {
+                        posthog.capture('fallback_download_click', withAttribution({}));
+                    }
                     return;
                 }
-                if (window.fbq) fbq('track', 'Lead', withAttribution({
-                    content_name: 'SagaBulkReporter-Setup',
-                    content_category: 'installer-download'
-                }));
-                if (window.posthog) posthog.capture('download_click', withAttribution({}));
+                lockBriefly(download);
+                if ((window.fbq || window.posthog) && firstInWindow('download')) {
+                    if (window.fbq) fbq('track', 'Lead', withAttribution({
+                        content_name: 'SagaBulkReporter-Setup',
+                        content_category: 'installer-download'
+                    }));
+                    if (window.posthog) posthog.capture('download_click', withAttribution({}));
+                }
                 // Additive: the click is not prevented on Windows, so the download
-                // starts exactly as it did before the guide existed.
+                // starts exactly as it did before the guide existed. The guide is
+                // the loud feedback while it exists; when it is deleted on signing,
+                // the lock above stays as the minimum — do not remove it with the guide.
                 if (window.smartScreenGuide) window.smartScreenGuide.open(e);
             } else if (mail) {
-                if (window.fbq) fbq('track', 'Contact', withAttribution({
-                    content_name: 'contact-email',
-                    content_category: 'email'
-                }));
-                if (window.posthog) posthog.capture('contact_click', withAttribution({}));
+                lockBriefly(mail, 2000);
+                if ((window.fbq || window.posthog) && firstInWindow('contact')) {
+                    if (window.fbq) fbq('track', 'Contact', withAttribution({
+                        content_name: 'contact-email',
+                        content_category: 'email'
+                    }));
+                    if (window.posthog) posthog.capture('contact_click', withAttribution({}));
+                }
+                // The 46-tap burst was an Android visitor whose tap did nothing:
+                // a mailto: with no mail app configured fails silently. Whether or
+                // not the mail client opens, leave the address on screen with a way
+                // to copy it, so a dead mailto is no longer a dead end.
+                var address = mail.getAttribute('href').replace(/^mailto:/, '').split('?')[0];
+                showToast('Se deschide aplicația de email. Dacă nu se întâmplă nimic, scrieți-ne la ' + address,
+                    'Copiază adresa',
+                    function () {
+                        if (!navigator.clipboard) return;
+                        navigator.clipboard.writeText(address).then(function () {
+                            showToast('Adresă copiată: ' + address);
+                        }, function () { });
+                    });
             }
         }, true);
     </script>
@@ -2023,6 +2204,11 @@
                 // download is suppressed — "Descarcă totuși" is still offered inside.
                 if (variant === 'mobile' && e && e.preventDefault) e.preventDefault();
 
+                // Already open: re-running would fire a second smartscreen_guide_shown
+                // and reset openedAt, so the dwell on close would be measured from the
+                // last stray click rather than from when the guide actually appeared.
+                if (!guide.hidden) return;
+
                 guide.setAttribute('data-variant', variant);
                 lastFocus = document.activeElement;
                 guide.hidden = false;
@@ -2062,6 +2248,13 @@
             window.smartScreenGuide = { open: open, close: close };
         })();
     </script>
+
+    <!-- Click feedback toast — driven by the conversion handler near </body>.
+         Independent of the SmartScreen guide above, which is temporary. -->
+    <div id="toast" class="toast" role="status" aria-live="polite">
+        <span class="toast__text" id="toast-text"></span>
+        <button class="toast__action" type="button" id="toast-action" hidden></button>
+    </div>
 
     <!-- Cookie consent banner — gates the Facebook Pixel + PostHog (GDPR / ePrivacy). -->
     <div id="cookie-banner" class="cookie-banner" hidden>
