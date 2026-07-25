@@ -1965,6 +1965,16 @@
             setTimeout(function () { el.classList.remove('is-busy'); }, ms || 1200);
         }
 
+        // A Windows installer cannot run on a phone or tablet, so a download
+        // started from one is never a real conversion. Single source of truth:
+        // the SmartScreen guide picks its variant from this, and the handler
+        // below decides from this whether Meta hears about the click.
+        // Deliberately NOT derived from the guide — the guide is deleted when the
+        // installer is signed, and this check has to outlive it.
+        function isDesktopPlatform() {
+            return !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        }
+
         // One intent, one event. Repeat clicks inside this window are the same
         // person re-trying, not new demand — counting them corrupts the metric and,
         // for Lead, feeds Meta a conversion signal that never happened. 30s clears
@@ -2007,10 +2017,18 @@
                 }
                 lockBriefly(download);
                 if ((window.fbq || window.posthog) && firstInWindow('download')) {
-                    if (window.fbq) fbq('track', 'Lead', withAttribution({
+                    // Lead is the campaign's optimisation event, so it must only
+                    // ever describe a download that can actually be installed. On a
+                    // phone the .exe is suppressed below and useless even if it were
+                    // not, so reporting a conversion trains Meta's delivery toward
+                    // an audience that cannot convert — and it was 66% of all Lead
+                    // events, which is why the campaign kept skewing further mobile.
+                    if (window.fbq && isDesktopPlatform()) fbq('track', 'Lead', withAttribution({
                         content_name: 'SagaBulkReporter-Setup',
                         content_category: 'installer-download'
                     }));
+                    // Kept on every device: interest from a phone is real, it just
+                    // is not a download. Segment it in PostHog with $device_type.
                     if (window.posthog) posthog.capture('download_click', withAttribution({}));
                 }
                 // Additive: the click is not prevented on Windows, so the download
@@ -2180,7 +2198,9 @@
             var panel = guide.querySelector('.ss__panel');
             var openedAt = 0;
             var lastFocus = null;
-            var variant = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mobile' : 'windows';
+            // Shared with the conversion handler above, so the panel a visitor sees
+            // and the conversion Meta is told about can never disagree.
+            var variant = isDesktopPlatform() ? 'windows' : 'mobile';
 
             function focusable() {
                 return Array.prototype.filter.call(
