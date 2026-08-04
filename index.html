@@ -619,6 +619,49 @@
             opacity: 0.92;
         }
 
+        /* --- Sinteza showcase --- */
+        .sinteza__grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 56px;
+            align-items: center;
+            margin-top: 48px;
+        }
+
+        .sinteza__text p {
+            color: var(--gray-500);
+        }
+
+        .sinteza__list {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+
+        .sinteza__list li {
+            margin-bottom: 10px;
+            color: var(--gray-500);
+        }
+
+        /* Portrait A4, unlike every other screenshot on the page. The ratio is
+           the asset's own, so `contain` letterboxes nothing; max-width keeps a
+           2305px-tall page from dominating the section. */
+        .sinteza__doc {
+            width: 100%;
+            max-width: 440px;
+            aspect-ratio: 1648 / 1902;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid var(--gray-200);
+            background-color: var(--gray-100);
+            cursor: zoom-in;
+            transition: opacity var(--transition-fast);
+        }
+
+        .sinteza__doc:hover {
+            opacity: 0.92;
+        }
+
         .step__screenshot-placeholder {
             margin-top: 24px;
             width: 100%;
@@ -1014,6 +1057,11 @@
             .steps {
                 grid-template-columns: 1fr;
                 gap: 48px;
+            }
+
+            .sinteza__grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
             }
 
             .step {
@@ -1674,13 +1722,13 @@
                     <div class="step__number">02</div>
                     <h4 class="step__title">Alegeți rapoartele și perioada</h4>
                     <p class="step__description">
-                        Bifați rapoartele dorite (balanțe, jurnal, registre etc.) și intervalul de luni. Aplicația se ocupă de combinațiile firmă × lună × raport.
+                        Bifați rapoartele dorite (balanțe, jurnal, registre etc.) și perioada: lună, trimestru sau semestru, într-un singur fișier sau fișiere lunare. Aplicația se ocupă de combinațiile firmă × perioadă × raport.
                     </p>
                     <a href="images/screenshot-2.png" class="glightbox" data-gallery="screenshots"
-                       data-title="Pasul 2: Alegerea rapoartelor și a perioadei">
+                       data-title="Pasul 2: Alegerea rapoartelor și a perioadei (lună, trimestru sau semestru)">
                         <img
                             src="images/screenshot-2.png"
-                            alt="Pasul 2: Alegerea rapoartelor și a perioadei"
+                            alt="Pasul 2: Alegerea rapoartelor și a perioadei (lună, trimestru sau semestru)"
                             class="step__screenshot"
                             onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
                         >
@@ -1809,6 +1857,45 @@
                 <div class="report-card" style="background-color: var(--gray-50);">
                     <div class="report-card__name">Format SAGA 3.x</div>
                     <div class="report-card__detail">Toate rapoartele citite direct din baza Firebird a Saga 3.x.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SINTEZĂ FINANCIARĂ ===== -->
+    <section class="section" id="sinteza">
+        <div class="container">
+            <div class="section__header">
+                <div class="label">Raport pentru client</div>
+                <h2>Sinteza financiară</h2>
+                <div class="divider divider--blue"></div>
+                <p>Singurul raport din listă scris pentru client, nu pentru contabil.</p>
+            </div>
+            <div class="sinteza__grid">
+                <div class="sinteza__text">
+                    <p>
+                        O pagină pe care o trimiteți mai departe fără să o mai prelucrați: cifrele lunii,
+                        explicate în română, cu sigla cabinetului dumneavoastră în antet.
+                    </p>
+                    <ul class="sinteza__list">
+                        <li>Vânzări, încasări, plăți, rezultat de casă și disponibil, fiecare cu evoluția față de luna trecută.</li>
+                        <li>Cifra de afaceri și profitul cumulate pe an, cu grafic lunar și linia de marjă.</li>
+                        <li>Clienți de încasat, furnizori de plătit și cheltuielile lunii.</li>
+                        <li>Card de TVA (decont și sold 4423/4424), afișat doar la plătitorii de TVA.</li>
+                        <li>Se generează în serie, ca orice alt raport: o rulare acoperă toate firmele.</li>
+                    </ul>
+                </div>
+                <a href="images/screenshot-4-sinteza.png" class="glightbox" data-gallery="screenshots"
+                   data-title="Sinteza financiară: raportul de o pagină pentru client">
+                    <img
+                        src="images/screenshot-4-sinteza.png"
+                        alt="Sinteza financiară: raport de o pagină pentru client, cu indicatorii lunii, grafice de evoluție și cardul de TVA"
+                        class="sinteza__doc"
+                        onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
+                    >
+                </a>
+                <div class="step__screenshot-placeholder" style="display:none">
+                    Captură: sinteza financiară
                 </div>
             </div>
         </div>
