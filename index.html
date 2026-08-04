@@ -888,6 +888,17 @@
             color: var(--gray-400);
         }
 
+        /* Legal identification. Kept quiet visually, but permanently visible
+           on every page rather than buried behind a link. */
+        .footer__legal {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 20px;
+            margin-top: 20px;
+            font-size: var(--text-sm);
+            color: var(--gray-400);
+        }
+
         .footer__links {
             display: flex;
             gap: 24px;
@@ -1044,6 +1055,20 @@
             .footer__left {
                 flex-direction: column;
                 gap: 12px;
+            }
+
+            /* Sits outside .footer__inner, so it does not inherit the
+               centering above and has to opt in itself. */
+            .footer__legal {
+                justify-content: center;
+                text-align: center;
+            }
+
+            /* Both link labels are long enough to overflow 390px side by
+               side, which clipped "Termeni și condiții" before it wrapped. */
+            .footer__links {
+                flex-wrap: wrap;
+                justify-content: center;
             }
 
             .cta-section {
@@ -1903,13 +1928,19 @@
     <footer class="footer">
         <div class="container footer__inner">
             <div class="footer__left">
-                <span class="footer__copy">ACS Soft &copy; 2026</span>
+                <span class="footer__copy">ACS SOFT CONSULT SRL &copy; 2026</span>
                 <a href="mailto:contact@bulkreporter.ro" class="footer__link">contact@bulkreporter.ro</a>
+                <a href="tel:+40744827687" class="footer__link">0744 827 687</a>
             </div>
             <div class="footer__links">
                 <a href="/confidentialitate.html" class="footer__link">Politica de confidențialitate</a>
                 <a href="/termeni.html" class="footer__link">Termeni și condiții</a>
             </div>
+        </div>
+        <div class="container footer__legal">
+            <span>CUI 50227116</span>
+            <span>Nr. Reg. Com. J2024011763404</span>
+            <span>Sediul social: Str. Sg. Constantin Moise nr. 5D, bl. 2, sc. 2, ap. B5, sector 6, București</span>
         </div>
     </footer>
 
