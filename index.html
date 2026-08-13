@@ -710,6 +710,90 @@
             line-height: 1.55;
         }
 
+        /* Second level of detail (#283). The markup is a real <details>, so with
+           JS off this is an inline expand that is keyboard correct and indexable;
+           the script below upgrades it to a drawer that spans the whole row. */
+        .report-card__more > summary {
+            margin-top: 12px;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--blue-500);
+            cursor: pointer;
+            list-style: none;
+            display: inline-block;
+        }
+
+        .report-card__more > summary::-webkit-details-marker { display: none; }
+        .report-card__more > summary::after { content: " +"; }
+        .report-card__more[open] > summary::after,
+        .report-card__more > summary[aria-expanded="true"]::after { content: " \2013"; }
+
+        .report-card__long {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            line-height: 1.55;
+            margin-top: 10px;
+        }
+
+        /* Drawer mode. Set by the script once it takes over the disclosure. */
+        .reports-grid--drawer .report-card__long { display: none; }
+        .reports-grid--drawer .report-card.is-open { background-color: var(--gray-50); }
+
+        .report-drawer {
+            grid-column: 1 / -1;
+            position: relative;
+            background-color: var(--white);
+            border-top: 2px solid var(--blue-500);
+            padding: 28px 28px 32px;
+        }
+
+        /* Caret pointing back at the card that opened the drawer. */
+        .report-drawer::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: var(--caret, 50%);
+            transform: translate(-50%, -100%);
+            border: 8px solid transparent;
+            border-bottom-color: var(--blue-500);
+        }
+
+        /* The drawer takes focus when it opens so a screen reader lands on the
+           text it just asked for. That focus is programmatic and never a tab
+           stop, so it draws no ring; the summary and the close button keep
+           theirs. */
+        .report-drawer:focus { outline: none; }
+
+        .report-drawer__name {
+            font-size: var(--text-md);
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 8px;
+            padding-right: 32px;
+        }
+
+        .report-drawer__body {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            line-height: 1.65;
+            max-width: 70ch;
+        }
+
+        .report-drawer__close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            border: 0;
+            background: none;
+            padding: 4px 8px;
+            font-size: 22px;
+            line-height: 1;
+            color: var(--gray-500);
+            cursor: pointer;
+        }
+
+        .report-drawer__close:hover { color: var(--black); }
+
         /* ========================================
            FEATURES
            ======================================== */
@@ -1773,106 +1857,210 @@
                 <div class="report-card">
                     <div class="report-card__name">Balanța de verificare sintetică</div>
                     <div class="report-card__detail">Sume precedente, curente, rulaje și solduri pe conturi sintetice.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Balanța lunii pe conturi sintetice, cu grupele Sume precedente, Rulaje perioadă, Sume totale și Solduri finale. Cine o vrea în cealaltă formă poate cere layoutul „Solduri inițiale”, care desface cinci grupe: solduri inițiale, rulaje precedente, rulaje curente, total rulaje și solduri finale. Se poate limita la anumite conturi și iese pe lună, pe trimestru sau pe semestru.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Balanța de verificare analitică</div>
                     <div class="report-card__detail">Aceleași sume și solduri, desfășurate pe fiecare cont analitic, cu opțiunea de layout „Solduri inițiale”.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Aceleași grupe de sume ca la balanța sintetică, dar desfășurate pe fiecare cont analitic, așa încât vedeți din ce se compune un sold sintetic fără să deschideți fișele. Acceptă un filtru de conturi, util când vă interesează o singură clasă, și are aceleași două layouturi.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Registru Jurnal</div>
                     <div class="report-card__detail">Dump complet al jurnalului cu split debit/credit pe interval.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Toate înregistrările contabile din perioadă, în ordine cronologică: data, documentul, contul debitor, contul creditor, explicația și sumele pe debit și pe credit. Este registrul cerut la control, cu totaluri la final, și se poate lista pe lună, pe trimestru sau pe semestru.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Registru Jurnal sintetic</div>
                     <div class="report-card__detail">Rulaje pe perechi de conturi sintetice, ca variantă condensată a registrului jurnal detaliat.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Aceleași operațiuni ca în registrul jurnal, dar cumulate pe perechi de conturi: cont debitor, denumirea lui, cont creditor, denumirea lui și suma rulată între ele. Câteva pagini în loc de câteva zeci, pentru o verificare rapidă a corespondențelor lunii.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Registrul-inventar</div>
                     <div class="report-card__detail">Elementele de activ și de pasiv grupate pe conturi, cu valoarea contabilă, valoarea de inventar și diferențele.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Elementele de activ și de pasiv la data aleasă, grupate pe conturi, cu valoarea contabilă, valoarea de inventar și diferențele dintre ele. Conturile fără sold nu apar, ca lista să rămână citibilă. Este registrul obligatoriu de inventariere, gata de listat și semnat.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Registru de evidență fiscală</div>
                     <div class="report-card__detail">Registrul cerut firmelor pe impozit pe profit, completat din datele Saga, cu firmele micro sărite automat.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Registrul cerut firmelor plătitoare de impozit pe profit, cu contul, denumirea, suma, partea nedeductibilă și baza impozitată. Se completează din datele de închidere existente în Saga. Firmele micro nu țin acest registru și sunt sărite automat, cu un mesaj în locul fișierului.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Fișă de cont</div>
                     <div class="report-card__detail">Fișa oricărui cont: sold inițial, rulaje debit/credit și sold final, cu detalierea mișcărilor și sold curent.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Fișa oricărui cont, cu sold inițial, rulaje debit și credit și sold final, urmate de fiecare mișcare în parte: data, documentul, explicația, contul corespondent, sumele și soldul curent. Alegeți conturile care vă interesează sau le luați pe toate, pe orice interval.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Balanța clienți</div>
                     <div class="report-card__detail">Solduri inițiale, cumpărări, plăți, solduri finale pe partener.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Câte un rând pe client, cu cod, denumire, CIF și județ, soldul neîncasat la începutul perioadei, totalul facturilor emise, încasările și cât a rămas de încasat. O folosiți ca să vedeți dintr-o privire cine are restanțe și cât, fără să deschideți fișa fiecărui partener.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Balanța furnizori</div>
                     <div class="report-card__detail">Echivalentul pentru furnizori, cu aceeași structură.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Câte un rând pe furnizor, cu cod, denumire, CIF și județ, soldul neachitat la începutul perioadei, totalul facturilor primite, plățile făcute și cât rămâne de plătit, cu total pe firmă la final. Se citește singură, fără să deschideți fișa fiecărui partener.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Registru de casă</div>
                     <div class="report-card__detail">Operațiunile de casă pe casierie, inclusiv casieriile în valută, cu semnalarea conturilor închise sau blocate în Saga.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Operațiunile de casă pe fiecare casierie, cu data, documentul, explicația, încasările, plățile și soldul după fiecare rând. Casieriile în valută primesc în plus coloanele de valută, curs și sumă în valută. Conturile închise sau blocate în Saga sunt semnalate, ca să nu rămână nelistate.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Registru bancă</div>
                     <div class="report-card__detail">Operațiunile bancare pe cont curent, inclusiv conturile în valută, cu semnalarea conturilor închise sau blocate în Saga.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Operațiunile bancare pe fiecare cont curent, cu data, documentul, explicația, încasările, plățile și soldul curent. Conturile în valută primesc coloanele de valută, curs și sumă în valută, iar conturile închise sau blocate în Saga sunt semnalate.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Jurnal cumpărări (TVA)</div>
                     <div class="report-card__detail">TVA deductibil integral, deductibil parțial 50% și nedeductibil 100%, în XLSX și PDF.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Achizițiile perioadei cu TVA deductibil integral, deductibil parțial 50% și nedeductibil 100%, fiecare cu baza și TVA-ul lor. Pentru firmele cu TVA la încasare, sumele sunt împărțite în exigibil și neexigibil, cu reportul din lunile anterioare inclus. Iese în XLSX și PDF.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Stat salarii</div>
                     <div class="report-card__detail">Statul lunar al salariilor pentru fiecare firmă.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Statul de plată al lunii, cu un rând pe salariat: salariu de bază, sporuri, ore normă și ore lucrate, concedii de odihnă și medicale pe tipuri, venit brut, CAS, CASS, deduceri, impozit, salariu net, avans, rețineri și rest de plată, cu o coloană de semnătură.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Centralizator salarii</div>
                     <div class="report-card__detail">Câte un rând pe salariat: venit brut realizat, CAS, CASS, impozit, net, avans și rest de plată, cu total pe firmă și contribuțiile societății (CAM).</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Rezumatul statului, câte un rând pe salariat: venit brut realizat, CAS, CASS, impozit, net, avans și rest de plată. La final are totalul pe firmă și contribuția societății (CAM), adică exact cifrele care intră în nota contabilă de salarii.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Fluturași de salariu</div>
                     <div class="report-card__detail">O pagină A5 per angajat, cu tichete de masă, avantaje și detalierea reținerilor și deducerilor fiscale.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Câte o pagină A5 pentru fiecare angajat, cu drepturile lunii, tichetele de masă, avantajele în natură și detalierea reținerilor și a deducerilor fiscale. Se generează toate odată, într-un singur fișier, gata de tăiat și înmânat.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Pontaj</div>
                     <div class="report-card__detail">Grilă cu orele lucrate zi de zi, cu totaluri pe angajat și pe lună.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Grilă cu orele lucrate zi de zi, cu weekendurile marcate, și totaluri pe angajat: ore, zile, concediu de odihnă și absențe. În XLSX primiți în plus defalcarea pe ore suplimentare, ore de noapte, sâmbete, duminici, concedii medicale pe tipuri și concediu fără plată.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Jurnal vânzări</div>
                     <div class="report-card__detail">Vânzările lunii cu defalcare pe cotă de TVA.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Facturile emise în perioadă, cu numărul, data, clientul și CIF-ul, total document, bază, TVA și încasat, defalcate pe fiecare cotă în parte. Pentru TVA la încasare, coloanele separă exigibilul de neexigibil, iar taxarea inversă și operațiunile scutite au coloanele lor.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Situație 471 / 472 / 4758</div>
                     <div class="report-card__detail">Cheltuieli și venituri în avans, cu fișă de cont și rulaj lunar pe fiecare cont.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Cheltuielile și veniturile în avans și subvențiile pentru investiții, cu sold inițial, rulaje și sold final pe fiecare cont, urmate de fișa fiecăruia. O folosiți la închidere, ca să vedeți ce s-a mai eșalonat în lună și ce a rămas de reluat în perioadele următoare.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Situație imobilizări</div>
                     <div class="report-card__detail">Registrul imobilizărilor (valoare, amortizare, valoare rămasă) alături de soldurile 20x/21x/28x, cu reconciliere registru&ndash;balanță.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Registrul imobilizărilor, cu număr de inventar, denumire, data punerii în funcțiune, valoare, amortizare cumulată, valoare rămasă și durata rămasă. Alături stau soldurile conturilor 20x, 21x și 28x din balanță și diferența dintre registru și balanță, pe categorii, ca să prindeți din timp ce nu se potrivește.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Raport de gestiune</div>
                     <div class="report-card__detail">Sold inițial, intrări, ieșiri și sold final pe fiecare gestiune, cu detaliul documentelor și legătura la contul de stoc din balanță.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Sold inițial, intrări, ieșiri și sold final pe fiecare gestiune, cu detaliul documentelor și legătura la contul de stoc din balanță. Urmează modul în care ține firma stocul în Saga, global valoric sau cantitativ. Nu face evaluare pe articol, ci lucrează la nivel de gestiune.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">NIR-uri</div>
                     <div class="report-card__detail">Note de recepție și constatare de diferențe, câte un formular pe pagină, gata de semnat.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Note de recepție și constatare de diferențe, câte un formular pe pagină, gata de semnat: antetul cu numărul, data, gestiunea și furnizorul, apoi articolele cu cod, denumire, unitate de măsură, cont, cantitate, preț unitar, valoare și TVA, cu spațiile de semnătură dedesubt.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Cont profit și pierdere</div>
                     <div class="report-card__detail">Cheltuielile și veniturile perioadei, grupate pe clase, cu rulajele pe cont și rezultatul exercițiului.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Cheltuielile și veniturile perioadei, grupate pe clasele 6 și 7, cu sold inițial, rulaje și sold final pe fiecare cont, plus rezultatul exercițiului. Include și desfășurarea contului 121 pe conturi corespondente, ca să se vadă din ce s-a format rezultatul.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Impozit micro / profit</div>
                     <div class="report-card__detail">Estimare din veniturile clasei 7 alături de impozitul contabilizat (691/698), pentru microîntreprindere sau impozit pe profit.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Estimarea impozitului pornind de la veniturile clasei 7, cu ce s-a închis și baza rezultată, pusă alături de impozitul deja contabilizat în 691 sau 698. O folosiți ca verificare înainte de declarație, nu ca înlocuitor al calculului fiscal.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Plan de conturi</div>
                     <div class="report-card__detail">Planul de conturi al firmei grupat pe clasele 1&ndash;9, cu tip, grad (sintetic gr. I/II sau analitic) și conturile blocate.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Planul de conturi al firmei, grupat pe clasele 1 la 9, cu denumirea, tipul contului, gradul (sintetic de gradul I sau II, ori analitic) și starea, inclusiv conturile blocate. Util când preluați o firmă nouă și vreți să vedeți cum a fost construit planul.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Verificări de închidere</div>
                     <div class="report-card__detail">Control automat înainte de închidere: sold de casă, plafonul legal, egalitățile balanței, conturi de clarificare, avansuri de trezorerie, rezervă legală și capital social.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Un control automat rulat înainte de închidere, cu o listă de verificări trecute sau picate și, pentru fiecare problemă, contul, documentul și unde anume să vă uitați. Acoperă soldul de casă și plafonul legal, egalitățile balanței, conturile de clarificare, avansurile de trezorerie, rezerva legală și capitalul social.</p>
+                    </details>
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Sinteză financiară</div>
                     <div class="report-card__detail">Raport vizual de o pagină pentru client, cu sigla cabinetului și un card de TVA (decont și sold 4423/4424) afișat doar la plătitorii de TVA.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Raportul de o pagină scris pentru client, nu pentru contabil: vânzări, încasări, plăți, rezultat de casă și disponibil, fiecare comparat cu luna trecută, cifra de afaceri și profitul cumulate pe an cu grafic lunar, clienți de încasat și furnizori de plătit. Poartă sigla cabinetului, iar cardul de TVA apare doar la plătitorii de TVA.</p>
+                    </details>
                 </div>
                 <div class="report-card" style="background-color: var(--gray-50);">
                     <div class="report-card__name">Format SAGA 3.x</div>
@@ -2597,6 +2785,106 @@
             document.getElementById('cookie-reject').addEventListener('click', function () {
                 localStorage.setItem('cookie_consent', 'denied');
                 banner.hidden = true;
+            });
+        })();
+    </script>
+
+
+    <!-- Report catalog: upgrade the per-card <details> into a drawer that opens
+         below the card's row (#283). Without this the markup still works as a
+         plain inline expand. -->
+    <script>
+        (function () {
+            var grid = document.querySelector('.reports-grid');
+            if (!grid) return;
+
+            var discs = grid.querySelectorAll('.report-card__more');
+            if (!discs.length) return;
+
+            var drawer = document.createElement('div');
+            drawer.className = 'report-drawer';
+            drawer.id = 'report-drawer';
+            drawer.setAttribute('role', 'region');
+            drawer.setAttribute('tabindex', '-1');
+            drawer.innerHTML =
+                '<button class="report-drawer__close" type="button" aria-label="Inchide">&times;</button>' +
+                '<div class="report-drawer__name"></div>' +
+                '<div class="report-drawer__body"></div>';
+
+            var openCard = null;
+
+            grid.classList.add('reports-grid--drawer');
+            Array.prototype.forEach.call(discs, function (d) {
+                d.querySelector('summary').setAttribute('aria-expanded', 'false');
+                d.querySelector('summary').setAttribute('aria-controls', 'report-drawer');
+            });
+
+            function cards() {
+                return Array.prototype.slice.call(grid.querySelectorAll('.report-card'));
+            }
+
+            function columns() {
+                return getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+            }
+
+            function close(refocus) {
+                if (!openCard) return;
+                var summary = openCard.querySelector('summary');
+                summary.setAttribute('aria-expanded', 'false');
+                openCard.classList.remove('is-open');
+                if (drawer.parentNode) drawer.parentNode.removeChild(drawer);
+                openCard = null;
+                if (refocus) summary.focus();
+            }
+
+            function show(card) {
+                var list = cards(), i = list.indexOf(card), cols = columns();
+                // Insert after the LAST card of this card's row. Inserting straight
+                // after the card itself would push the rest of the row along, since
+                // a full-width item cannot share a row.
+                var last = Math.min(Math.floor(i / cols) * cols + cols - 1, list.length - 1);
+                var name = card.querySelector('.report-card__name').textContent;
+
+                drawer.querySelector('.report-drawer__name').textContent = name;
+                drawer.querySelector('.report-drawer__body').textContent =
+                    card.querySelector('.report-card__long').textContent;
+                drawer.setAttribute('aria-label', name);
+
+                list[last].parentNode.insertBefore(drawer, list[last].nextSibling);
+
+                var cr = card.getBoundingClientRect(), dr = drawer.getBoundingClientRect();
+                drawer.style.setProperty('--caret', (cr.left + cr.width / 2 - dr.left) + 'px');
+
+                card.classList.add('is-open');
+                card.querySelector('summary').setAttribute('aria-expanded', 'true');
+                openCard = card;
+                drawer.focus();
+            }
+
+            grid.addEventListener('click', function (e) {
+                if (e.target.closest('.report-drawer__close')) { close(true); return; }
+                var summary = e.target.closest('.report-card__more > summary');
+                if (!summary) return;
+                // The drawer replaces the native disclosure, so stop it toggling.
+                e.preventDefault();
+                var card = summary.closest('.report-card');
+                var wasOpen = card === openCard;
+                close(false);
+                if (!wasOpen) show(card);
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') close(true);
+            });
+
+            // The column count changes at the breakpoints, so a drawer placed for
+            // three columns sits in the wrong row at one. Re-place it rather than
+            // closing, so rotating a phone does not lose the reader's place.
+            window.addEventListener('resize', function () {
+                if (!openCard) return;
+                var card = openCard;
+                close(false);
+                show(card);
             });
         })();
     </script>
