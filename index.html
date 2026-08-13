@@ -772,11 +772,14 @@
             padding-right: 32px;
         }
 
+        /* No measure cap on purpose. These paragraphs are 200 to 375 characters,
+           so they land at two or three lines even across the full 1120px
+           container, and a cap just leaves the panel looking half empty. If the
+           copy ever grows past a few lines, put one back. */
         .report-drawer__body {
             font-size: var(--text-sm);
             color: var(--gray-600);
             line-height: 1.65;
-            max-width: 70ch;
         }
 
         .report-drawer__close {
