@@ -69,7 +69,25 @@
             });
         }
 
-        if (localStorage.getItem('cookie_consent') === 'granted') { loadPixel(); loadPostHog(); }
+        // Loads the TikTok Pixel — SAME consent gate as the Pixel and PostHog.
+        // TikTok ships this snippet to run on page load; the vendor blob is kept
+        // verbatim but the ttq.load()/ttq.page() calls (the only part that
+        // contacts analytics.tiktok.com) are deferred to consent.
+        window.tiktokReady = false;
+        function loadTikTok() {
+            if (window.tiktokReady) return;
+            window.tiktokReady = true;
+            !function (w, d, t) {
+                w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+                ttq.load('DA1I9NJC77UAAA42TFIG');
+                ttq.page();
+            }(window, document, 'ttq');
+        }
+
+        if (localStorage.getItem('cookie_consent') === 'granted') { loadPixel(); loadPostHog(); loadTikTok(); }
     </script>
     <!-- End Facebook Pixel Code -->
     <!-- The Lead listener near </body> guards on window.fbq, so it stays a
@@ -2421,8 +2439,8 @@
             return { open: open, close: close };
         }
 
-        // Conversion events (Meta Pixel + PostHog), enriched with captured
-        // campaign attribution:
+        // Conversion events (Meta Pixel + TikTok Pixel + PostHog), enriched with
+        // captured campaign attribution:
         //   download — installer download link (header/hero/pricing/CTA)
         //   contact  — the contact email (mailto)
         // Capture phase so events still fire as the click kicks off the download
@@ -2446,7 +2464,7 @@
                     return;
                 }
                 lockBriefly(download);
-                if ((window.fbq || window.posthog) && firstInWindow('download')) {
+                if ((window.fbq || window.ttq || window.posthog) && firstInWindow('download')) {
                     // Lead is the campaign's optimisation event, so it must only
                     // ever describe a download that can actually be installed. On a
                     // phone the .exe is suppressed below and useless even if it were
@@ -2456,6 +2474,17 @@
                     if (window.fbq && isDesktopPlatform()) fbq('track', 'Lead', withAttribution({
                         content_name: 'SagaBulkReporter-Setup',
                         content_category: 'installer-download'
+                    }));
+                    // Same desktop-only rule, and it bites harder here: TikTok's
+                    // audience is mostly mobile, so this will fire on a small slice
+                    // of clicks. That is the point — a conversion TikTok can
+                    // optimise toward has to be one that could end in an install.
+                    if (window.ttq && isDesktopPlatform()) ttq.track('Download', withAttribution({
+                        contents: [{
+                            content_id: 'SagaBulkReporter-Setup',
+                            content_type: 'product',
+                            content_name: 'Saga Bulk Reporter installer'
+                        }]
                     }));
                     // Kept on every device: interest from a phone is real, it just
                     // is not a download. Segment it in PostHog with $device_type.
@@ -2477,10 +2506,19 @@
                 }
             } else if (mail) {
                 lockBriefly(mail, 2000);
-                if ((window.fbq || window.posthog) && firstInWindow('contact')) {
+                if ((window.fbq || window.ttq || window.posthog) && firstInWindow('contact')) {
                     if (window.fbq) fbq('track', 'Contact', withAttribution({
                         content_name: 'contact-email',
                         content_category: 'email'
+                    }));
+                    // Every device, unlike Download: writing an email works fine
+                    // from a phone, so there is no platform to gate on here.
+                    if (window.ttq) ttq.track('Contact', withAttribution({
+                        contents: [{
+                            content_id: 'contact-email',
+                            content_type: 'product',
+                            content_name: 'Contact email'
+                        }]
                     }));
                     if (window.posthog) posthog.capture('contact_click', withAttribution({}));
                 }
@@ -2761,12 +2799,13 @@
         <button class="toast__action" type="button" id="toast-action" hidden></button>
     </div>
 
-    <!-- Cookie consent banner — gates the Facebook Pixel + PostHog (GDPR / ePrivacy). -->
+    <!-- Cookie consent banner — gates the Facebook Pixel + TikTok Pixel + PostHog
+         (GDPR / ePrivacy). -->
     <div id="cookie-banner" class="cookie-banner" hidden>
         <p class="cookie-banner__text">
-            Folosim cookie-uri de la Meta (Facebook Pixel) și un serviciu de analiză
-            web (PostHog) pentru a măsura eficiența campaniilor și a înțelege cum este
-            folosit site-ul. Detalii în
+            Folosim cookie-uri de la Meta (Facebook Pixel) și TikTok (TikTok Pixel),
+            plus un serviciu de analiză web (PostHog), pentru a măsura eficiența
+            campaniilor și a înțelege cum este folosit site-ul. Detalii în
             <a href="/confidentialitate.html">Politica de confidențialitate</a>.
         </p>
         <div class="cookie-banner__actions">
@@ -2784,6 +2823,7 @@
                 banner.hidden = true;
                 loadPixel();     // Meta Pixel PageView now that consent is given
                 loadPostHog();   // PostHog pageview — same consent
+                loadTikTok();    // TikTok Pixel page view — same consent
             });
             document.getElementById('cookie-reject').addEventListener('click', function () {
                 localStorage.setItem('cookie_consent', 'denied');
