@@ -16,7 +16,7 @@
         // Facebook ads today and email/other UTM-tagged links later.
         function captureAttribution() {
             try {
-                var KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid'];
+                var KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ttclid'];
                 var params = new URLSearchParams(window.location.search);
                 var attr = {}, found = false;
                 KEYS.forEach(function (k) {
@@ -100,7 +100,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 25 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bulkreporter.ro/">
-    <meta property="og:image" content="https://bulkreporter.ro/images/og-image.png">
+    <!-- ?v= is a cache-buster, not a file. Facebook and X key their image
+         caches on this URL, so re-rendering og-image.png is invisible to them
+         until the URL changes: a re-scrape refreshes the tags below but keeps
+         serving the blob already fetched. Bump v on every reshoot of the card. -->
+    <meta property="og:image" content="https://bulkreporter.ro/images/og-image.png?v=2">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Saga Bulk Reporter: rapoarte bulk din Saga 3.x">
@@ -109,7 +113,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="14 zile de test gratuit">
     <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 25 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
-    <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png">
+    <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=2">
 
     <title>Saga Bulk Reporter | ACS Soft</title>
 
@@ -2734,7 +2738,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             // then copies instead has genuinely done two different things, and which
             // path they fall back to is the whole point of measuring this.
             function record(outcome) {
-                if (!(window.fbq || window.posthog)) return;
+                if (!(window.fbq || window.ttq || window.posthog)) return;
                 if (!firstInWindow('share_to_device:' + outcome)) return;
                 if (window.posthog) posthog.capture('share_to_device', withAttribution({ outcome: outcome }));
                 // Meta only hears about outcomes where the link actually left the
@@ -2744,6 +2748,24 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     fbq('trackCustom', 'ShareToDevice', withAttribution({
                         content_name: 'send-to-device',
                         outcome: outcome
+                    }));
+                }
+                // This, not Download, is what a TikTok campaign optimises toward.
+                // TikTok inventory is overwhelmingly in-app on phones, which is
+                // exactly where the .exe is suppressed and Download is withheld, so
+                // optimising on Download would leave delivery with a conversion its
+                // own audience structurally cannot trigger. Same outcome filter as
+                // Meta above — a dismissed share sheet is still not a conversion.
+                // ClickButton is a standard event, so it is selectable as an ad
+                // group's optimisation event; a custom one would not be.
+                if (window.ttq && (outcome === 'shared' || outcome === 'copied' || outcome === 'unsupported')) {
+                    ttq.track('ClickButton', withAttribution({
+                        contents: [{
+                            content_id: 'send-to-device',
+                            content_type: 'product',
+                            content_name: 'Send installer link to a desktop'
+                        }],
+                        description: outcome
                     }));
                 }
             }
