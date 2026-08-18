@@ -37,6 +37,15 @@ rounded blue checkboxes in the app UI.
 `twitter:image`, so sharing the site link on Facebook/X shows the branded card.
 `images/og-image.png` is a copy of `facebook/og-image.png` — regenerated below.
 
+> **Re-rendering the card is not enough — bump `?v=` too.** Both tags carry a
+> `?v=N` suffix. Facebook and X key their image caches on that URL, so a card
+> re-rendered at the same URL stays invisible to them: re-scraping in the
+> [Sharing Debugger](https://developers.facebook.com/tools/debug/) refreshes
+> the title and description but keeps serving the blob already fetched, and
+> nginx sends `max-age=604800` on top. Raise `N` in the same commit as any
+> reshoot. This bit us on #7, where the count went to 25 everywhere and every
+> share still showed the old card.
+
 ## Regenerating / editing
 
 Everything is generated from source — no binary editing.
