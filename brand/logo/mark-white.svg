@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Saga Bulk Reporter">
-  <title>Saga Bulk Reporter — matrix mark (white, for dark backgrounds)</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Bulk Reporter">
+  <title>Bulk Reporter — matrix mark (white, for dark backgrounds)</title>
   <!-- empty cells -->
   <g fill="#FFFFFF" fill-opacity="0.24">
     <rect x="26" y="0"  width="22" height="22" rx="3.5"/>

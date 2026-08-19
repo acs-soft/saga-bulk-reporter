@@ -1,5 +1,5 @@
 /* ============================================================
-   Saga Bulk Reporter — Facebook brand asset generator
+   Bulk Reporter — Facebook brand asset generator
    ------------------------------------------------------------
    Writes one self-contained HTML "canvas" per asset into this
    folder. A headless-Chrome screenshot of each (at the matching
@@ -32,7 +32,7 @@ function mark(variant /* 'light' | 'onblue' */) {
       const d = r === c ? ' d' : '';
       rects += `<rect class="c${d}" x="${pos[c]}" y="${pos[r]}" width="22" height="22" rx="3.5"/>`;
     }
-  return `<svg class="mark mark--${variant}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Saga Bulk Reporter">${rects}</svg>`;
+  return `<svg class="mark mark--${variant}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bulk Reporter">${rects}</svg>`;
 }
 
 /* ---- Shared CSS ---- */
@@ -98,7 +98,7 @@ const cover = page(1640, 624, `
   #s-cover .meta i{font-style:normal;color:${C.g300}}
 `, `<div class="stage" id="s-cover" style="width:1640px;height:624px">
   <div class="bg">${mark('light')}</div>
-  <div class="lockup sig">${mark('light')}<div class="wm"><b>Saga Bulk Reporter</b><small>ACS Soft</small></div></div>
+  <div class="lockup sig">${mark('light')}<div class="wm"><b>Bulk Reporter</b><small>ACS Soft</small></div></div>
   <div class="body">
     <div class="eyebrow">Generator de rapoarte pentru Saga 3.x</div>
     <h1>Toate rapoartele. Toate firmele.<br><span class="b">Dintr-o singură rulare.</span></h1>
@@ -129,7 +129,7 @@ const og = page(1200, 630, `
   #s-og .hero .mark{width:300px;height:300px}
 `, `<div class="stage" id="s-og" style="width:1200px;height:630px">
   <div class="col">
-    <div class="lockup">${mark('light')}<div class="wm"><b>Saga Bulk Reporter</b><small>ACS Soft</small></div></div>
+    <div class="lockup">${mark('light')}<div class="wm"><b>Bulk Reporter</b><small>ACS Soft</small></div></div>
     <div class="eyebrow">Generator de rapoarte · Saga 3.x</div>
     <h1>Rapoarte bulk<br>din Saga</h1>
     <hr class="rule">
@@ -160,7 +160,7 @@ const postAnnounce = page(1080, 1080, `
   #s-pa .foot i{color:rgba(255,255,255,.45);font-style:normal}
 `, `<div class="stage" id="s-pa" style="width:1080px;height:1080px">
   <div class="bg">${mark('onblue')}</div>
-  <div class="lockup lockup--onblue sig">${mark('onblue')}<div class="wm"><b>Saga Bulk Reporter</b><small>ACS Soft</small></div></div>
+  <div class="lockup lockup--onblue sig">${mark('onblue')}<div class="wm"><b>Bulk Reporter</b><small>ACS Soft</small></div></div>
   <div class="pill">Noutate</div>
   <h1>Peste 25 de rapoarte<br>contabile, multi-firmă,<br>dintr-o singură rulare.</h1>
   <hr class="rule">
@@ -194,7 +194,7 @@ const postFeature = page(1080, 1080, `
     <hr class="rule">
     <div class="chips"><div class="chip">CSV</div><div class="chip">XLSX</div><div class="chip">PDF</div><div class="chip">JSON</div></div>
   </div>
-  <div class="foot"><b>Saga Bulk Reporter</b><i>·</i>bulkreporter.ro</div>
+  <div class="foot"><b>Bulk Reporter</b><i>·</i>bulkreporter.ro</div>
 </div>`);
 
 /* ---- write the bare logo mark (transparent) for general use ---- */
