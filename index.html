@@ -104,18 +104,18 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
          caches on this URL, so re-rendering og-image.png is invisible to them
          until the URL changes: a re-scrape refreshes the tags below but keeps
          serving the blob already fetched. Bump v on every reshoot of the card. -->
-    <meta property="og:image" content="https://bulkreporter.ro/images/og-image.png?v=2">
+    <meta property="og:image" content="https://bulkreporter.ro/images/og-image.png?v=3">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Saga Bulk Reporter: rapoarte bulk din Saga 3.x">
+    <meta property="og:image:alt" content="Bulk Reporter: rapoarte bulk din Saga 3.x">
 
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="14 zile de test gratuit">
     <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 25 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
-    <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=2">
+    <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=3">
 
-    <title>Saga Bulk Reporter | ACS Soft</title>
+    <title>Bulk Reporter | ACS Soft</title>
 
     <!-- Favicon — brand mark (white grid on #0066CC) -->
     <link rel="icon" href="/favicon.ico" sizes="any">
@@ -1734,7 +1734,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <header class="header">
         <div class="container header__inner">
             <div class="header__brand">
-                <a href="#" class="header__logo">Saga Bulk Reporter</a>
+                <a href="#" class="header__logo">Bulk Reporter</a>
                 <span class="header__company">ACS Soft</span>
             </div>
             <nav class="header__nav" id="mainNav">
@@ -1772,10 +1772,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 </div>
                 <div class="hero__visual">
                     <a href="images/screenshot-1.png" class="glightbox" data-gallery="screenshots"
-                       data-title="Saga Bulk Reporter: interfața principală">
+                       data-title="Bulk Reporter: interfața principală">
                         <img
                             src="images/screenshot-1.png"
-                            alt="Captura de ecran a aplicației Saga Bulk Reporter: interfața principală"
+                            alt="Captura de ecran a aplicației Bulk Reporter: interfața principală"
                             class="hero__screenshot"
                             onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
                         >
@@ -2452,7 +2452,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         // load together on consent, so neither fires before Accept.
         document.addEventListener('click', function (e) {
             if (!e.target.closest) return;
-            var download = e.target.closest('a[href*="SagaBulkReporter-Setup"]');
+            // Matches BOTH the old and the new installer filename, deliberately.
+            // "BulkReporter-Setup" is a substring of "SagaBulkReporter-Setup", so
+            // shortening the selector widens it — the reverse of the rename, which
+            // is why this string and not the full new filename. Lead is the
+            // campaign's optimisation event and this selector is the only thing
+            // that fires it, so it must not depend on when release.yml rewrites the
+            // hrefs below: a selector that stopped matching would break nothing
+            // visible, 404 nothing, and simply drive conversions to zero (#332).
+            var download = e.target.closest('a[href*="BulkReporter-Setup"]');
             var mail = download ? null : e.target.closest('a[href^="mailto:"]');
             if (download) {
                 // The retry link inside the SmartScreen guide points at the same
@@ -2475,6 +2483,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     // not, so reporting a conversion trains Meta's delivery toward
                     // an audience that cannot convert — and it was 66% of all Lead
                     // events, which is why the campaign kept skewing further mobile.
+                    // The content_name / content_id values below deliberately keep
+                    // the OLD string, and are the one place in this file that does.
+                    // They are identifiers sent to Meta and TikTok, never rendered
+                    // to a visitor, so they are not a trademark surface — and
+                    // renaming them re-keys the conversion, splitting its
+                    // optimisation history in two while the reel and TikTok ads are
+                    // still learning. Decided 2026-08-19 (#332); revisit once the
+                    // campaign is out of its learning phase, not before.
                     if (window.fbq && isDesktopPlatform()) fbq('track', 'Lead', withAttribution({
                         content_name: 'SagaBulkReporter-Setup',
                         content_category: 'installer-download'
@@ -2692,7 +2708,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <div class="label">Descărcare</div>
             <h2 class="ovl__title" id="db-title">Aplicația se instalează pe un calculator cu Windows</h2>
             <p class="ovl__lede">
-                Saga Bulk Reporter citește bazele de date Saga 3.x direct de pe calculatorul
+                Bulk Reporter citește bazele de date Saga 3.x direct de pe calculatorul
                 pe care rulează, așa că nu poate fi instalată pe telefon sau tabletă.
                 Trimiteți-vă linkul acum, ca să îl aveți la îndemână când ajungeți la birou.
             </p>
@@ -2786,7 +2802,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             if (shareBtn) shareBtn.addEventListener('click', function () {
                 lockBriefly(shareBtn);
                 navigator.share({
-                    title: 'Saga Bulk Reporter',
+                    title: 'Bulk Reporter',
                     text: 'Rapoarte Saga pentru tot portofoliul de firme, dintr-o singură rulare.',
                     url: window.location.href
                 }).then(function () {
