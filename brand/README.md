@@ -1,4 +1,4 @@
-# Saga Bulk Reporter — brand & social kit
+# Bulk Reporter — brand & social kit
 
 Visual assets for the Facebook page (and other social/link use), built on the
 same Swiss/International design system as the landing page (`index.html`):
