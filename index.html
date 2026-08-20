@@ -1051,6 +1051,26 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             color: var(--gray-400);
         }
 
+        /* Affiliation disclaimer. Same quiet treatment as .footer__legal, but
+           prose rather than a chip row: it wraps, so it gets a reading width
+           instead of stretching the full container. The global reset zeroes
+           margins and the base p rule sets its own size and colour, so both
+           have to be restated here rather than inherited. */
+        .footer__disclaimer {
+            margin-top: 16px;
+            max-width: 780px;
+        }
+
+        .footer__disclaimer p {
+            font-size: var(--text-sm);
+            line-height: 1.6;
+            color: var(--gray-400);
+        }
+
+        .footer__disclaimer p + p {
+            margin-top: 8px;
+        }
+
         .footer__links {
             display: flex;
             gap: 24px;
@@ -2261,6 +2281,16 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <span>CUI 50227116</span>
             <span>Nr. Reg. Com. J2024011763404</span>
             <span>Sediul social: Str. Sg. Constantin Moise nr. 5D, bl. 2, sc. 2, ap. B5, sector 6, București</span>
+        </div>
+        <!-- SAGA affiliation disclaimer. Copied VERBATIM from ProductDisclaimer
+             in the app repo (Core/ProductDisclaimer.cs, #316) — the About
+             dialog, the installer and the licence contract carry the same
+             claims, and the point of the disclaimer is that it reads as one
+             considered statement rather than per-surface boilerplate. If the
+             constant is reworded, re-copy it; do not edit this in place. -->
+        <div class="container footer__disclaimer">
+            <p>Bulk Reporter este un produs independent, dezvoltat de ACS SOFT CONSULT SRL. Nu suntem afiliați, asociați, autorizați sau sponsorizați de SAGA Software SRL și nu avem nicio legătură comercială cu aceasta.</p>
+            <p>SAGA este marcă înregistrată a SAGA Software SRL. Denumirea este folosită aici exclusiv în scop descriptiv, pentru a indica programul cu care aplicația este compatibilă.</p>
         </div>
     </footer>
 
