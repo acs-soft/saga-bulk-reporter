@@ -967,6 +967,40 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             margin-bottom: 0;
         }
 
+        /* Licensing FAQ (#412). The four questions asked most often before a
+           purchase, each answered by hand five times before it was written down
+           here. Deliberately plain visible text rather than a <details>
+           disclosure: these are the questions that decide the sale, so they
+           should not cost a click, and they are what people type into a search
+           engine. Every answer matches the signed contract (art. 5) and the
+           extra-station price in the contract generator's vendor settings. */
+        .pricing__faq {
+            margin-top: 64px;
+            padding-top: 48px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .pricing__faq h3 {
+            margin-bottom: 32px;
+        }
+
+        .pricing__faq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px 64px;
+        }
+
+        .pricing__faq-item h4 {
+            font-size: var(--text-base);
+            margin-bottom: 8px;
+        }
+
+        .pricing__faq-item p {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+
         /* ========================================
            CTA SECTION
            ======================================== */
@@ -1135,6 +1169,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
             .pricing__card {
                 max-width: 480px;
+            }
+
+            .pricing__faq-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
             }
 
             .section {
@@ -2220,6 +2259,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                         </li>
                         <li>
                             <span class="pricing__check">&check;</span>
+                            Licență pe calculator, stații în plus 299 RON / an
+                        </li>
+                        <li>
+                            <span class="pricing__check">&check;</span>
                             Export CSV, JSON, XLSX, PDF
                         </li>
                         <li>
@@ -2246,6 +2289,35 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <p>
                         Aveți întrebări? Scrieți-ne la <a href="mailto:contact@bulkreporter.ro" style="color: var(--blue-500); text-decoration: none; font-weight: 500;">contact@bulkreporter.ro</a>
                     </p>
+                </div>
+            </div>
+            <div class="pricing__faq">
+                <h3>Întrebări despre licențiere</h3>
+                <div class="pricing__faq-grid">
+                    <div class="pricing__faq-item">
+                        <h4>Licența este pe calculator, nu pe firmă</h4>
+                        <p>
+                            O licență acoperă un număr nelimitat de societăți și de luni, indiferent câte firme aveți în portofoliu. Pe aceeași adresă de email se pot emite oricâte chei.
+                        </p>
+                    </div>
+                    <div class="pricing__faq-item">
+                        <h4>Lucrați în rețea, cu Saga pe un server?</h4>
+                        <p>
+                            Licența se activează pe calculatorul pe care instalați aplicația, nu pe serverul Saga, iar serverul în sine nu are nevoie de licență. Dacă rapoartele le generează o singură persoană, de pe un singur calculator, o singură licență este suficientă: aplicația se conectează prin rețea la baza de date de pe server și vede toate societățile, exact ca programul Saga.
+                        </p>
+                    </div>
+                    <div class="pricing__faq-item">
+                        <h4>Mai multe stații de lucru</h4>
+                        <p>
+                            Dacă vreți să generați rapoarte de pe mai multe calculatoare, este nevoie de câte o licență pentru fiecare. Prima stație 399 RON pe an, fiecare stație în plus 299 RON pe an. Trei calculatoare înseamnă 997 RON pe an în loc de 1.197.
+                        </p>
+                    </div>
+                    <div class="pricing__faq-item">
+                        <h4>Schimbați calculatorul sau reinstalați Windows?</h4>
+                        <p>
+                            Cheia veche nu mai este valabilă, pentru că se schimbă amprenta calculatorului. Emitem gratuit o cheie nouă pentru perioada rămasă din licență, în maximum 3 zile lucrătoare de la solicitare. Ne scrieți pe email cu noul ID de mașină din aplicație.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
