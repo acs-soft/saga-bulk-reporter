@@ -97,7 +97,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
     <!-- Open Graph -->
     <meta property="og:title" content="14 zile de test gratuit">
-    <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 25 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
+    <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 30 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bulkreporter.ro/">
     <!-- ?v= is a cache-buster, not a file. Facebook and X key their image
@@ -112,7 +112,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="14 zile de test gratuit">
-    <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 25 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
+    <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 30 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
     <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=3">
 
     <title>Bulk Reporter | ACS Soft</title>
@@ -1819,7 +1819,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <h1 class="hero__title">Rapoarte bulk din Saga, multi-firmă, multi-lună, dintr-o singură rulare</h1>
                     <div class="divider divider--blue"></div>
                     <p class="hero__description">
-                        Generați peste 25 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
+                        Generați peste 30 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
                     </p>
                     <div class="hero__actions">
                         <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.30.0.exe" class="btn-primary">
@@ -1971,6 +1971,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     </details>
                 </div>
                 <div class="report-card">
+                    <div class="report-card__name">Număr note contabile</div>
+                    <div class="report-card__detail">Câte note contabile și câte rânduri are registrul-jurnal, pe firmă și pe lună.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Raportul cu care verificați dintr-o privire dacă o lună este completă: numărul de note contabile și numărul de rânduri din registrul-jurnal, pentru fiecare firmă și fiecare lună din rulare, într-un singur tabel. Este util înainte de închidere, când căutați firma la care s-a lucrat mai puțin decât credeați.</p>
+                    </details>
+                </div>
+                <div class="report-card">
                     <div class="report-card__name">Registrul-inventar</div>
                     <div class="report-card__detail">Elementele de activ și de pasiv grupate pe conturi, cu valoarea contabilă, valoarea de inventar și diferențele.</div>
                     <details class="report-card__more">
@@ -2024,6 +2032,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
                         <p class="report-card__long">Operațiunile bancare pe fiecare cont curent, cu data, documentul, explicația, încasările, plățile și soldul curent. Conturile în valută primesc coloanele de valută, curs și sumă în valută, iar conturile închise sau blocate în Saga sunt semnalate.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situație diferențe de curs valutar</div>
+                    <div class="report-card__detail">Diferențele de curs înregistrate de Saga, cu cursul și suma în valută de pe fiecare rând.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Diferențele favorabile și nefavorabile așa cum le-a înregistrat Saga, nu recalculate de noi: contul, documentul, valuta, cursul folosit și suma în valută, alături de diferența în lei. Iese pe lună, pe trimestru, pe semestru sau pe an.</p>
                     </details>
                 </div>
                 <div class="report-card">
@@ -2099,11 +2115,35 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     </details>
                 </div>
                 <div class="report-card">
+                    <div class="report-card__name">Situația aprovizionărilor</div>
+                    <div class="report-card__detail">Intrările pe articol, cu cantitate și valoare, grupate pe gestiuni.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Toate intrările perioadei, desfășurate pe articol: cantitate, valoare și furnizor, grupate pe gestiuni, cu subtotal pe fiecare gestiune și total general. Spre deosebire de jurnalul de cumpărări, care conține numai documentele cu TVA, această listare cuprinde tot ce a intrat în gestiune.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situația vânzărilor</div>
+                    <div class="report-card__detail">Ieșirile pe articol, cu cantitate, valoare și adaos, grupate pe gestiuni.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Toate ieșirile perioadei, desfășurate pe articol: cantitate, valoare de vânzare, cost și adaosul rezultat, grupate pe gestiuni. Este listarea de căutat pentru arhivare sau pentru o evidență completă a mișcărilor: jurnalul de vânzări conține numai documentele cu TVA, deci avizele și notele contabile manuale nu apar în el, deși mișcă balanța.</p>
+                    </details>
+                </div>
+                <div class="report-card">
                     <div class="report-card__name">NIR-uri</div>
                     <div class="report-card__detail">Note de recepție și constatare de diferențe, câte un formular pe pagină, gata de semnat.</div>
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
                         <p class="report-card__long">Note de recepție și constatare de diferențe, câte un formular pe pagină, gata de semnat: antetul cu numărul, data, gestiunea și furnizorul, apoi articolele cu cod, denumire, unitate de măsură, cont, cantitate, preț unitar, valoare și TVA, cu spațiile de semnătură dedesubt.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Bon de consum</div>
+                    <div class="report-card__detail">Formular semnabil de bon de consum, unul pe pagină, din bonurile înregistrate în Saga.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Bonurile de consum din Saga, tipărite ca formulare, câte unul pe pagină, gata de semnat: gestiunea, tipul bonului, articolele cu cantitate și valoare, plus totalul. Iese în PDF pentru tipărire și în CSV, XLSX sau JSON dacă vă trebuie ca listă.</p>
                     </details>
                 </div>
                 <div class="report-card">
@@ -2140,10 +2180,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Sinteză financiară</div>
-                    <div class="report-card__detail">Raport vizual de o pagină pentru client, cu sigla cabinetului și un card de TVA (decont și sold 4423/4424) afișat doar la plătitorii de TVA.</div>
+                    <div class="report-card__detail">Raport vizual pe două pagini pentru client, cu sigla cabinetului și un card de TVA (decont și sold 4423/4424) afișat doar la plătitorii de TVA.</div>
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
-                        <p class="report-card__long">Raportul de o pagină scris pentru client, nu pentru contabil: vânzări, încasări, plăți, rezultat de casă și disponibil, fiecare comparat cu luna trecută, cifra de afaceri și profitul cumulate pe an cu grafic lunar, clienți de încasat și furnizori de plătit. Poartă sigla cabinetului, iar cardul de TVA apare doar la plătitorii de TVA.</p>
+                        <p class="report-card__long">Raportul scris pentru client, nu pentru contabil, pe două pagini. Prima adună disponibilul în casă și în bancă, vânzările, încasările, plățile și fluxul de numerar, fiecare comparat cu perioada trecută, cifra de afaceri și profitul cumulate pe an cu grafic lunar, plus trei grafice de evoluție. A doua strânge clienții de încasat, furnizorii de plătit, cheltuielile perioadei și cardul de TVA. Ambele pagini poartă sigla cabinetului și pot fi despărțite fără să devină anonime, iar cardul de TVA apare doar la plătitorii de TVA.</p>
                     </details>
                 </div>
                 <div class="report-card" style="background-color: var(--gray-50);">
@@ -2178,10 +2218,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     </ul>
                 </div>
                 <a href="images/screenshot-4-sinteza.png" class="glightbox" data-gallery="screenshots"
-                   data-title="Sinteza financiară: raportul de o pagină pentru client">
+                   data-title="Sinteza financiară: raportul pentru client">
                     <img
                         src="images/screenshot-4-sinteza.png"
-                        alt="Sinteza financiară: raport de o pagină pentru client, cu indicatorii lunii, grafice de evoluție și cardul de TVA"
+                        alt="Sinteza financiară: raport pentru client, cu indicatorii lunii, grafice de evoluție și cardul de TVA"
                         class="sinteza__doc"
                         onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
                     >
