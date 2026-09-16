@@ -12,6 +12,7 @@ on:
       - 'brand/_src/**'
       - 'marketing/**'
       - '.github/workflows/track-downloads.yml'
+      - '.github/workflows/publish-installer.yml'
   workflow_dispatch:
   # Callable from other workflows in this repo (e.g. track-downloads after it
   # commits a fresh metrics/downloads.json). A commit pushed with the default
