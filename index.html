@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Price phase (#561). 399 RON/an up to and including 15 October 2026, 599 from the 16th.
+         The page carries both versions and this picks one before first paint, so the rise needs
+         no deploy on the night. Same rule, and the same clock caveat, as the app's
+         LicensePricing.PriceOn(today): the visitor's local date decides. Without JS the
+         attribute is absent and the CSS shows the intro version. Its own block on purpose: an
+         exception in any other script cannot stop it. -->
+    <script>
+        (function () {
+            var standardFrom = new Date(2026, 9, 16);   // local midnight, 16 October 2026
+            document.documentElement.setAttribute(
+                'data-price-phase', new Date() >= standardFrom ? 'standard' : 'intro');
+        })();
+    </script>
+
     <!-- Facebook Pixel — loaded ONLY after cookie consent (GDPR / ePrivacy) -->
     <script>
         window.PIXEL_ID = '996863876559271';
@@ -424,6 +438,20 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             font-size: var(--text-sm);
             color: var(--gray-400);
             letter-spacing: 0.01em;
+        }
+
+        /* Intro-phase only (#561): the deadline, where a visitor from an ad actually is. */
+        .hero__price-note {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .hero__price-note a {
+            color: var(--blue-500);
+            font-weight: 500;
+            text-decoration: none;
+            white-space: nowrap;
         }
 
         /* Usage counters sit under the hero screenshot and together span its
@@ -895,6 +923,32 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             color: var(--gray-500);
         }
 
+        /* Price phase (#561), set on <html> by the script at the top of <head>. !important
+           because several of the tagged elements carry their own display. */
+        html:not([data-price-phase="standard"]) [data-price="standard"],
+        html[data-price-phase="standard"] [data-price="intro"] {
+            display: none !important;
+        }
+
+        /* The announced rise. Announced, never staged as a fall: no struck-through 599, because
+           nobody has ever paid it (Dir. (EU) 2019/2161, OG 99/2000). Wording is the app's signed-
+           off LicenseOfferCopy, word for word; change it there first. */
+        .pricing__notice {
+            border-left: 3px solid var(--blue-500);
+            padding-left: 16px;
+            margin: 16px 0 16px;
+            font-size: var(--text-sm);
+            line-height: 1.6;
+            color: var(--gray-600);
+        }
+
+        .pricing__notice strong {
+            display: block;
+            color: var(--black);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
         .pricing__trial {
             font-size: var(--text-sm);
             color: var(--blue-500);
@@ -973,7 +1027,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
            disclosure: these are the questions that decide the sale, so they
            should not cost a click, and they are what people type into a search
            engine. Every answer matches the signed contract (art. 5) and the
-           extra-station price in the contract generator's vendor settings. */
+           prices in the license manager (CommercialTerms), the authority on
+           price since the contract generator was frozen (#561). */
         .pricing__faq {
             margin-top: 64px;
             padding-top: 48px;
@@ -1827,6 +1882,9 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                             <span class="btn-primary__arrow">&rarr;</span>
                         </a>
                         <span class="hero__meta">Versiune 1.30.0 &bull; Windows 10/11 &bull; 14 zile gratuit</span>
+                        <p class="hero__price-note" data-price="intro">
+                            Din 16 octombrie 2026, prețul unei licențe crește la 599&nbsp;RON/an. <a href="#preturi">Vezi prețurile</a>
+                        </p>
                     </div>
                 </div>
                 <div class="hero__visual">
@@ -2243,9 +2301,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 <div class="pricing__card">
                     <div class="pricing__badge">Licență anuală</div>
                     <div class="pricing__amount">
-                        <span class="pricing__value">399</span>
+                        <span class="pricing__value" data-price="intro">399</span>
+                        <span class="pricing__value" data-price="standard">599</span>
                         <span class="pricing__period">RON / an</span>
                     </div>
+                    <p class="pricing__notice" data-price="intro">
+                        <strong>Din 16 octombrie 2026, prețul unei licențe crește la 599&nbsp;RON/an.</strong>
+                        Achiziționați o licență până pe 15 octombrie și păstrați prețul de 399&nbsp;RON/an la fiecare reînnoire, nu doar anul acesta.
+                    </p>
                     <div class="pricing__trial">14 zile gratuit, fără card bancar</div>
                     <div class="pricing__divider"></div>
                     <ul class="pricing__features">
@@ -2259,7 +2322,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                         </li>
                         <li>
                             <span class="pricing__check">&check;</span>
-                            Licență pe calculator, stații în plus 299 RON / an
+                            <span data-price="intro">Licență pe calculator, stații în plus 299&nbsp;RON&nbsp;/&nbsp;an (499 din 16&nbsp;octombrie)</span>
+                            <span data-price="standard">Licență pe calculator, stații în plus 499&nbsp;RON&nbsp;/&nbsp;an</span>
                         </li>
                         <li>
                             <span class="pricing__check">&check;</span>
@@ -2308,8 +2372,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     </div>
                     <div class="pricing__faq-item">
                         <h4>Mai multe stații de lucru</h4>
-                        <p>
-                            Dacă vreți să generați rapoarte de pe mai multe calculatoare, este nevoie de câte o licență pentru fiecare. Prima stație 399 RON pe an, fiecare stație în plus 299 RON pe an. Trei calculatoare înseamnă 997 RON pe an în loc de 1.197.
+                        <p data-price="intro">
+                            Dacă vreți să generați rapoarte de pe mai multe calculatoare, este nevoie de câte o licență pentru fiecare. Până pe 15 octombrie, prima stație costă 399&nbsp;RON pe an și fiecare stație în plus 299&nbsp;RON pe an, deci trei calculatoare înseamnă 997&nbsp;RON pe an în loc de 1.197. Din 16 octombrie, prima stație costă 599&nbsp;RON pe an și fiecare stație în plus 499&nbsp;RON pe an, adică 1.597&nbsp;RON pe an pentru trei calculatoare.
+                        </p>
+                        <p data-price="standard">
+                            Dacă vreți să generați rapoarte de pe mai multe calculatoare, este nevoie de câte o licență pentru fiecare. Prima stație 599&nbsp;RON pe an, fiecare stație în plus 499&nbsp;RON pe an. Trei calculatoare înseamnă 1.597&nbsp;RON pe an în loc de 1.797.
                         </p>
                     </div>
                     <div class="pricing__faq-item">
