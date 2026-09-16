@@ -1,7 +1,8 @@
 name: Track downloads
 
 # Refreshes the two counters the landing page shows as hero stats:
-#   metrics/downloads.* — cumulative GitHub Releases downloads
+#   metrics/downloads.* — cumulative installer downloads: GitHub Releases, frozen
+#                         when the buttons moved to /dl/, plus our server's since
 #   metrics/usage.*     — cumulative `report_run` events from PostHog
 # Both are kept as a CSV time series because neither source stores one for us:
 # the Releases API only exposes a running total, and PostHog's free-tier event
@@ -30,14 +31,60 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Verbatim from deploy.yml.
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/deploy_key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
       - name: Append today's total to the CSV
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          # GitHub Releases' download_count summed over every asset of every
+          # release, taken when the download buttons moved to /dl/ (#574), and
+          # deliberately never re-read. The SmartScreen fallback links still
+          # download from GitHub, typically right after a /dl/ download that was
+          # already counted below, so a live sum would count one visitor twice.
+          GITHUB_FROZEN_TOTAL: '778'
+          DL_LOG: /home/deployer/bulkreporter/dl-logs/downloads.log
         run: |
-          # Sum download_count across every asset of every release (all pages).
-          counts=$(gh api --paginate "repos/${{ github.repository }}/releases" \
-            --jq '.[].assets[].download_count')
-          total=$(printf '%s\n' "$counts" | awk '{ s += $1 } END { print s + 0 }')
+          # The server half: installer downloads in nginx's /dl/ log. The log is
+          # on the host beside dl/, outside the web root, and holds no IP address
+          # or user agent, one line per request:
+          #   2026-09-16T14:09:56+03:00 GET /dl/BulkReporter-Setup.exe 200 26184057
+          #
+          # What counts as a download: a GET answered 200 for an installer name.
+          #   HEAD  a link check, or publish-installer.yml's own probe
+          #   206   a resumed or ranged request for a download already counted
+          #   304   a browser revalidating, nothing transferred
+          # A download cancelled partway still logs 200 and still counts, as it
+          # did on GitHub, whose counter counts starts.
+          #
+          # Rotated copies are read too (zcat -f passes plain files through), but
+          # a copy rotated away is gone for good, so the log should not be rotated
+          # at all. It is small: only /dl/ requests go to it.
+          #
+          # Every failure keeps the last good number, like the report count below.
+          if ! log=$(ssh -i ~/.ssh/deploy_key -o UserKnownHostsFile=~/.ssh/known_hosts \
+                -o BatchMode=yes -o ConnectTimeout=20 "$TARGET" "zcat -f ${DL_LOG}*"); then
+            echo "::warning::Could not read ${DL_LOG} on the server; keeping the previous download count."
+            exit 0
+          fi
+          server=$(printf '%s\n' "$log" | awk '
+            $2 == "GET" && $4 == "200" && $3 ~ /^\/dl\/BulkReporter-Setup[-A-Za-z0-9.]*\.exe$/ { n++ }
+            END { print n + 0 }')
+          total=$(( GITHUB_FROZEN_TOTAL + server ))
+
+          # Both halves only ever grow, so a smaller total means a half went
+          # missing (the log truncated or rotated away). Never publish a drop.
+          previous=$(jq -r '.total // 0' metrics/downloads.json 2>/dev/null || echo 0)
+          if [ "$total" -lt "$previous" ]; then
+            echo "::warning::${total} downloads (${GITHUB_FROZEN_TOTAL} GitHub + ${server} server) is below the published ${previous}; keeping ${previous}. Was the log truncated or rotated?"
+            exit 0
+          fi
+          echo "Downloads: ${GITHUB_FROZEN_TOTAL} GitHub (frozen) + ${server} server = ${total}"
           today=$(date -u +%Y-%m-%d)
 
           file=metrics/downloads.csv
