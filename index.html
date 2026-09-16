@@ -1800,7 +1800,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 <a href="#cum-functioneaza" class="header__link">Cum funcționează</a>
                 <a href="#rapoarte" class="header__link">Rapoarte</a>
                 <a href="#preturi" class="header__link">Prețuri</a>
-                <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.30.0.exe" class="header__cta">Descarcă</a>
+                <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.30.0.exe" class="header__cta">Descarcă</a>
             </nav>
             <button class="header__toggle" aria-label="Meniu" onclick="document.getElementById('mainNav').classList.toggle('header__nav--mobile-open')">
                 <span></span>
@@ -1822,7 +1822,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                         Generați peste 25 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
                     </p>
                     <div class="hero__actions">
-                        <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.30.0.exe" class="btn-primary">
+                        <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.30.0.exe" class="btn-primary">
                             Descarcă gratuit
                             <span class="btn-primary__arrow">&rarr;</span>
                         </a>
@@ -2274,7 +2274,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                             Suport tehnic prin email
                         </li>
                     </ul>
-                    <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.30.0.exe" class="pricing__cta">
+                    <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.30.0.exe" class="pricing__cta">
                         Descarcă și testează gratuit
                     </a>
                 </div>
@@ -2328,7 +2328,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         <div class="container">
             <h2>Începeți astăzi</h2>
             <p>Descărcați aplicația, testați-o 14 zile gratuit și scurtați procesul de închidere de lună.</p>
-            <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.30.0.exe" class="btn-white">
+            <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.30.0.exe" class="btn-white">
                 Descarcă și testează gratuit
                 <span>&rarr;</span>
             </a>
@@ -2369,9 +2369,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <!-- Lightbox initialization: click any screenshot → full-resolution modal. -->
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
     <script>
-        GLightbox({ selector: '.glightbox', loop: true });
+        // Guarded: this block also registers the download click handler below.
+        // A CDN that fails to load (a firewall, an outage) would otherwise throw
+        // here and take the Lead event and the download attribution down with it.
+        if (window.GLightbox) GLightbox({ selector: '.glightbox', loop: true });
 
-        // Hero stats — total downloads (GitHub Releases) and total reports
+        // Hero stats — total downloads (GitHub Releases up to the move to /dl/,
+        // our own server's download log since) and total reports
         // generated (PostHog). Both are served same-origin from JSON that the
         // daily "Track downloads" workflow refreshes, so there is no
         // per-visitor third-party API call: no rate limits, and the numbers
@@ -2484,6 +2488,44 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             if (lastFired[key] && now - lastFired[key] < CLICK_WINDOW_MS) return false;
             lastFired[key] = now;
             return true;
+        }
+
+        // Download to install attribution (#554). The installer is served from
+        // this origin (/dl/), so the anchor's download attribute names the saved
+        // file; the installer reads "__tok-<token>" back out of its own name, and
+        // the app sends it on first_launch. The join is then one hop in PostHog:
+        // first_launch.attribution_token to download_click.download_token, whose
+        // event carries the utm_* / fbclid.
+        //
+        // Twelve base64url characters, 72 random bits. Short on purpose: the name
+        // is not hidden, it shows in the download bar and on the SmartScreen
+        // dialog, exactly where the visitor decides whether to trust the file.
+        // The installer accepts 8 to 128 characters of [A-Za-z0-9_-].
+        //
+        // The base name is the anchor's own download attribute, because
+        // release.yml rewrites every BulkReporter-Setup-X.Y.Z.exe on this page.
+        // A version assembled here in JS would never be bumped (#571).
+        //
+        // Called only once a tracker is loaded, i.e. after consent. Without
+        // consent there is no download_click to join to, and the static name
+        // stays as it is.
+        var TOKEN_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+        function nameDownload(a) {
+            try {
+                // Drop the previous click's token first. Appending a second would
+                // still parse, as ONE id "A__tok-B" that matches neither event, so
+                // the join would fail with every file and event looking fine.
+                var base = (a.getAttribute('download') || '').replace(/__tok-[A-Za-z0-9_-]*(?=\.exe$)/, '');
+                if (!/\.exe$/.test(base) || !window.crypto || !window.crypto.getRandomValues) return null;
+                var bytes = window.crypto.getRandomValues(new Uint8Array(12));
+                var token = '';
+                // 256 is a multiple of 64, so the low six bits are uniform.
+                for (var i = 0; i < bytes.length; i++) token += TOKEN_CHARS.charAt(bytes[i] & 63);
+                a.setAttribute('download', base.replace(/\.exe$/, '__tok-' + token + '.exe'));
+                return token;
+            } catch (e) {
+                return null;   // no token beats a wrong one; the download is untouched
+            }
         }
 
         // Modal plumbing shared by the two overlays near </body> — focus trap,
@@ -2610,7 +2652,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     }));
                     // Kept on every device: interest from a phone is real, it just
                     // is not a download. Segment it in PostHog with $device_type.
-                    if (window.posthog) posthog.capture('download_click', withAttribution({}));
+                    // A token only where a file is saved: the phone branch below
+                    // suppresses the download, so its token would join nothing.
+                    if (window.posthog) {
+                        var token = isDesktopPlatform() ? nameDownload(download) : null;
+                        posthog.capture('download_click', withAttribution(token ? { download_token: token } : {}));
+                    }
                 }
                 // Two different problems, so two different panels.
                 // Windows: additive only — the click is not prevented, the download
