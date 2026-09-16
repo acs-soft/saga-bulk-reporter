@@ -47,7 +47,7 @@ jobs:
           # deliberately never re-read. The SmartScreen fallback links still
           # download from GitHub, typically right after a /dl/ download that was
           # already counted below, so a live sum would count one visitor twice.
-          GITHUB_FROZEN_TOTAL: '776'
+          GITHUB_FROZEN_TOTAL: '778'
           DL_LOG: /home/deployer/bulkreporter/dl-logs/downloads.log
         run: |
           # The server half: installer downloads in nginx's /dl/ log. The log is
