@@ -97,7 +97,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
     <!-- Open Graph -->
     <meta property="og:title" content="14 zile de test gratuit">
-    <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 30 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
+    <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, 35 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bulkreporter.ro/">
     <!-- ?v= is a cache-buster, not a file. Facebook and X key their image
@@ -112,7 +112,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="14 zile de test gratuit">
-    <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 30 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
+    <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, 35 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
     <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=3">
 
     <title>Bulk Reporter | ACS Soft</title>
@@ -1819,7 +1819,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <h1 class="hero__title">Rapoarte bulk din Saga, multi-firmă, multi-lună, dintr-o singură rulare</h1>
                     <div class="divider divider--blue"></div>
                     <p class="hero__description">
-                        Generați peste 30 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
+                        Generați 35 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
                     </p>
                     <div class="hero__actions">
                         <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.30.0.exe" class="btn-primary">
@@ -1935,7 +1935,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 <div class="label">Catalog</div>
                 <h2>Rapoartele generate</h2>
                 <div class="divider divider--blue"></div>
-                <p>Toate rapoartele uzuale de închidere de lună, extrase identic pe oricâte firme și luni doriți.</p>
+                <p>Toate rapoartele uzuale de închidere de lună, extrase identic pe oricâte firme și luni doriți. Rapoartele marcate PFA sunt pentru firmele din Saga PS și formează un pachet separat.</p>
             </div>
             <div class="reports-grid">
                 <div class="report-card">
@@ -2186,9 +2186,41 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                         <p class="report-card__long">Raportul scris pentru client, nu pentru contabil, pe două pagini. Prima adună disponibilul în casă și în bancă, vânzările, încasările, plățile și fluxul de numerar, fiecare comparat cu perioada trecută, cifra de afaceri și profitul cumulate pe an cu grafic lunar, plus trei grafice de evoluție. A doua strânge clienții de încasat, furnizorii de plătit, cheltuielile perioadei și cardul de TVA. Ambele pagini poartă sigla cabinetului și pot fi despărțite fără să devină anonime, iar cardul de TVA apare doar la plătitorii de TVA.</p>
                     </details>
                 </div>
+                <div class="report-card">
+                    <div class="report-card__name">Registru de încasări și plăți (PFA)</div>
+                    <div class="report-card__detail">Registrul-jurnal de încasări și plăți al unui PFA, cu încasările și plățile separate pe numerar și bancă.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Registrul de bază al unui PFA în partidă simplă: data, numărul documentului, felul operațiunii, apoi încasările și plățile, fiecare pe numerar și pe bancă, cu total pe lună și total general. Este construit peste procedura din Saga PS, deci conține aceleași operațiuni pe care le tipărește Saga. Face parte din pachetul pentru PFA.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situație impozit (PFA)</div>
+                    <div class="report-card__detail">Venitul impozabil, cheltuielile deductibile și nedeductibile, venitul net și impozitul, pe categoriile din Saga PS.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Calculul impozitului pe venit pentru un PFA: venitul impozabil, cheltuielile deductibile, inclusiv amortizarea, cheltuielile de protocol și cele nedeductibile, apoi venitul net și impozitul. Cifrele sunt grupate pe categoriile pe care le folosește Saga PS. Se generează pe an sau pe orice perioadă aleasă, iar un an încheiat cu pierdere arată impozit zero. Face parte din pachetul pentru PFA.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situație detaliată impozit (PFA)</div>
+                    <div class="report-card__detail">Documentele din spatele cifrelor din Situația impozit, grupate pe categorii, cu total pe fiecare grupă.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Pentru fiecare cifră din Situația impozit, înregistrările care o compun: data, numărul documentului, explicația, sursa și suma, grupate pe categorii (cheltuieli deductibile, de protocol, nedeductibile și venituri), cu total pe fiecare grupă. Este raportul cu care verificați de unde vine impozitul. Face parte din pachetul pentru PFA.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Registru de evidență fiscală (PFA)</div>
+                    <div class="report-card__detail">Registrul de evidență fiscală pentru partidă simplă, completat din aceleași date ca Situația impozit.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Registrul de evidență fiscală al unui PFA, pe formularul pentru partidă simplă: cheltuielile deductibile, venitul și celelalte rânduri ale formularului, completate din aceleași date ca Situația impozit. Poartă același nume ca registrul firmelor plătitoare de impozit pe profit, dar este alt formular, cu altă sursă de date. Face parte din pachetul pentru PFA.</p>
+                    </details>
+                </div>
                 <div class="report-card" style="background-color: var(--gray-50);">
                     <div class="report-card__name">Format SAGA 3.x</div>
-                    <div class="report-card__detail">Toate rapoartele citite direct din baza Firebird a Saga 3.x.</div>
+                    <div class="report-card__detail">Toate rapoartele citite direct din bazele Firebird ale Saga 3.x, atât Saga C, cât și Saga PS.</div>
                 </div>
             </div>
         </div>
