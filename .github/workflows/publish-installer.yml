@@ -1,0 +1,207 @@
+name: Publish installer to /dl
+
+# Copies a release's installer onto the server, next to the site rather than
+# inside it, and points /dl/BulkReporter-Setup.exe at it. That unversioned URL is
+# what the download buttons in index.html link to (#554): serving the installer
+# from our own origin is the only reason the page's download="..." attribute can
+# name the saved file, and that name is what carries the attribution token into
+# the installer.
+#
+#   /home/deployer/bulkreporter/site/   deploy.yml's rsync target, wiped each deploy
+#   /home/deployer/bulkreporter/dl/     this workflow's, never deleted from
+#
+# The release is created in THIS repo by the app repo's release.yml, using
+# SITE_RELEASE_TOKEN. A release created with the default GITHUB_TOKEN would not
+# raise `release: published`; one created with that token should, but confirm it
+# on the first real release rather than assuming. workflow_dispatch is the
+# fallback, and it is also how the site is rolled back to an earlier version.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish, e.g. v1.30.0. Repoints the download to it, older or not.
+        required: true
+        type: string
+
+# Queue, never cancel: a cancelled run can stop between the copy and the repoint,
+# and two repoints must never interleave.
+concurrency:
+  group: publish-installer
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      # Read through env, never spliced into a script: a dispatch input is free text.
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      SITE: https://bulkreporter.ro
+      DL_DIR: /home/deployer/bulkreporter/dl
+    steps:
+      - name: Wait for the installer asset
+        id: asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # The whole string, not line by line as grep would: the name ends up
+          # inside a command run on the server.
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::'$TAG' is not a release tag (vX.Y.Z or vX.Y.Z-suffix)"
+            exit 1
+          fi
+          name="BulkReporter-Setup-${TAG#v}.exe"
+
+          # release.yml creates the release first and uploads the installer after,
+          # so this event can arrive before the file exists. An asset is also
+          # listed while it is still uploading, hence the state check.
+          meta=''
+          for attempt in $(seq 1 40); do
+            release=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG}" 2>/dev/null || true)
+            meta=$(printf '%s' "$release" | jq -c --arg n "$name" \
+              '. as $r | first(.assets[]? | select(.name == $n and .state == "uploaded"))
+                 | {size, digest, prerelease: $r.prerelease}' 2>/dev/null || true)
+            [ -n "$meta" ] && break
+            echo "Attempt ${attempt}/40: ${name} is not uploaded to ${TAG} yet"
+            sleep 15
+          done
+          if [ -z "$meta" ]; then
+            echo "::error::${name} was never uploaded to ${TAG}"
+            exit 1
+          fi
+
+          {
+            echo "name=${name}"
+            echo "size=$(printf '%s' "$meta" | jq -r .size)"
+            echo "digest=$(printf '%s' "$meta" | jq -r '.digest // empty')"
+            echo "prerelease=$(printf '%s' "$meta" | jq -r '.prerelease // false')"
+          } >> "$GITHUB_OUTPUT"
+          echo "Found ${name}: ${meta}"
+
+      - name: Download and verify it
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NAME: ${{ steps.asset.outputs.name }}
+          SIZE: ${{ steps.asset.outputs.size }}
+          DIGEST: ${{ steps.asset.outputs.digest }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "$NAME" --dir out
+          actual=$(stat -c %s "out/$NAME")
+          if [ "$actual" != "$SIZE" ]; then
+            echo "::error::${NAME} is ${actual} bytes, the release says ${SIZE}"
+            exit 1
+          fi
+          case "$DIGEST" in
+            sha256:*)
+              echo "${DIGEST#sha256:}  out/${NAME}" | sha256sum -c -
+              ;;
+            *)
+              echo "No sha256 digest on the asset; size check only."
+              ;;
+          esac
+
+      # Verbatim from deploy.yml.
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/deploy_key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Copy it into dl/
+        env:
+          NAME: ${{ steps.asset.outputs.name }}
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          set -euo pipefail
+          ssh_opts="-i $HOME/.ssh/deploy_key -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+
+          # dl/ is created by hand together with the nginx bind mount (#568). If it
+          # is missing, nginx is not serving it either, so stop here rather than
+          # let rsync create a directory nothing reads.
+          ssh $ssh_opts "$TARGET" "test -d '$DL_DIR'" || {
+            echo "::error::${DL_DIR} does not exist on the server; the nginx /dl/ location (#568) comes first"
+            exit 1
+          }
+
+          # ⚠️ No --delete, ever. Older versions stay: a download already in
+          # flight, or a link someone saved, still resolves to them. Replacing a
+          # file of the same name is safe as well, because rsync writes a temp
+          # file and renames it over the old one.
+          rsync -a --chmod=F644 -e "ssh $ssh_opts" "out/$NAME" "$TARGET:$DL_DIR/"
+
+      - name: Point BulkReporter-Setup.exe at it
+        # A prerelease raises `release: published` too. Its file is copied above,
+        # which is harmless, but the site's visitors must never be handed an RC.
+        if: steps.asset.outputs.prerelease != 'true'
+        env:
+          NAME: ${{ steps.asset.outputs.name }}
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          set -euo pipefail
+          # ⚠️ The link target is a bare file name, deliberately relative. nginx
+          # resolves it inside its container, where the host path
+          # /home/deployer/bulkreporter/dl does not exist, so an absolute link
+          # would 404 there while looking correct from an SSH session.
+          #
+          # Build the new link under a temp name, then rename it over the old
+          # one: rename is atomic, so the name always resolves to one version
+          # or the other. `ln -sfn` in place would unlink first and leave a gap.
+          ssh -i "$HOME/.ssh/deploy_key" -o UserKnownHostsFile="$HOME/.ssh/known_hosts" "$TARGET" "
+            set -e
+            cd '$DL_DIR'
+            test -s '$NAME'
+            echo \"was: \$(readlink BulkReporter-Setup.exe 2>/dev/null || echo '(none)')\"
+            ln -sfn '$NAME' BulkReporter-Setup.exe.tmp
+            mv -Tf BulkReporter-Setup.exe.tmp BulkReporter-Setup.exe
+            echo \"now: \$(readlink BulkReporter-Setup.exe)\"
+          "
+
+      - name: Check what visitors get
+        env:
+          NAME: ${{ steps.asset.outputs.name }}
+          SIZE: ${{ steps.asset.outputs.size }}
+          REPOINTED: ${{ steps.asset.outputs.prerelease != 'true' }}
+        run: |
+          set -euo pipefail
+          # Fetches headers only, from the live site, and fails the run on the
+          # two ways this breaks silently.
+          check() {
+            local url="$1" headers length
+            for attempt in 1 2 3 4 5 6; do
+              headers=$(curl -fsSI "$url" | tr -d '\r') || headers=''
+              length=$(printf '%s\n' "$headers" | awk -F': *' 'tolower($1) == "content-length" { print $2 }')
+              [ "$length" = "$SIZE" ] && break
+              # open_file_cache, if the server enables it, can keep serving the
+              # old link target for up to a minute.
+              echo "Attempt ${attempt}: ${url} has Content-Length '${length}', want ${SIZE}"
+              sleep 15
+            done
+            if [ "$length" != "$SIZE" ]; then
+              echo "::error::${url} does not serve ${NAME}"
+              printf '%s\n' "$headers"
+              exit 1
+            fi
+            # ⚠️ A Content-Disposition filename from the server overrides the
+            # page's download attribute. Every download would keep working and
+            # attribution would stop, with nothing else showing it.
+            if printf '%s\n' "$headers" | grep -qi '^content-disposition:'; then
+              echo "::error::${url} sends Content-Disposition, which silently kills download attribution (#568)"
+              exit 1
+            fi
+            echo "OK ${url}"
+            printf '%s\n' "$headers" | grep -i '^cache-control:' || echo "(no Cache-Control)"
+          }
+
+          check "${SITE}/dl/${NAME}"
+          if [ "$REPOINTED" = "true" ]; then
+            check "${SITE}/dl/BulkReporter-Setup.exe"
+          fi

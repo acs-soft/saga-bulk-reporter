@@ -1,5 +1,5 @@
 /* ============================================================
-   Saga Bulk Reporter — Facebook AD creatives (1080×1080)
+   Bulk Reporter — Facebook AD creatives (1080×1080)
    Three benefit-led ads, one job each, matrix-grid brand.
    Patterns borrowed from competitor Quick Importer:
    question hook → solution → free-trial CTA, and "→" flow.
@@ -75,7 +75,7 @@ function ad({ id, bg, theme, eyebrow, h1, flow }) {
     <div class="bg">${mark(markVar)}</div>
     <div class="sig">${mark(markVar)}</div>
     <div class="main">
-      <div class="lockup">${mark(markVar)}<b>Saga Bulk Reporter</b></div>
+      <div class="lockup">${mark(markVar)}<b>Bulk Reporter</b></div>
       <div class="eyebrow" style="margin-top:54px">${eyebrow}</div>
       <h1 style="margin-top:22px">${h1}</h1>
       <hr class="rule">

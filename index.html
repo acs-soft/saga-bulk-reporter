@@ -97,25 +97,25 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
     <!-- Open Graph -->
     <meta property="og:title" content="14 zile de test gratuit">
-    <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 25 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
+    <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, 35 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bulkreporter.ro/">
     <!-- ?v= is a cache-buster, not a file. Facebook and X key their image
          caches on this URL, so re-rendering og-image.png is invisible to them
          until the URL changes: a re-scrape refreshes the tags below but keeps
          serving the blob already fetched. Bump v on every reshoot of the card. -->
-    <meta property="og:image" content="https://bulkreporter.ro/images/og-image.png?v=2">
+    <meta property="og:image" content="https://bulkreporter.ro/images/og-image.png?v=4">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Saga Bulk Reporter: rapoarte bulk din Saga 3.x">
+    <meta property="og:image:alt" content="Bulk Reporter: rapoarte bulk din Saga 3.x">
 
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="14 zile de test gratuit">
-    <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, peste 25 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
-    <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=2">
+    <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, 35 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
+    <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=4">
 
-    <title>Saga Bulk Reporter | ACS Soft</title>
+    <title>Bulk Reporter | ACS Soft</title>
 
     <!-- Favicon — brand mark (white grid on #0066CC) -->
     <link rel="icon" href="/favicon.ico" sizes="any">
@@ -670,7 +670,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         .sinteza__doc {
             width: 100%;
             max-width: 440px;
-            aspect-ratio: 1648 / 1902;
+            aspect-ratio: 1684 / 2657;
             object-fit: contain;
             display: block;
             margin: 0 auto;
@@ -967,6 +967,41 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             margin-bottom: 0;
         }
 
+        /* Licensing FAQ (#412). The four questions asked most often before a
+           purchase, each answered by hand five times before it was written down
+           here. Deliberately plain visible text rather than a <details>
+           disclosure: these are the questions that decide the sale, so they
+           should not cost a click, and they are what people type into a search
+           engine. Every answer matches the signed contract (art. 5) and the
+           prices in the license manager (CommercialTerms), the authority on
+           price since the contract generator was frozen (#561). */
+        .pricing__faq {
+            margin-top: 64px;
+            padding-top: 48px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .pricing__faq h3 {
+            margin-bottom: 32px;
+        }
+
+        .pricing__faq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px 64px;
+        }
+
+        .pricing__faq-item h4 {
+            font-size: var(--text-base);
+            margin-bottom: 8px;
+        }
+
+        .pricing__faq-item p {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+
         /* ========================================
            CTA SECTION
            ======================================== */
@@ -1051,6 +1086,26 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             color: var(--gray-400);
         }
 
+        /* Affiliation disclaimer. Same quiet treatment as .footer__legal, but
+           prose rather than a chip row: it wraps, so it gets a reading width
+           instead of stretching the full container. The global reset zeroes
+           margins and the base p rule sets its own size and colour, so both
+           have to be restated here rather than inherited. */
+        .footer__disclaimer {
+            margin-top: 16px;
+            max-width: 780px;
+        }
+
+        .footer__disclaimer p {
+            font-size: var(--text-sm);
+            line-height: 1.6;
+            color: var(--gray-400);
+        }
+
+        .footer__disclaimer p + p {
+            margin-top: 8px;
+        }
+
         .footer__links {
             display: flex;
             gap: 24px;
@@ -1115,6 +1170,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
             .pricing__card {
                 max-width: 480px;
+            }
+
+            .pricing__faq-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
             }
 
             .section {
@@ -1734,14 +1794,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <header class="header">
         <div class="container header__inner">
             <div class="header__brand">
-                <a href="#" class="header__logo">Saga Bulk Reporter</a>
+                <a href="#" class="header__logo">Bulk Reporter</a>
                 <span class="header__company">ACS Soft</span>
             </div>
             <nav class="header__nav" id="mainNav">
                 <a href="#cum-functioneaza" class="header__link">Cum funcționează</a>
                 <a href="#rapoarte" class="header__link">Rapoarte</a>
                 <a href="#preturi" class="header__link">Prețuri</a>
-                <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.29.0.exe" class="header__cta">Descarcă</a>
+                <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.34.0.exe" class="header__cta">Descarcă</a>
             </nav>
             <button class="header__toggle" aria-label="Meniu" onclick="document.getElementById('mainNav').classList.toggle('header__nav--mobile-open')">
                 <span></span>
@@ -1760,23 +1820,23 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <h1 class="hero__title">Rapoarte bulk din Saga, multi-firmă, multi-lună, dintr-o singură rulare</h1>
                     <div class="divider divider--blue"></div>
                     <p class="hero__description">
-                        Generați peste 25 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
+                        Generați 35 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
                     </p>
                     <div class="hero__actions">
-                        <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.29.0.exe" class="btn-primary">
+                        <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.34.0.exe" class="btn-primary">
                             Descarcă gratuit
                             <span class="btn-primary__arrow">&rarr;</span>
                         </a>
-                        <span class="hero__meta">Versiune 1.29.0 &bull; Windows 10/11 &bull; 14 zile gratuit</span>
+                        <span class="hero__meta">Versiune 1.34.0 &bull; Windows 10/11 &bull; 14 zile gratuit</span>
                     </div>
                 </div>
                 <div class="hero__visual">
                     <a href="images/screenshot-1.png" class="glightbox" data-gallery="screenshots"
-                       data-title="Saga Bulk Reporter: interfața principală">
+                       data-title="Bulk Reporter: interfața principală">
                         <img
                             src="images/screenshot-1.webp"
                             fetchpriority="high"
-                            alt="Captura de ecran a aplicației Saga Bulk Reporter: interfața principală"
+                            alt="Captura de ecran a aplicației Bulk Reporter: interfața principală"
                             class="hero__screenshot"
                             onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
                         >
@@ -1834,15 +1894,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <div class="step__number">02</div>
                     <h4 class="step__title">Alegeți rapoartele și perioada</h4>
                     <p class="step__description">
-                        Bifați rapoartele dorite (balanțe, jurnal, registre etc.) și perioada: lună, trimestru sau semestru, într-un singur fișier sau fișiere lunare. Aplicația se ocupă de combinațiile firmă × perioadă × raport.
+                        Bifați rapoartele dorite (balanțe, jurnal, registre etc.) și perioada: lună, trimestru, semestru sau an, într-un singur fișier sau fișiere lunare. Aplicația se ocupă de combinațiile firmă × perioadă × raport.
                     </p>
                     <a href="images/screenshot-2.png" class="glightbox" data-gallery="screenshots"
-                       data-title="Pasul 2: Alegerea rapoartelor și a perioadei (lună, trimestru sau semestru)">
+                       data-title="Pasul 2: Alegerea rapoartelor și a perioadei (lună, trimestru, semestru sau an)">
                         <img
                             src="images/screenshot-2.webp"
                             loading="lazy"
                             decoding="async"
-                            alt="Pasul 2: Alegerea rapoartelor și a perioadei (lună, trimestru sau semestru)"
+                            alt="Pasul 2: Alegerea rapoartelor și a perioadei (lună, trimestru, semestru sau an)"
                             class="step__screenshot"
                             onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
                         >
@@ -1883,7 +1943,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 <div class="label">Catalog</div>
                 <h2>Rapoartele generate</h2>
                 <div class="divider divider--blue"></div>
-                <p>Toate rapoartele uzuale de închidere de lună, extrase identic pe oricâte firme și luni doriți.</p>
+                <p>Toate rapoartele uzuale de închidere de lună, extrase identic pe oricâte firme și luni doriți. Rapoartele marcate PFA sunt pentru firmele din Saga PS și formează un pachet separat. Sinteza Financiară Extinsă este un modul separat.</p>
             </div>
             <div class="reports-grid">
                 <div class="report-card">
@@ -1916,6 +1976,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
                         <p class="report-card__long">Aceleași operațiuni ca în registrul jurnal, dar cumulate pe perechi de conturi: cont debitor, denumirea lui, cont creditor, denumirea lui și suma rulată între ele. Câteva pagini în loc de câteva zeci, pentru o verificare rapidă a corespondențelor lunii.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Număr note contabile</div>
+                    <div class="report-card__detail">Câte note contabile și câte rânduri are registrul-jurnal, pe firmă și pe lună.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Raportul cu care verificați dintr-o privire dacă o lună este completă: numărul de note contabile și numărul de rânduri din registrul-jurnal, pentru fiecare firmă și fiecare lună din rulare, într-un singur tabel. Este util înainte de închidere, când căutați firma la care s-a lucrat mai puțin decât credeați.</p>
                     </details>
                 </div>
                 <div class="report-card">
@@ -1972,6 +2040,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
                         <p class="report-card__long">Operațiunile bancare pe fiecare cont curent, cu data, documentul, explicația, încasările, plățile și soldul curent. Conturile în valută primesc coloanele de valută, curs și sumă în valută, iar conturile închise sau blocate în Saga sunt semnalate.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situație diferențe de curs valutar</div>
+                    <div class="report-card__detail">Diferențele de curs înregistrate de Saga, cu cursul și suma în valută de pe fiecare rând.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Diferențele favorabile și nefavorabile așa cum le-a înregistrat Saga, nu recalculate de noi: contul, documentul, valuta, cursul folosit și suma în valută, alături de diferența în lei. Iese pe lună, pe trimestru, pe semestru sau pe an.</p>
                     </details>
                 </div>
                 <div class="report-card">
@@ -2047,11 +2123,35 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     </details>
                 </div>
                 <div class="report-card">
+                    <div class="report-card__name">Situația aprovizionărilor</div>
+                    <div class="report-card__detail">Intrările pe articol, cu cantitate și valoare, grupate pe gestiuni.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Toate intrările perioadei, desfășurate pe articol: cantitate, valoare și furnizor, grupate pe gestiuni, cu subtotal pe fiecare gestiune și total general. Spre deosebire de jurnalul de cumpărări, care conține numai documentele cu TVA, această listare cuprinde tot ce a intrat în gestiune.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situația vânzărilor</div>
+                    <div class="report-card__detail">Ieșirile pe articol, cu cantitate, valoare și adaos, grupate pe gestiuni.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Toate ieșirile perioadei, desfășurate pe articol: cantitate, valoare de vânzare, cost și adaosul rezultat, grupate pe gestiuni. Este listarea de căutat pentru arhivare sau pentru o evidență completă a mișcărilor: jurnalul de vânzări conține numai documentele cu TVA, deci avizele și notele contabile manuale nu apar în el, deși mișcă balanța.</p>
+                    </details>
+                </div>
+                <div class="report-card">
                     <div class="report-card__name">NIR-uri</div>
                     <div class="report-card__detail">Note de recepție și constatare de diferențe, câte un formular pe pagină, gata de semnat.</div>
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
                         <p class="report-card__long">Note de recepție și constatare de diferențe, câte un formular pe pagină, gata de semnat: antetul cu numărul, data, gestiunea și furnizorul, apoi articolele cu cod, denumire, unitate de măsură, cont, cantitate, preț unitar, valoare și TVA, cu spațiile de semnătură dedesubt.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Bon de consum</div>
+                    <div class="report-card__detail">Formular semnabil de bon de consum, unul pe pagină, din bonurile înregistrate în Saga.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Bonurile de consum din Saga, tipărite ca formulare, câte unul pe pagină, gata de semnat: gestiunea, tipul bonului, articolele cu cantitate și valoare, plus totalul. Iese în PDF pentru tipărire și în CSV, XLSX sau JSON dacă vă trebuie ca listă.</p>
                     </details>
                 </div>
                 <div class="report-card">
@@ -2088,15 +2188,55 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Sinteză financiară</div>
-                    <div class="report-card__detail">Raport vizual de o pagină pentru client, cu sigla cabinetului și un card de TVA (decont și sold 4423/4424) afișat doar la plătitorii de TVA.</div>
+                    <div class="report-card__detail">Raport vizual pe două pagini pentru client, cu sigla cabinetului și un card de TVA (decont și sold 4423/4424) afișat doar la plătitorii de TVA.</div>
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
-                        <p class="report-card__long">Raportul de o pagină scris pentru client, nu pentru contabil: vânzări, încasări, plăți, rezultat de casă și disponibil, fiecare comparat cu luna trecută, cifra de afaceri și profitul cumulate pe an cu grafic lunar, clienți de încasat și furnizori de plătit. Poartă sigla cabinetului, iar cardul de TVA apare doar la plătitorii de TVA.</p>
+                        <p class="report-card__long">Raportul scris pentru client, nu pentru contabil, pe două pagini. Prima adună disponibilul în casă și în bancă, vânzările, încasările, plățile și fluxul de numerar, fiecare comparat cu perioada trecută, cifra de afaceri și profitul cumulate pe an cu grafic lunar, plus trei grafice de evoluție. A doua strânge clienții de încasat, furnizorii de plătit, cheltuielile perioadei și cardul de TVA. Ambele pagini poartă sigla cabinetului și pot fi despărțite fără să devină anonime, iar cardul de TVA apare doar la plătitorii de TVA.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Sinteza Financiară Extinsă</div>
+                    <div class="report-card__detail">Modul separat: raport pentru client, de 10 pagini, pornit de la Sinteza financiară. Gratuit până la 31.12.2026 pentru toți clienții cu licență.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Pornește de la Sinteza financiară și adaugă poziția financiară, performanța pe ultimele 12 luni și față de anul trecut, cheltuielile pe categorii, bilanțul și indicatorii, dividendele, furnizorii de plătit pe scadențe, taxele datorate și scadențele lor, plus o anexă pe conturi. Se generează pentru firmele cu contabilitate în partidă dublă. Este gratuită până la 31.12.2026 inclusiv pentru toți clienții cu licență Bulk Reporter; după această dată se activează separat.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Registru de încasări și plăți (PFA)</div>
+                    <div class="report-card__detail">Registrul-jurnal de încasări și plăți al unui PFA, cu încasările și plățile separate pe numerar și bancă.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Registrul de bază al unui PFA în partidă simplă: data, numărul documentului, felul operațiunii, apoi încasările și plățile, fiecare pe numerar și pe bancă, cu total pe lună și total general. Este construit peste procedura din Saga PS, deci conține aceleași operațiuni pe care le tipărește Saga. Face parte din pachetul pentru PFA.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situație impozit (PFA)</div>
+                    <div class="report-card__detail">Venitul impozabil, cheltuielile deductibile și nedeductibile, venitul net și impozitul, pe categoriile din Saga PS.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Calculul impozitului pe venit pentru un PFA: venitul impozabil, cheltuielile deductibile, inclusiv amortizarea, cheltuielile de protocol și cele nedeductibile, apoi venitul net și impozitul. Cifrele sunt grupate pe categoriile pe care le folosește Saga PS. Se generează pe an sau pe orice perioadă aleasă, iar un an încheiat cu pierdere arată impozit zero. Face parte din pachetul pentru PFA.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situație detaliată impozit (PFA)</div>
+                    <div class="report-card__detail">Documentele din spatele cifrelor din Situația impozit, grupate pe categorii, cu total pe fiecare grupă.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Pentru fiecare cifră din Situația impozit, înregistrările care o compun: data, numărul documentului, explicația, sursa și suma, grupate pe categorii (cheltuieli deductibile, de protocol, nedeductibile și venituri), cu total pe fiecare grupă. Este raportul cu care verificați de unde vine impozitul. Face parte din pachetul pentru PFA.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Registru de evidență fiscală (PFA)</div>
+                    <div class="report-card__detail">Registrul de evidență fiscală pentru partidă simplă, completat din aceleași date ca Situația impozit.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Registrul de evidență fiscală al unui PFA, pe formularul pentru partidă simplă: cheltuielile deductibile, venitul și celelalte rânduri ale formularului, completate din aceleași date ca Situația impozit. Poartă același nume ca registrul firmelor plătitoare de impozit pe profit, dar este alt formular, cu altă sursă de date. Face parte din pachetul pentru PFA.</p>
                     </details>
                 </div>
                 <div class="report-card" style="background-color: var(--gray-50);">
                     <div class="report-card__name">Format SAGA 3.x</div>
-                    <div class="report-card__detail">Toate rapoartele citite direct din baza Firebird a Saga 3.x.</div>
+                    <div class="report-card__detail">Toate rapoartele citite direct din bazele Firebird ale Saga 3.x, atât Saga C, cât și Saga PS.</div>
                 </div>
             </div>
         </div>
@@ -2114,11 +2254,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <div class="sinteza__grid">
                 <div class="sinteza__text">
                     <p>
-                        O pagină pe care o trimiteți mai departe fără să o mai prelucrați: cifrele lunii,
-                        explicate în română, cu sigla cabinetului dumneavoastră în antet.
+                        Două pagini pe care le trimiteți mai departe fără să le mai prelucrați: cifrele lunii,
+                        explicate în română, cu sigla cabinetului dumneavoastră pe fiecare pagină.
                     </p>
                     <ul class="sinteza__list">
-                        <li>Vânzări, încasări, plăți, rezultat de casă și disponibil, fiecare cu evoluția față de luna trecută.</li>
+                        <li>Disponibilul în casă și în bancă, vânzări, încasări, plăți și fluxul de numerar, fiecare cu evoluția față de perioada anterioară.</li>
                         <li>Cifra de afaceri și profitul cumulate pe an, cu grafic lunar și linia de marjă.</li>
                         <li>Clienți de încasat, furnizori de plătit și cheltuielile lunii.</li>
                         <li>Card de TVA (decont și sold 4423/4424), afișat doar la plătitorii de TVA.</li>
@@ -2126,12 +2266,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     </ul>
                 </div>
                 <a href="images/screenshot-4-sinteza.png" class="glightbox" data-gallery="screenshots"
-                   data-title="Sinteza financiară: raportul de o pagină pentru client">
+                   data-title="Sinteza financiară: raportul pentru client">
                     <img
                         src="images/screenshot-4-sinteza.webp"
                         loading="lazy"
                         decoding="async"
-                        alt="Sinteza financiară: raport de o pagină pentru client, cu indicatorii lunii, grafice de evoluție și cardul de TVA"
+                        alt="Sinteza financiară, raport pe două pagini pentru client: indicatorii lunii și graficele de evoluție, apoi clienții, furnizorii, cheltuielile și cardul de TVA"
                         class="sinteza__doc"
                         onerror="this.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"
                     >
@@ -2155,7 +2295,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <div class="features-grid">
                 <div class="feature">
                     <h4 class="feature__title">Multi-firmă, multi-lună</h4>
-                    <p class="feature__description">O singură rulare acoperă orice combinație de firme × luni × tipuri de raport. Nu mai exportați manual.</p>
+                    <p class="feature__description">O singură rulare acoperă orice combinație de firme × luni × tipuri de raport, din Saga C și Saga PS deodată. Nu mai exportați manual.</p>
                 </div>
                 <div class="feature">
                     <h4 class="feature__title">Patru formate de export</h4>
@@ -2167,7 +2307,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 </div>
                 <div class="feature">
                     <h4 class="feature__title">Organizare automată</h4>
-                    <p class="feature__description">Fișierele sunt salvate într-o structură consistentă: &lt;firmă&gt;\&lt;an&gt;\&lt;lună&gt;\&lt;raport&gt;.</p>
+                    <p class="feature__description">Fișierele sunt salvate într-o structură consistentă: &lt;firmă&gt;\&lt;an&gt;\&lt;lună&gt;\&lt;raport&gt;. Fiecare firmă poate avea și folderul ei, inclusiv un folder sincronizat cu clientul.</p>
                 </div>
                 <div class="feature">
                     <h4 class="feature__title">Fără conexiune internet</h4>
@@ -2193,7 +2333,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 <div class="pricing__card">
                     <div class="pricing__badge">Licență anuală</div>
                     <div class="pricing__amount">
-                        <span class="pricing__value">399</span>
+                        <span class="pricing__value">599</span>
                         <span class="pricing__period">RON / an</span>
                     </div>
                     <div class="pricing__trial">14 zile gratuit, fără card bancar</div>
@@ -2201,11 +2341,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <ul class="pricing__features">
                         <li>
                             <span class="pricing__check">&check;</span>
-                            Toate rapoartele incluse
+                            Toate rapoartele pentru Saga C incluse
                         </li>
                         <li>
                             <span class="pricing__check">&check;</span>
                             Firme și luni nelimitate
+                        </li>
+                        <li>
+                            <span class="pricing__check">&check;</span>
+                            Licență pe calculator, stații în plus 499&nbsp;RON&nbsp;/&nbsp;an
                         </li>
                         <li>
                             <span class="pricing__check">&check;</span>
@@ -2220,7 +2364,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                             Suport tehnic prin email
                         </li>
                     </ul>
-                    <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.29.0.exe" class="pricing__cta">
+                    <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.34.0.exe" class="pricing__cta">
                         Descarcă și testează gratuit
                     </a>
                 </div>
@@ -2237,6 +2381,35 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     </p>
                 </div>
             </div>
+            <div class="pricing__faq">
+                <h3>Întrebări despre licențiere</h3>
+                <div class="pricing__faq-grid">
+                    <div class="pricing__faq-item">
+                        <h4>Licența este pe calculator, nu pe firmă</h4>
+                        <p>
+                            O licență acoperă un număr nelimitat de societăți și de luni, indiferent câte firme aveți în portofoliu. Pe aceeași adresă de email se pot emite oricâte chei.
+                        </p>
+                    </div>
+                    <div class="pricing__faq-item">
+                        <h4>Lucrați în rețea, cu Saga pe un server?</h4>
+                        <p>
+                            Licența se activează pe calculatorul pe care instalați aplicația, nu pe serverul Saga, iar serverul în sine nu are nevoie de licență. Dacă rapoartele le generează o singură persoană, de pe un singur calculator, o singură licență este suficientă: aplicația se conectează prin rețea la baza de date de pe server și vede toate societățile, exact ca programul Saga.
+                        </p>
+                    </div>
+                    <div class="pricing__faq-item">
+                        <h4>Mai multe stații de lucru</h4>
+                        <p>
+                            Dacă vreți să generați rapoarte de pe mai multe calculatoare, este nevoie de câte o licență pentru fiecare. Prima stație 599&nbsp;RON pe an, fiecare stație în plus 499&nbsp;RON pe an. Trei calculatoare înseamnă 1.597&nbsp;RON pe an în loc de 1.797.
+                        </p>
+                    </div>
+                    <div class="pricing__faq-item">
+                        <h4>Schimbați calculatorul sau reinstalați Windows?</h4>
+                        <p>
+                            Cheia veche nu mai este valabilă, pentru că se schimbă amprenta calculatorului. Emitem gratuit o cheie nouă pentru perioada rămasă din licență, în maximum 3 zile lucrătoare de la solicitare. Ne scrieți pe email cu noul ID de mașină din aplicație.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -2245,11 +2418,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         <div class="container">
             <h2>Începeți astăzi</h2>
             <p>Descărcați aplicația, testați-o 14 zile gratuit și scurtați procesul de închidere de lună.</p>
-            <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.29.0.exe" class="btn-white">
+            <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.34.0.exe" class="btn-white">
                 Descarcă și testează gratuit
                 <span>&rarr;</span>
             </a>
-            <div class="hero__meta" style="margin-top: 16px;">Versiune 1.29.0 &bull; Windows 10/11 &bull; 14 zile gratuit</div>
+            <div class="hero__meta" style="margin-top: 16px;">Versiune 1.34.0 &bull; Windows 10/11 &bull; 14 zile gratuit</div>
         </div>
     </section>
 
@@ -2271,14 +2444,28 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <span>Nr. Reg. Com. J2024011763404</span>
             <span>Sediul social: Str. Sg. Constantin Moise nr. 5D, bl. 2, sc. 2, ap. B5, sector 6, București</span>
         </div>
+        <!-- SAGA affiliation disclaimer. Copied VERBATIM from ProductDisclaimer
+             in the app repo (Core/ProductDisclaimer.cs, #316) — the About
+             dialog, the installer and the licence contract carry the same
+             claims, and the point of the disclaimer is that it reads as one
+             considered statement rather than per-surface boilerplate. If the
+             constant is reworded, re-copy it; do not edit this in place. -->
+        <div class="container footer__disclaimer">
+            <p>Bulk Reporter este un produs independent, dezvoltat de ACS SOFT CONSULT SRL. Nu suntem afiliați, asociați, autorizați sau sponsorizați de SAGA Software SRL și nu avem nicio legătură comercială cu aceasta.</p>
+            <p>SAGA este marcă înregistrată a SAGA Software SRL. Denumirea este folosită aici exclusiv în scop descriptiv, pentru a indica programul cu care aplicația este compatibilă.</p>
+        </div>
     </footer>
 
     <!-- Lightbox initialization: click any screenshot → full-resolution modal. -->
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
     <script>
-        GLightbox({ selector: '.glightbox', loop: true });
+        // Guarded: this block also registers the download click handler below.
+        // A CDN that fails to load (a firewall, an outage) would otherwise throw
+        // here and take the Lead event and the download attribution down with it.
+        if (window.GLightbox) GLightbox({ selector: '.glightbox', loop: true });
 
-        // Hero stats — total downloads (GitHub Releases) and total reports
+        // Hero stats — total downloads (GitHub Releases up to the move to /dl/,
+        // our own server's download log since) and total reports
         // generated (PostHog). Both are served same-origin from JSON that the
         // daily "Track downloads" workflow refreshes, so there is no
         // per-visitor third-party API call: no rate limits, and the numbers
@@ -2393,6 +2580,44 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             return true;
         }
 
+        // Download to install attribution (#554). The installer is served from
+        // this origin (/dl/), so the anchor's download attribute names the saved
+        // file; the installer reads "__tok-<token>" back out of its own name, and
+        // the app sends it on first_launch. The join is then one hop in PostHog:
+        // first_launch.attribution_token to download_click.download_token, whose
+        // event carries the utm_* / fbclid.
+        //
+        // Twelve base64url characters, 72 random bits. Short on purpose: the name
+        // is not hidden, it shows in the download bar and on the SmartScreen
+        // dialog, exactly where the visitor decides whether to trust the file.
+        // The installer accepts 8 to 128 characters of [A-Za-z0-9_-].
+        //
+        // The base name is the anchor's own download attribute, because
+        // release.yml rewrites every BulkReporter-Setup-X.Y.Z.exe on this page.
+        // A version assembled here in JS would never be bumped (#571).
+        //
+        // Called only once a tracker is loaded, i.e. after consent. Without
+        // consent there is no download_click to join to, and the static name
+        // stays as it is.
+        var TOKEN_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+        function nameDownload(a) {
+            try {
+                // Drop the previous click's token first. Appending a second would
+                // still parse, as ONE id "A__tok-B" that matches neither event, so
+                // the join would fail with every file and event looking fine.
+                var base = (a.getAttribute('download') || '').replace(/__tok-[A-Za-z0-9_-]*(?=\.exe$)/, '');
+                if (!/\.exe$/.test(base) || !window.crypto || !window.crypto.getRandomValues) return null;
+                var bytes = window.crypto.getRandomValues(new Uint8Array(12));
+                var token = '';
+                // 256 is a multiple of 64, so the low six bits are uniform.
+                for (var i = 0; i < bytes.length; i++) token += TOKEN_CHARS.charAt(bytes[i] & 63);
+                a.setAttribute('download', base.replace(/\.exe$/, '__tok-' + token + '.exe'));
+                return token;
+            } catch (e) {
+                return null;   // no token beats a wrong one; the download is untouched
+            }
+        }
+
         // Modal plumbing shared by the two overlays near </body> — focus trap,
         // Escape, scroll lock, backdrop close. It lives here, not inside either
         // of them, because the SmartScreen guide is deleted when the installer
@@ -2461,7 +2686,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         // load together on consent, so neither fires before Accept.
         document.addEventListener('click', function (e) {
             if (!e.target.closest) return;
-            var download = e.target.closest('a[href*="SagaBulkReporter-Setup"]');
+            // Matches BOTH the old and the new installer filename, deliberately.
+            // "BulkReporter-Setup" is a substring of "SagaBulkReporter-Setup", so
+            // shortening the selector widens it — the reverse of the rename, which
+            // is why this string and not the full new filename. Lead is the
+            // campaign's optimisation event and this selector is the only thing
+            // that fires it, so it must not depend on when release.yml rewrites the
+            // hrefs below: a selector that stopped matching would break nothing
+            // visible, 404 nothing, and simply drive conversions to zero (#332).
+            var download = e.target.closest('a[href*="BulkReporter-Setup"]');
             var mail = download ? null : e.target.closest('a[href^="mailto:"]');
             if (download) {
                 // The retry link inside the SmartScreen guide points at the same
@@ -2484,6 +2717,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     // not, so reporting a conversion trains Meta's delivery toward
                     // an audience that cannot convert — and it was 66% of all Lead
                     // events, which is why the campaign kept skewing further mobile.
+                    // The content_name / content_id values below deliberately keep
+                    // the OLD string, and are the one place in this file that does.
+                    // They are identifiers sent to Meta and TikTok, never rendered
+                    // to a visitor, so they are not a trademark surface — and
+                    // renaming them re-keys the conversion, splitting its
+                    // optimisation history in two while the reel and TikTok ads are
+                    // still learning. Decided 2026-08-19 (#332); revisit once the
+                    // campaign is out of its learning phase, not before.
                     if (window.fbq && isDesktopPlatform()) fbq('track', 'Lead', withAttribution({
                         content_name: 'SagaBulkReporter-Setup',
                         content_category: 'installer-download'
@@ -2501,7 +2742,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     }));
                     // Kept on every device: interest from a phone is real, it just
                     // is not a download. Segment it in PostHog with $device_type.
-                    if (window.posthog) posthog.capture('download_click', withAttribution({}));
+                    // A token only where a file is saved: the phone branch below
+                    // suppresses the download, so its token would join nothing.
+                    if (window.posthog) {
+                        var token = isDesktopPlatform() ? nameDownload(download) : null;
+                        posthog.capture('download_click', withAttribution(token ? { download_token: token } : {}));
+                    }
                 }
                 // Two different problems, so two different panels.
                 // Windows: additive only — the click is not prevented, the download
@@ -2568,7 +2814,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 vă avertizează. Mai jos aveți pașii prin care îl deschideți în siguranță.
                 <br>
                 Dacă descărcarea nu a pornit,
-                <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.29.0.exe" data-fallback-download>apăsați aici</a>.
+                <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.34.0.exe" data-fallback-download>apăsați aici</a>.
             </p>
 
             <ol class="ss__steps">
@@ -2582,7 +2828,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                             meniul <b>&hellip;</b> din dreptul fișierului.
                         </p>
                         <div class="ss__mock">
-                            <div class="ss__mock-file">SagaBulkReporter-Setup-1.29.0.exe</div>
+                            <div class="ss__mock-file">BulkReporter-Setup-1.34.0.exe</div>
                             <div class="ss__mock-text">Fișierul nu este descărcat frecvent și poate fi periculos.</div>
                             <div class="ss__mock-actions">
                                 <span class="ss__mock-btn">Renunțare</span>
@@ -2625,7 +2871,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                         <div class="ss__mock">
                             <div class="ss__mock-title">Windows v-a protejat computerul</div>
                             <div class="ss__mock-text">
-                                Aplicație: <span class="ss__mock-file">SagaBulkReporter-Setup-1.29.0.exe</span><br>
+                                Aplicație: <span class="ss__mock-file">BulkReporter-Setup-1.34.0.exe</span><br>
                                 Editor: Editor necunoscut
                             </div>
                             <div class="ss__mock-actions">
@@ -2642,7 +2888,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 <ul class="ss__list">
                     <li><b>Nu este un virus.</b> Windows avertizează pentru orice program nou care nu are încă un certificat de semnare, nu pentru că ar fi găsit ceva în fișier.</li>
                     <li><b>Datele rămân la dumneavoastră.</b> Aplicația citește bazele Saga local, de pe calculatorul dumneavoastră. Nimic nu se încarcă în cloud.</li>
-                    <li><b>Descărcarea vine direct de la sursă</b>, de pe GitHub, din pagina oficială de versiuni a aplicației.</li>
+                    <li><b>Descărcarea vine direct de la sursă</b>, de pe bulkreporter.ro. Fiecare versiune este publicată și pe GitHub, în pagina oficială de versiuni a aplicației.</li>
                 </ul>
             </div>
 
@@ -2701,7 +2947,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <div class="label">Descărcare</div>
             <h2 class="ovl__title" id="db-title">Aplicația se instalează pe un calculator cu Windows</h2>
             <p class="ovl__lede">
-                Saga Bulk Reporter citește bazele de date Saga 3.x direct de pe calculatorul
+                Bulk Reporter citește bazele de date Saga 3.x direct de pe calculatorul
                 pe care rulează, așa că nu poate fi instalată pe telefon sau tabletă.
                 Trimiteți-vă linkul acum, ca să îl aveți la îndemână când ajungeți la birou.
             </p>
@@ -2711,7 +2957,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                      that would do nothing. -->
                 <button class="btn-primary" type="button" id="db-share" hidden>Trimite pe alt dispozitiv</button>
                 <button class="ovl__ghost" type="button" id="db-copy">Copiază linkul</button>
-                <a class="ovl__ghost" href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/SagaBulkReporter-Setup-1.29.0.exe" data-fallback-download>Descarcă totuși</a>
+                <a class="ovl__ghost" href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.34.0.exe" data-fallback-download>Descarcă totuși</a>
             </div>
         </div>
     </div>
@@ -2795,7 +3041,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             if (shareBtn) shareBtn.addEventListener('click', function () {
                 lockBriefly(shareBtn);
                 navigator.share({
-                    title: 'Saga Bulk Reporter',
+                    title: 'Bulk Reporter',
                     text: 'Rapoarte Saga pentru tot portofoliul de firme, dintr-o singură rulare.',
                     url: window.location.href
                 }).then(function () {
