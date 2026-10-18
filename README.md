@@ -13,7 +13,7 @@ Edit `index.html` in place and push to `main`. The `Deploy to server` workflow (
 
 The "Versiune X.Y.Z" strings and every versioned `BulkReporter-Setup-X.Y.Z.exe` reference (the `download` attributes and the GitHub fallback links) are auto-updated by the app repo's release workflow on every non-prerelease tag, in a commit it pushes to `main` at the end of the run. Don't hand-edit them during a release cycle, and don't merge to `main` while that run is going, or its push is rejected.
 
-The report count is exact ("35 de rapoarte" in the hero and both meta descriptions) and so is the report catalogue: adding a report to the app means a new card here and a new count, in the same change as the app repo's `release.yml`.
+The report count is exact ("36 de rapoarte" in the hero and both meta descriptions) and so is the report catalogue: adding a report to the app means a new card here and a new count, in the same change as the app repo's `release.yml`.
 
 ## Screenshots
 
