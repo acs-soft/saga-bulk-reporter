@@ -1360,7 +1360,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         /* ===== Modal overlay shell =====
            Shared chrome for the two overlays near </body>: the SmartScreen guide
            and the send-to-device bridge. Deliberately a separate section — the
-           guide is deleted once the installer is signed, and the bridge is the
+           guide is deleted once SmartScreen stops warning, and the bridge is the
            only handoff a phone gets, so it has to outlive that deletion. Anything
            reusable belongs here; the guide's own rules stay in its own section. */
         .ovl {
@@ -1506,7 +1506,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
            NOT prevented — the installer download starts exactly as before and the
            existing download_click / Lead events fire unchanged. The guide is
            purely additive; see the handler near </body>.
-           DELETE THIS SECTION once the installer is Authenticode-signed. It is
+           DELETE THIS SECTION once SmartScreen no longer warns (app #80). It is
            self-contained: nothing outside it uses .ss__*. */
         .ss__steps {
             margin-top: 22px;
@@ -1690,7 +1690,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
            link 46 times in 17 seconds because nothing happened.
 
            Two parts, deliberately independent of the SmartScreen guide — that
-           guide is temporary and gets deleted when the installer is signed, and
+           guide is temporary and gets deleted when SmartScreen stops warning, and
            the feedback must not leave with it:
              .is-busy  — the clicked control dims and stops taking pointer events
                          for a moment, so a reflex second click cannot land.
@@ -2566,8 +2566,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         // started from one is never a real conversion. Single source of truth:
         // the SmartScreen guide picks its variant from this, and the handler
         // below decides from this whether Meta hears about the click.
-        // Deliberately NOT derived from the guide — the guide is deleted when the
-        // installer is signed, and this check has to outlive it.
+        // Deliberately NOT derived from the guide — the guide is deleted when
+        // SmartScreen stops warning, and this check has to outlive it.
         function isDesktopPlatform() {
             return !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         }
@@ -2628,8 +2628,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
         // Modal plumbing shared by the two overlays near </body> — focus trap,
         // Escape, scroll lock, backdrop close. It lives here, not inside either
-        // of them, because the SmartScreen guide is deleted when the installer
-        // is signed and the send-to-device bridge must keep working afterwards.
+        // of them, because the SmartScreen guide is deleted when SmartScreen stops
+        // warning and the send-to-device bridge must keep working afterwards.
         // Anything specific to one panel goes in that panel's hooks.
         function createOverlay(id, hooks) {
             var root = document.getElementById(id);
@@ -2807,9 +2807,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     </script>
 
     <!-- SmartScreen guide — opened by the download click handler above. Windows
-         SmartScreen blocks unsigned installers, and the warning is where most
-         downloads are abandoned; this explains it before the user meets it.
-         Delete this block once the installer is Authenticode-signed. -->
+         SmartScreen blocks installers it has no reputation for, and the warning is
+         where most downloads are abandoned; this explains it before the user meets it.
+         Since v1.36.0 the installer is Authenticode-signed (ACS SOFT CONSULT SRL, app
+         #80), but a new certificate still gets the block until signed downloads build
+         reputation. Delete this block once the warning no longer appears on a clean
+         machine for a browser download (removal steps: app issue #80). -->
     <div id="ss-guide" class="ovl" hidden>
         <div class="ovl__backdrop" data-ovl-close></div>
         <div class="ovl__panel" role="dialog" aria-modal="true" aria-labelledby="ss-title" tabindex="-1">
@@ -2818,8 +2821,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <div class="label">Descărcarea a început</div>
             <h2 class="ovl__title" id="ss-title">Windows va afișa un avertisment. Este normal.</h2>
             <p class="ovl__lede">
-                Instalatorul nu este încă semnat digital, așa că Windows nu îl recunoaște și
-                vă avertizează. Mai jos aveți pașii prin care îl deschideți în siguranță.
+                Kitul de instalare este semnat digital de ACS SOFT CONSULT SRL, dar Windows încă nu
+                îl recunoaște și vă avertizează. Mai jos aveți pașii prin care îl deschideți în siguranță.
                 <br>
                 Dacă descărcarea nu a pornit,
                 <a href="https://github.com/acs-soft/saga-bulk-reporter/releases/latest/download/BulkReporter-Setup-1.36.0.exe" data-fallback-download>apăsați aici</a>.
@@ -2876,11 +2879,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                             După primul pas apare un buton nou, jos în aceeași fereastră:
                             <b>Executați oricum</b> <i>(Run anyway)</i>. Instalarea pornește normal.
                         </p>
+                        <p>
+                            Dacă la „Editor” nu scrie ACS SOFT CONSULT SRL, nu instalați fișierul.
+                        </p>
                         <div class="ss__mock">
                             <div class="ss__mock-title">Windows v-a protejat computerul</div>
                             <div class="ss__mock-text">
                                 Aplicație: <span class="ss__mock-file">BulkReporter-Setup-1.36.0.exe</span><br>
-                                Editor: Editor necunoscut
+                                Editor: ACS SOFT CONSULT SRL
                             </div>
                             <div class="ss__mock-actions">
                                 <span class="ss__mock-btn is-target">Executați oricum</span>
@@ -2894,7 +2900,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <div class="ss__block">
                 <h3>De ce apare avertismentul</h3>
                 <ul class="ss__list">
-                    <li><b>Nu este un virus.</b> Windows avertizează pentru orice program nou care nu are încă un certificat de semnare, nu pentru că ar fi găsit ceva în fișier.</li>
+                    <li><b>Nu este un virus.</b> Kitul de instalare este semnat digital de ACS SOFT CONSULT SRL, numele pe care îl vedeți la „Editor”. Windows avertizează totuși pentru orice program nou, până când acesta este descărcat de suficient de multe ori; avertismentul nu înseamnă că s-a găsit ceva în fișier.</li>
                     <li><b>Datele rămân la dumneavoastră.</b> Aplicația citește bazele Saga local, de pe calculatorul dumneavoastră. Nimic nu se încarcă în cloud; rapoartele pleacă pe e-mail doar când le trimiteți dumneavoastră, prin serverul de e-mail al cabinetului.</li>
                     <li><b>Descărcarea vine direct de la sursă</b>, de pe bulkreporter.ro. Fiecare versiune este publicată și pe GitHub, în pagina oficială de versiuni a aplicației.</li>
                 </ul>
