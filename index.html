@@ -97,14 +97,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
     <!-- Open Graph -->
     <meta property="og:title" content="14 zile de test gratuit">
-    <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, 36 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
+    <meta property="og:description" content="Generator de rapoarte bulk pentru Saga 3.x, 38 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bulkreporter.ro/">
     <!-- ?v= is a cache-buster, not a file. Facebook and X key their image
          caches on this URL, so re-rendering og-image.png is invisible to them
          until the URL changes: a re-scrape refreshes the tags below but keeps
          serving the blob already fetched. Bump v on every reshoot of the card. -->
-    <meta property="og:image" content="https://bulkreporter.ro/images/og-image.png?v=5">
+    <meta property="og:image" content="https://bulkreporter.ro/images/og-image.png?v=6">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Bulk Reporter: rapoarte bulk din Saga 3.x">
@@ -112,8 +112,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="14 zile de test gratuit">
-    <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, 36 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
-    <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=5">
+    <meta name="twitter:description" content="Generator de rapoarte bulk pentru Saga 3.x, 38 de rapoarte, multi-firmă, multi-lună, dintr-o singură rulare.">
+    <meta name="twitter:image" content="https://bulkreporter.ro/images/og-image.png?v=6">
 
     <title>Bulk Reporter | ACS Soft</title>
 
@@ -1820,7 +1820,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <h1 class="hero__title">Rapoarte bulk din Saga, multi-firmă, multi-lună, dintr-o singură rulare</h1>
                     <div class="divider divider--blue"></div>
                     <p class="hero__description">
-                        Generați 36 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
+                        Generați 38 de rapoarte contabile (balanțe, jurnal, registru de casă/bancă și mai multe) direct din bazele de date Saga 3.x, pentru zeci de firme și luni odată, în CSV, JSON, XLSX sau PDF.
                     </p>
                     <div class="hero__actions">
                         <a href="/dl/BulkReporter-Setup.exe" download="BulkReporter-Setup-1.37.0.exe" class="btn-primary">
@@ -2075,6 +2075,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     </details>
                 </div>
                 <div class="report-card">
+                    <div class="report-card__name">Stat de plată &ndash; alte categorii</div>
+                    <div class="report-card__detail">Al doilea stat de plată din Saga: colaboratorii, contractele de administrare și celelalte venituri asimilate salariilor.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Statul de plată al lunii pentru persoanele care nu sunt salariați permanenți, dar au venituri asimilate salariilor: „Colaborator”, „Contract administrare” și „Alte categorii (asimilate sal)”, ca statul „alte categorii” din Saga. Are același formular ca statul salariaților permanenți, cu un rând pe persoană și o coloană de semnătură, iar contribuția societății (CAM) este calculată pe baza acestor persoane. Un administrator plătit pe contract de administrare apare aici, nu pe statul salariaților. Merge și pentru firmele din Saga PS.</p>
+                    </details>
+                </div>
+                <div class="report-card">
                     <div class="report-card__name">Centralizator salarii</div>
                     <div class="report-card__detail">Câte un rând pe salariat: venit brut realizat, CAS, CASS, impozit, net, avans și rest de plată, cu total pe firmă și contribuțiile societății (CAM).</div>
                     <details class="report-card__more">
@@ -2144,6 +2152,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
                         <p class="report-card__long">Toate ieșirile perioadei, desfășurate pe articol: cantitate, valoare de vânzare, cost și adaosul rezultat, grupate pe gestiuni. Este listarea de căutat pentru arhivare sau pentru o evidență completă a mișcărilor: jurnalul de vânzări conține numai documentele cu TVA, deci avizele și notele contabile manuale nu apar în el, deși mișcă balanța.</p>
+                    </details>
+                </div>
+                <div class="report-card">
+                    <div class="report-card__name">Situația stocurilor</div>
+                    <div class="report-card__detail">Pe fiecare articol, cantitativ și valoric: stoc inițial, intrări, ieșiri și stoc final, grupate pe gestiuni.</div>
+                    <details class="report-card__more">
+                        <summary>Mai multe</summary>
+                        <p class="report-card__long">Pentru fiecare gestiune și fiecare articol: stoc inițial, cantitate intrată, cantitate ieșită și stoc final, apoi aceleași mișcări în valoare, la cost: sold inițial, valoare intrată, valoare ieșită și sold final, cu subtotal pe fiecare gestiune și total general. Cifrele urmează „Situația stocurilor” din Saga: valorile sunt rotunjite pe articol, stornările sunt scăzute din coloana operației inițiale, iar articolele cu cantități și valori zero nu sunt listate. Spre deosebire de „Raport de gestiune”, care lucrează la nivel de gestiune, această situație desface stocul pe articole. Iese pe lună, pe trimestru, pe semestru sau pe an, pentru firmele din Saga C.</p>
                     </details>
                 </div>
                 <div class="report-card">
