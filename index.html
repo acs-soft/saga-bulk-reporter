@@ -732,6 +732,20 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             line-height: 1.55;
         }
 
+        /* Closing card („Vă lipsește un raport?”). The card count rarely divides by
+           the column count (40 cards at 3 columns left one card and two empty cells),
+           so the last card spans whatever cells its row has left: 3 when it starts a
+           row of three, 2 when it is second. The breakpoints below redo this for 2
+           columns and drop it at 1. Counted with "of .report-card" so the drawer, a
+           sibling div the script inserts into the grid, does not shift the count; a
+           browser without that syntax drops these rules and shows a one-cell card.
+           It holds no <details>, and every card before it spans one cell, so the
+           drawer script's row arithmetic (index / columns) still holds. */
+        .report-card--ask { background-color: var(--gray-50); }
+        .report-card--ask a { color: var(--blue-500); text-decoration: none; font-weight: 500; }
+        .report-card--ask:nth-child(3n+1 of .report-card) { grid-column: span 3; }
+        .report-card--ask:nth-child(3n+2 of .report-card) { grid-column: span 2; }
+
         /* Second level of detail (#283). The markup is a real <details>, so with
            JS off this is an inline expand that is keyboard correct and indexable;
            the script below upgrades it to a drawer that spans the whole row. */
@@ -1158,6 +1172,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            /* Closing card at 2 columns: reset the 3-column spans, then fill the row. */
+            .report-card--ask:nth-child(n of .report-card) { grid-column: auto; }
+            .report-card--ask:nth-child(2n+1 of .report-card) { grid-column: span 2; }
+
             .features-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 32px;
@@ -1240,6 +1258,9 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             .reports-grid {
                 grid-template-columns: 1fr;
             }
+
+            /* Closing card at 1 column: a span would add an implicit column. */
+            .report-card--ask:nth-child(n of .report-card) { grid-column: auto; }
 
             .report-card {
                 padding: 28px 24px;
@@ -1967,7 +1988,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <div class="report-card__detail">Dump complet al jurnalului cu split debit/credit pe interval.</div>
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
-                        <p class="report-card__long">Toate înregistrările contabile din perioadă, în ordine cronologică: data, documentul, contul debitor, contul creditor, explicația și sumele pe debit și pe credit. Este registrul cerut la control, cu totaluri la final, și se poate lista pe lună, pe trimestru sau pe semestru.</p>
+                        <p class="report-card__long">Toate înregistrările contabile din perioadă, în ordine cronologică: data, documentul, contul debitor, contul creditor, explicația și sumele pe debit și pe credit. Este registrul cerut la control, cu totaluri la final, și se poate lista pe lună, pe trimestru sau pe semestru. Cu bifa „Un singur fișier pe tot intervalul…” din alegerea perioadei, registrul iese într-un singur fișier chiar dacă intervalul trece de 31 decembrie, pe cel mult trei ani calendaristici (trei ani întregi, de exemplu 2023–2025, doar cu perioada „Anual”).</p>
                     </details>
                 </div>
                 <div class="report-card">
@@ -2015,7 +2036,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <div class="report-card__detail">Fișa oricărui cont: sold inițial, rulaje debit/credit și sold final, cu detalierea mișcărilor și sold curent.</div>
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
-                        <p class="report-card__long">Fișa oricărui cont, cu sold inițial, rulaje debit și credit și sold final, urmate de fiecare mișcare în parte: data, documentul, explicația, contul corespondent, sumele și soldul curent. Alegeți conturile care vă interesează sau le luați pe toate, pe orice interval.</p>
+                        <p class="report-card__long">Fișa oricărui cont, cu sold inițial, rulaje debit și credit și sold final, urmate de fiecare mișcare în parte: data, documentul, explicația, contul corespondent, sumele și soldul curent. Alegeți conturile care vă interesează sau le luați pe toate, pe orice interval. Cu bifa „Un singur fișier pe tot intervalul…” din alegerea perioadei, fișa iese într-un singur fișier chiar dacă intervalul trece de 31 decembrie, pe cel mult trei ani calendaristici (trei ani întregi, de exemplu 2023–2025, doar cu perioada „Anual”).</p>
                     </details>
                 </div>
                 <div class="report-card">
@@ -2212,10 +2233,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 </div>
                 <div class="report-card">
                     <div class="report-card__name">Sinteză financiară</div>
-                    <div class="report-card__detail">Raport vizual pe două pagini pentru client, cu sigla cabinetului și un card de TVA (decont și sold 4423/4424) afișat doar la plătitorii de TVA.</div>
+                    <div class="report-card__detail">Raport vizual pe două pagini pentru client, cu sigla cabinetului, activul net față de capitalul social și un card de TVA (decont și sold 4423/4424) afișat doar la plătitorii de TVA.</div>
                     <details class="report-card__more">
                         <summary>Mai multe</summary>
-                        <p class="report-card__long">Raportul scris pentru client, nu pentru contabil, pe două pagini. Prima adună disponibilul în casă și în bancă, vânzările, încasările, plățile și fluxul de numerar, fiecare comparat cu perioada trecută, cifra de afaceri și profitul cumulate pe an cu grafic lunar, plus trei grafice de evoluție. A doua strânge clienții de încasat, furnizorii de plătit, cheltuielile perioadei și cardul de TVA. Ambele pagini poartă sigla cabinetului și pot fi despărțite fără să devină anonime, iar cardul de TVA apare doar la plătitorii de TVA.</p>
+                        <p class="report-card__long">Raportul scris pentru client, nu pentru contabil, pe două pagini. Prima adună disponibilul în casă și în bancă, vânzările, încasările, plățile și fluxul de numerar, fiecare comparat cu perioada trecută, cifra de afaceri și profitul cumulate pe an cu grafic lunar, plus trei grafice de evoluție. A doua strânge clienții de încasat, furnizorii de plătit, cheltuielile perioadei și cardul de TVA, iar la final cardul „Capitaluri proprii (activ net)”: activul net la data balanței, alături de capitalul social subscris din contul 101 și de jumătatea lui, când firma are capital înregistrat, plus activul net de la 31 decembrie al anului anterior, când firma are un exercițiu anterior în Saga. Când activul net este sub jumătate din capitalul social, cardul arată ce prevede Legea 31/1990 pentru această situație. Ambele pagini poartă sigla cabinetului și pot fi despărțite fără să devină anonime, iar cardul de TVA apare doar la plătitorii de TVA.</p>
                     </details>
                 </div>
                 <div class="report-card">
@@ -2262,6 +2283,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     <div class="report-card__name">Format SAGA 3.x</div>
                     <div class="report-card__detail">Toate rapoartele citite direct din bazele Firebird ale Saga 3.x, atât Saga C, cât și Saga PS.</div>
                 </div>
+                <div class="report-card report-card--ask">
+                    <div class="report-card__name">Vă lipsește un raport?</div>
+                    <div class="report-card__detail">Spuneți-ne ce raport din Saga ați vrea să generați în serie și la ce vă folosește: scrieți-ne la <a href="mailto:contact@bulkreporter.ro">contact@bulkreporter.ro</a>.</div>
+                </div>
             </div>
         </div>
     </section>
@@ -2286,6 +2311,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                         <li>Cifra de afaceri și profitul cumulate pe an, cu grafic lunar și linia de marjă.</li>
                         <li>Clienți de încasat, furnizori de plătit și cheltuielile lunii.</li>
                         <li>Card de TVA (decont și sold 4423/4424), afișat doar la plătitorii de TVA.</li>
+                        <li>Capitalurile proprii (activul net), comparate cu jumătate din capitalul social subscris și, când există, cu activul net de la 31 decembrie al anului anterior, cu atenționare când activul net este sub această jumătate.</li>
                         <li>Se generează în serie, ca orice alt raport: o rulare acoperă toate firmele.</li>
                     </ul>
                 </div>
