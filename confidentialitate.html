@@ -13,7 +13,7 @@
 </head>
 <body style="max-width:720px;margin:40px auto;padding:0 20px;font-family:-apple-system,'Segoe UI',sans-serif;line-height:1.6;color:#262626">
   <h1>Politica de confidențialitate</h1>
-  <p>Ultima actualizare: 22 septembrie 2026.</p>
+  <p>Ultima actualizare: 12 noiembrie 2026.</p>
 
   <p><strong>Operator de date:</strong> ACS SOFT CONSULT SRL<br>
      CUI: 50227116<br>
@@ -73,14 +73,18 @@
 
   <h2>Aplicația desktop</h2>
   <p>Aplicația desktop Bulk Reporter generează rapoartele <strong>local</strong>,
-     pe calculatorul dumneavoastră, și <strong>nu transmite niciodată datele
-     contabile</strong> ale firmelor dumneavoastră.</p>
+     pe calculatorul dumneavoastră, și <strong>nu ne transmite niciodată datele
+     contabile</strong> ale firmelor dumneavoastră. Rapoartele pleacă pe e-mail numai
+     atunci când alegeți dumneavoastră să le trimiteți, prin serverul de e-mail configurat
+     de dumneavoastră, către destinatarii aleși de dumneavoastră (detalii mai jos).</p>
   <p>Pentru a înțelege cum este folosită aplicația și pentru a o îmbunătăți, colectăm
      date de utilizare printr-un serviciu de analiză, <strong>PostHog</strong>
      (găzduit în Uniunea Europeană, PostHog EU Cloud, cu datele stocate în UE).
-     Aceste date se referă la evenimente de utilizare, de exemplu instalarea
-     aplicației, configurarea inițială, generarea unui raport sau solicitarea unei
-     licențe.</p>
+     Aceste date descriu cum folosiți aplicația, de exemplu ce rapoarte generați, pentru
+     câte firme, cât durează o rulare, dacă un raport a eșuat (doar motivul, dintr-o listă
+     fixă, niciodată textul erorii), dacă ați testat sau folosit trimiterea pe e-mail și
+     câte mesaje au plecat sau au eșuat (tot doar motivul, dintr-o listă fixă), versiunea
+     aplicației și a sistemului de operare și starea licenței.</p>
 
   <p>Evenimentele sunt asociate unui <strong>identificator de instalare</strong> derivat
      din configurația calculatorului dumneavoastră. Acesta este un identificator
@@ -92,20 +96,62 @@
 
   <p>Adresa IP nu este stocată și nu se deduce din ea nicio localizare. Telemetria
      <strong>nu include niciodată datele contabile</strong> prelucrate în aplicație și nu
-     conține denumiri de firme, coduri de identificare fiscală, nume de persoane, sume sau
-     solduri. Datele de telemetrie se păstrează cât timp le păstrează serviciul de
+     conține denumiri de firme, coduri de identificare fiscală, nume de persoane, sume,
+     solduri, adrese de e-mail, destinatari sau conținutul mesajelor trimise. Datele de telemetrie se păstrează cât timp le păstrează serviciul de
      analiză, potrivit politicii acestuia; nu le stabilim un termen propriu, însă le
      ștergem la cererea dumneavoastră, potrivit drepturilor descrise mai jos.</p>
   <p>Telemetria este activată implicit, cu o notificare la prima pornire, și poate fi
      <strong>dezactivată oricând din Setări</strong>. Debifarea se aplică imediat: din acel
-     moment aplicația nu mai înregistrează și nu mai transmite nimic, iar evenimentele deja
-     înregistrate și netransmise se șterg. Temeiul legal este interesul legitim
-     (art. 6 alin. (1) lit. (f) GDPR) de a menține și îmbunătăți produsul.</p>
+     moment aplicația nu mai înregistrează și nu mai transmite niciun eveniment de
+     utilizare, iar evenimentele deja înregistrate și netransmise se șterg. Temeiul legal
+     este interesul legitim (art. 6 alin. (1) lit. (f) GDPR) de a menține și îmbunătăți
+     produsul.</p>
+
+  <p><strong>Trimiterea rapoartelor pe e-mail.</strong> Dacă o folosiți (Setări › E-mail),
+     rapoartele pleacă din contul de e-mail al cabinetului, prin serverul de e-mail (SMTP)
+     configurat de dumneavoastră, direct la destinatarii aleși de dumneavoastră, și
+     <strong>nu trec prin serverele noastre</strong>. Mesajele pleacă numai când porniți
+     dumneavoastră trimiterea. Verificarea setărilor de e-mail (testarea conexiunii și
+     mesajul de probă, trimis pe adresa expeditorului) se conectează la același server.
+     Parola contului de e-mail este criptată pe calculatorul dumneavoastră și nu ne este
+     transmisă. Mesajele trimise astfel sunt prelucrate de furnizorul contului
+     dumneavoastră de e-mail, nu de noi.</p>
+
+  <p><strong>Verificarea actualizărilor.</strong> La fiecare pornire, aplicația verifică
+     dacă există o versiune nouă, printr-o cerere către GitHub, serviciul pe care publicăm
+     versiunile aplicației, iar dacă de acolo nu primește un răspuns valid, printr-o cerere
+     către bulkreporter.ro. Cererea nu conține date despre dumneavoastră sau despre firmele
+     dumneavoastră; ca la orice conexiune la internet, serverul care o primește vede adresa
+     IP a calculatorului.</p>
+
+  <p><strong>Cererea de licență.</strong> Activarea licenței nu necesită conexiune la
+     internet: cheia de licență se verifică pe calculatorul dumneavoastră. Cererea de
+     licență conține datele pe care le completați (denumirea firmei, CIF-ul și eventualele
+     observații), identificatorul calculatorului, versiunea aplicației și, dacă au fost
+     înregistrate la instalare, datele acceptării termenilor. Cererea ne ajunge pe calea
+     aleasă de dumneavoastră: prin programul de e-mail al calculatorului, prin textul
+     copiat sau prin butoanele „Gmail (web)” și „Outlook.com (web)”. Aceste două butoane
+     deschid în browser pagina de scriere a unui mesaj, completată cu datele cererii, așa
+     că datele ajung la Google, respectiv la Microsoft, în momentul în care se deschide
+     pagina; mesajul pleacă numai când îl trimiteți dumneavoastră.</p>
+
+  <p><strong>Semnarea PDF-urilor.</strong> Dacă semnați rapoartele PDF cu un certificat
+     digital și în configurația aplicației este indicat un server de marcare temporală
+     (implicit nu este), la fiecare semnătură aplicația trimite acelui server o amprentă
+     criptografică a semnăturii, nu conținutul raportului, și primește înapoi marca
+     temporală.</p>
+
+  <p><strong>PDF-ul Sintezei.</strong> Pentru PDF-ul rapoartelor de tip Sinteză, aplicația
+     pornește fără fereastră browserul Microsoft Edge sau Google Chrome instalat pe
+     calculator, care transformă în PDF un fișier creat local de aplicație. Aplicația nu
+     cere browserului să încarce nimic de pe internet. Conexiunile pe care browserul le
+     poate face din proprie inițiativă, de exemplu pentru propriile actualizări, țin de
+     Microsoft, respectiv de Google, și nu ne transmit nimic.</p>
 
   <h2>Anunțuri despre versiuni noi</h2>
   <p>Dacă aveți sau ați avut o licență Bulk Reporter, vă putem trimite, pe adresa de email
-     de contact din contract, <strong>anunțuri despre versiunile noi ale aplicației</strong>
-     — ce s-a schimbat, ce corecții am făcut și dacă acestea vă afectează rapoartele pe care
+     de contact din contract, <strong>anunțuri despre versiunile noi ale aplicației</strong>:
+     ce s-a schimbat, ce corecții am făcut și dacă acestea vă afectează rapoartele pe care
      le-ați generat deja. Prelucrăm în acest scop <strong>adresa de email de contact și
      denumirea firmei</strong>.</p>
 
