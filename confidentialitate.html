@@ -13,7 +13,7 @@
 </head>
 <body style="max-width:720px;margin:40px auto;padding:0 20px;font-family:-apple-system,'Segoe UI',sans-serif;line-height:1.6;color:#262626">
   <h1>Politica de confidențialitate</h1>
-  <p>Ultima actualizare: 12 noiembrie 2026.</p>
+  <p>Ultima actualizare: 13 noiembrie 2026.</p>
 
   <p><strong>Operator de date:</strong> ACS SOFT CONSULT SRL<br>
      CUI: 50227116<br>
@@ -55,7 +55,7 @@
      care se termină în <code>__tok-Xk3p9Q_aZ2mL.exe</code>). Același cod este înregistrat
      în PostHog, împreună cu parametrii campaniei din care ați ajuns pe site. La prima
      pornire, aplicația transmite codul odată cu evenimentul de instalare, astfel încât
-     instalarea, și odată cu ea identificatorul de instalare descris mai jos, poate fi
+     instalarea, și odată cu ea identificatorul calculatorului descris mai jos, poate fi
      asociată cu vizita pe site și cu campania din care a pornit descărcarea. Codul nu
      conține nicio informație despre dumneavoastră și <strong>nu este transmis către Meta
      sau TikTok</strong>. Fără acordul dumneavoastră, fișierul se descarcă sub numele
@@ -70,6 +70,13 @@
   <h2>Transfer de date</h2>
   <p>Datele pot fi transferate către Meta și TikTok în afara Spațiului Economic
      European, pe baza clauzelor contractuale standard ale Uniunii Europene.</p>
+  <p>Pentru aplicația desktop: cererea de licență trimisă prin serverul nostru este
+     găzduită în Uniunea Europeană (Hetzner Online, Zoho CPaaS). Zoho o poate accesa din India numai pentru asistență tehnică ocazională, pe baza
+     clauzelor contractuale standard ale Uniunii Europene. Verificarea actualizărilor ajunge la
+     GitHub, care vede adresa IP a calculatorului. Dacă folosiți butoanele „Gmail (web)”
+     sau „Outlook.com (web)”, datele cererii ajung la Google, respectiv la Microsoft.
+     Aceste trei companii prelucrează datele ca operatori, potrivit propriilor politici de
+     confidențialitate, și pot transfera datele în afara Spațiului Economic European.</p>
 
   <h2>Aplicația desktop</h2>
   <p>Aplicația desktop Bulk Reporter generează rapoartele <strong>local</strong>,
@@ -81,18 +88,27 @@
      date de utilizare printr-un serviciu de analiză, <strong>PostHog</strong>
      (găzduit în Uniunea Europeană, PostHog EU Cloud, cu datele stocate în UE).
      Aceste date descriu cum folosiți aplicația, de exemplu ce rapoarte generați, pentru
-     câte firme, cât durează o rulare, dacă un raport a eșuat (doar motivul, dintr-o listă
-     fixă, niciodată textul erorii), dacă ați testat sau folosit trimiterea pe e-mail și
-     câte mesaje au plecat sau au eșuat (tot doar motivul, dintr-o listă fixă), versiunea
-     aplicației și a sistemului de operare și starea licenței.</p>
+     câte firme, cât durează o rulare, dacă un raport a eșuat sau nu a produs date (doar
+     motivul, dintr-o listă fixă, niciodată textul erorii), pașii parcurși la configurare
+     și pe ecranul principal până la prima rulare, dacă ați testat sau folosit trimiterea
+     pe e-mail și câte mesaje au plecat sau au eșuat (tot doar motivul, dintr-o listă
+     fixă), dacă ați trimis o cerere de licență și dacă a reușit, versiunea aplicației și
+     a sistemului de operare și starea licenței.</p>
 
-  <p>Evenimentele sunt asociate unui <strong>identificator de instalare</strong> derivat
-     din configurația calculatorului dumneavoastră. Acesta este un identificator
+  <p>Evenimentele sunt asociate unui <strong>identificator al calculatorului</strong>,
+     derivat din configurația acestuia. Acesta este un identificator
      <strong>pseudonim, nu anonim</strong>: întrucât folosim exact același identificator
      și la emiterea licenței, <strong>vă putem asocia, în evidențele noastre, cu datele de
      contact și de licențiere pe care ni le-ați transmis</strong>. Tratăm, prin urmare,
      aceste date ca date cu caracter personal, iar drepturile descrise mai jos se aplică
      și asupra lor.</p>
+
+  <p>Aplicația creează și un <strong>cod aleatoriu al instalării</strong>, care nu este
+     derivat din calculator și nu conține nicio informație despre dumneavoastră. Îl
+     transmite o singură dată, odată cu datele de utilizare, cât timp telemetria este
+     activată, și îl include în cererea de licență. Ne ajută să deosebim două calculatoare
+     care au același identificator, de exemplu calculatoare instalate din aceeași imagine
+     Windows. Îl tratăm la fel ca identificatorul calculatorului.</p>
 
   <p>Adresa IP nu este stocată și nu se deduce din ea nicio localizare. Telemetria
      <strong>nu include niciodată datele contabile</strong> prelucrate în aplicație și nu
@@ -126,14 +142,34 @@
 
   <p><strong>Cererea de licență.</strong> Activarea licenței nu necesită conexiune la
      internet: cheia de licență se verifică pe calculatorul dumneavoastră. Cererea de
-     licență conține datele pe care le completați (denumirea firmei, CIF-ul și eventualele
-     observații), identificatorul calculatorului, versiunea aplicației și, dacă au fost
-     înregistrate la instalare, datele acceptării termenilor. Cererea ne ajunge pe calea
-     aleasă de dumneavoastră: prin programul de e-mail al calculatorului, prin textul
-     copiat sau prin butoanele „Gmail (web)” și „Outlook.com (web)”. Aceste două butoane
-     deschid în browser pagina de scriere a unui mesaj, completată cu datele cererii, așa
-     că datele ajung la Google, respectiv la Microsoft, în momentul în care se deschide
-     pagina; mesajul pleacă numai când îl trimiteți dumneavoastră.</p>
+     licență conține datele pe care le completați în formular (denumirea firmei, CIF-ul,
+     adresa de e-mail, numele și funcția reprezentantului legal, dacă este o stație
+     suplimentară și, dacă le completați, telefonul, persoana de contact și observațiile),
+     identificatorul calculatorului, codul instalării, versiunea aplicației și, dacă au
+     fost înregistrate la instalare, datele acceptării termenilor. Le folosim pentru a vă
+     trimite proforma, contractul și cheia de licență și pentru a vă scrie despre cererea
+     dumneavoastră, de exemplu dacă nu a fost încă finalizată. Temeiul legal este
+     încheierea contractului, la cererea dumneavoastră (art. 6 alin. (1) lit. (b) GDPR). Dacă cererea
+     nu este urmată de un contract, o ștergem în cel mult 12 luni.</p>
+
+  <p>Când apăsați „Trimite cererea”, aplicația trimite aceste date, printr-o conexiune
+     criptată, către serverul nostru de pe bulkreporter.ro, găzduit de <strong>Hetzner
+     Online</strong> în Uniunea Europeană. Serverul ni le transmite pe e-mail prin
+     <strong>Zoho CPaaS</strong> (fostul ZeptoMail), serviciul de e-mail tranzacțional al
+     Zoho Corporation, cu
+     datele găzduite în Uniunea Europeană. Cererea ajunge numai la noi: serverul nu trimite
+     nimic pe adresa dumneavoastră, iar confirmarea apare doar pe ecran. Adresa IP de la
+     care vine cererea este folosită numai pentru a limita trimiterile abuzive: serverul o
+     ține doar în memorie, cel mult o zi, și nu o scrie nicăieri. Statisticile de utilizare
+     înregistrează doar faptul că o cerere a fost trimisă sau motivul pentru care nu a
+     reușit, dintr-o listă fixă. Datele din formular nu ajung în statistici.</p>
+
+  <p>Dacă trimiterea nu reușește, cererea poate pleca în continuare prin programul de
+     e-mail al calculatorului, prin textul copiat sau prin butoanele „Gmail (web)” și
+     „Outlook.com (web)”. Aceste două butoane deschid în browser pagina de scriere a unui
+     mesaj, completată cu datele cererii, așa că datele ajung la Google, respectiv la
+     Microsoft, în momentul în care se deschide pagina; mesajul pleacă numai când îl
+     trimiteți dumneavoastră.</p>
 
   <p><strong>Semnarea PDF-urilor.</strong> Dacă semnați rapoartele PDF cu un certificat
      digital și în configurația aplicației este indicat un server de marcare temporală

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Termeni și condiții | Bulk Reporter</title>
-  <meta name="terms-version" content="2026-09-24">
+  <meta name="terms-version" content="2026-11-13">
 
   <!-- Favicon - brand mark (white grid on #0066CC) -->
   <link rel="icon" href="/favicon.ico" sizes="any">
@@ -36,7 +36,7 @@
 <body>
 <h1>Termeni de licențiere și utilizare</h1>
 <p class="lead"><strong>Bulk Reporter</strong> &middot; în vigoare din
-24 septembrie 2026 &middot; ACS SOFT CONSULT SRL &middot; contact@bulkreporter.ro</p>
+13 noiembrie 2026 &middot; ACS SOFT CONSULT SRL &middot; contact@bulkreporter.ro</p>
 
 <p>Acești termeni se aplică instalării și utilizării aplicației
 <strong>Bulk Reporter</strong> („Aplicația"), destinată utilizării împreună cu programul de
@@ -106,10 +106,33 @@ dumneavoastră.</p>
 citire.</strong> Nu creează, nu modifică și nu șterge nimic în Saga.</p>
 <p><strong>Datele contabile și rapoartele generate nu sunt transmise Furnizorului.</strong>
 Generarea rapoartelor funcționează fără conexiune la internet.</p>
-<p><strong>Activarea licenței nu necesită conexiune la internet.</strong> Aplicația nu se
-conectează la niciun server pentru activare: cererea de licențiere este generată local, iar
-Cheia de Licență este verificată local, la fiecare pornire. Internetul este necesar doar
-pentru verificarea actualizărilor și pentru telemetria descrisă la secțiunea 5.</p>
+<p><strong>Activarea licenței nu necesită conexiune la internet.</strong> Cheia de Licență
+este verificată local, la fiecare pornire, iar Aplicația nu se conectează la niciun server
+pentru activare. Cererea de Cheie de Licență pleacă numai când o trimiteți dumneavoastră:
+direct din Aplicație, prin serverul Furnizorului, sau, dacă trimiterea nu reușește, prin
+e-mail ori ca text copiat.</p>
+<p>Aplicația folosește internetul doar pentru:</p>
+<ul>
+  <li>legătura cu serverul Saga, când bazele de date nu sunt pe acest calculator;</li>
+  <li>verificarea actualizărilor, la fiecare pornire;</li>
+  <li>telemetria descrisă la secțiunea 5, cât timp este activată;</li>
+  <li>trimiterea cererii de Cheie de Licență, când o trimiteți dumneavoastră;</li>
+  <li>trimiterea rapoartelor pe e-mail și verificarea setărilor de e-mail, când alegeți
+    dumneavoastră să le trimiteți sau să le verificați;</li>
+  <li>marca temporală a semnăturii PDF, dacă ați configurat un server de marcare
+    temporală.</li>
+</ul>
+<p><strong>Rapoartele trimise pe e-mail pleacă prin serverul de e-mail (SMTP) pe care îl
+configurați dumneavoastră în Aplicație, către destinatarii pe care îi alegeți
+dumneavoastră.</strong> Nu trec prin serverele Furnizorului. Butoanele „Gmail (web)” și
+„Outlook.com (web)” din fereastra licenței doar deschid în browser pagina de scriere a unui
+mesaj, completată cu datele cererii de licență. Aceste date ajung la Google, respectiv la
+Microsoft, când se deschide pagina, iar mesajul pleacă numai când îl trimiteți
+dumneavoastră.</p>
+<p>Pentru PDF-ul rapoartelor de tip Sinteză, Aplicația pornește fără fereastră browserul
+Microsoft Edge sau Google Chrome instalat pe calculator și nu îi cere să încarce nimic de pe
+internet. Conexiunile pe care browserul le face din proprie inițiativă, de exemplu pentru
+propriile actualizări, țin de producătorul acestuia.</p>
 <p>Jurnalele de funcționare și eventualele rapoarte de eroare se scriu <strong>numai pe
 calculatorul dumneavoastră</strong>, se păstrează 30 de zile și se șterg automat.
 <strong>Nu sunt transmise automat nicăieri</strong> și nu ajung la Furnizor decât dacă
@@ -121,13 +144,15 @@ după expirarea perioadei de probă sau a licenței.</p>
 <h2>5. Telemetrie de utilizare</h2>
 <p>Aplicația transmite către un serviciu de analiză găzduit în Uniunea Europeană evenimente
 despre <strong>modul în care este folosită</strong>, de exemplu ce rapoarte generați, pentru
-câte firme, cât durează o rulare, dacă o rulare a eșuat (doar motivul, dintr-o listă fixă,
-niciodată textul erorii), versiunea Aplicației și a sistemului de operare, starea licenței și
+câte firme, cât durează o rulare, dacă o rulare a eșuat sau nu a produs date (doar motivul,
+dintr-o listă fixă, niciodată textul erorii), pașii parcurși la configurare și pe ecranul
+principal până la prima rulare, versiunea Aplicației și a sistemului de operare, starea
+licenței, dacă a fost trimisă o cerere de licență sau de ce nu a reușit trimiterea și
 rezultatul verificărilor de conexiune.</p>
 <p>Aceste evenimente <strong>nu conțin denumiri de firme, CUI-uri, nume de persoane, sume,
 solduri sau orice alt conținut al bazelor de date ori al rapoartelor</strong>. Adresa IP nu se
 păstrează și nu se deduce din ea nicio localizare: nici țară, nici localitate, nici
-coordonate.</p>
+coordonate. Datele completate în cererea de licență nu ajung în aceste evenimente.</p>
 <p>Dacă fișierul de instalare a purtat în nume un cod aleatoriu, Aplicația îl transmite o
 singură dată, numai la prima pornire pe acest calculator, pentru a ști din ce campanie provine
 descărcarea.</p>
@@ -137,9 +162,15 @@ calculatorului. Este un identificator <strong>pseudonim, nu anonim</strong>: est
 Furnizorul vă poate asocia, în evidențele proprii, cu datele de contact și de licențiere pe
 care i le-ați transmis. Aceste date sunt tratate ca date cu caracter personal, iar drepturile
 și termenele de la secțiunea 10 se aplică și asupra lor.</p>
-<p><strong>Puteți dezactiva oricând telemetria din meniul „Setări".</strong> Debifarea casetei
-se aplică imediat: din acel moment Aplicația nu mai înregistrează și nu mai transmite nimic,
-iar evenimentele deja înregistrate și netransmise se șterg. Alegerea se reține pentru
+<p>Aplicația creează și un <strong>cod aleatoriu al instalării</strong>, pe care îl
+transmite o singură dată, odată cu evenimentele de utilizare, cât timp telemetria este
+activată, și îl include în cererea de Cheie de Licență. Codul nu este derivat din calculator
+și nu conține nicio informație despre dumneavoastră. Ne ajută să deosebim două calculatoare
+care au același identificator, de exemplu calculatoare instalate din aceeași imagine
+Windows. Îl tratăm la fel ca identificatorul de mai sus.</p>
+<p><strong>Puteți dezactiva oricând telemetria din meniul „Setări”.</strong> Debifarea casetei
+se aplică imediat: din acel moment Aplicația nu mai înregistrează și nu mai transmite niciun
+eveniment de utilizare, iar evenimentele deja înregistrate și netransmise se șterg. Alegerea se reține pentru
 calculator, nu pentru contul Windows, deci se aplică tuturor utilizatorilor aceluiași
 calculator. Aplicația funcționează identic.</p>
 
@@ -184,10 +215,14 @@ utilizare descris mai sus.</p>
 <p>Pentru datele din Saga, <strong>rămâneți operator independent, iar Furnizorul nu este
 persoană împuternicită</strong>, întrucât aceste date nu ajung la Furnizor. Nu este necesar
 un acord de prelucrare (DPA) pentru utilizarea obișnuită a Aplicației.</p>
-<p>Furnizorul prelucrează, în calitate de operator, datele dumneavoastră de contact și de
-facturare, datele de licențiere și telemetria de la secțiunea 5.</p>
+<p>Furnizorul prelucrează, în calitate de operator, datele din cererea de Cheie de Licență,
+datele dumneavoastră de contact și de facturare, datele de licențiere și telemetria de la
+secțiunea 5. Cererea trimisă direct din Aplicație ajunge la Furnizor prin serverul acestuia
+și printr-un serviciu de e-mail tranzacțional, ambele cu datele găzduite în Uniunea
+Europeană. Detaliile se găsesc în Politica de confidențialitate de pe bulkreporter.ro.</p>
 <p>Le păstrează astfel: <strong>datele de contact, contractuale și de licențiere</strong>:
-3 ani de la încetarea relației contractuale; <strong>datele din facturi</strong>: 10 ani de
+3 ani de la încetarea relației contractuale; <strong>cererile de licență neurmate de un
+contract</strong>: 12 luni de la data cererii; <strong>datele din facturi</strong>: 10 ani de
 la închiderea exercițiului financiar, potrivit legislației contabile;
 <strong>telemetria</strong>: cât timp o păstrează serviciul de analiză, potrivit politicii
 acestuia; Furnizorul nu îi stabilește un termen propriu, însă o șterge la cererea
