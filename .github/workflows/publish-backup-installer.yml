@@ -197,6 +197,8 @@ jobs:
             echo "::notice::${PAGE} is not on main yet; nothing to point at ${VERSION}."
             exit 0
           fi
+          # Upper case, as Windows' Get-FileHash prints it (the digest is lower case).
+          export SHA256="${SHA256^^}"
           # Only this page, and only inside the BulkBackup markers: the root
           # index.html carries BulkReporter's version, which its release job owns.
           perl -0pi -e '
