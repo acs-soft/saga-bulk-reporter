@@ -15,6 +15,20 @@ The "Versiune X.Y.Z" strings and every versioned `BulkReporter-Setup-X.Y.Z.exe` 
 
 The report count is exact ("38 de rapoarte" in the hero and both meta descriptions) and so is the report catalogue: adding a report to the app means a new card here and a new count, in the same change as the app repo's `release.yml`.
 
+## BulkBackup (`/tools/backup`)
+
+A second product's page lives in this repo: `tools/backup/index.html`, at <https://bulkreporter.ro/tools/backup> (BulkBackup, from the private `acs-soft/saga-backup-app`). It has its own screenshots, favicon and footer disclaimer, and no analytics or cookies.
+
+- **Releases** are not in this repo. They live in the public [`acs-soft/bulk-backup`](https://github.com/acs-soft/bulk-backup), because this repo's `releases/latest` is the reporter's update feed.
+- **Publishing a version:** `gh workflow run publish-backup-installer.yml -f tag=vX.Y.Z` (`.github/workflows/publish-backup-installer.yml`, dispatch only). It:
+  1. verifies `BulkBackup-Setup-X.Y.Z.exe` against the release digest;
+  2. copies it into `/dl/` (never `--delete`) and re-checks the bytes the site serves;
+  3. for a non-prerelease, rewrites every `BulkBackup-Setup-X.Y.Z.exe` and every `data-bb="version"` element in `tools/backup/index.html`, commits to `main` and deploys.
+- **Links:** the page links the **versioned** `/dl/BulkBackup-Setup-X.Y.Z.exe`. There is no unversioned BulkBackup symlink, and nginx needs no BulkBackup rule.
+- **Root `index.html`:** never put a BulkBackup version string in it (only the footer link): the reporter's release `sed` and update-check fallback read every „Versiune X.Y.Z” there.
+- **Download counter:** BulkBackup downloads are not counted (`track-downloads.yml` matches `BulkReporter-Setup*.exe` only).
+- **Screenshots** (`tools/backup/images/`): Stare, Setări and Istoric cropped to the runs table. They show no firm names or CIFs. Keep it that way.
+
 ## Screenshots
 
 `images/screenshot-1.png` to `screenshot-3.png` (hero and the three steps) and `images/screenshot-4-sinteza.png` (the Sinteza section). They show only fictional firms: the app repo's seeder writes a presentable set with `dotnet run --project tools/SeedTestData -- <folder> --force --demo 10`. Never shoot them against a real Saga install. If an image is missing the layout shows a graceful placeholder.
