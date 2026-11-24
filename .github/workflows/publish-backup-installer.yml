@@ -1,0 +1,234 @@
+name: Publish BulkBackup installer to /dl
+
+# BulkBackup's counterpart of publish-installer.yml (acs-soft/saga-backup-app #4).
+# BulkBackup releases live in their own public repo, acs-soft/bulk-backup, so a
+# `release` event there cannot start this workflow; it runs on dispatch, by hand
+# (`gh workflow run publish-backup-installer.yml -f tag=v1.0.1`) or from
+# BulkBackup's release job later.
+#
+#   1. Copy BulkBackup-Setup-X.Y.Z.exe from that release into dl/, after checking
+#      its size and SHA-256 against the release's digest.
+#   2. Check that the live site serves it.
+#   3. Unless it is a prerelease: point tools/backup/index.html at that version
+#      (file name, version and SHA-256), commit to main and deploy.
+#
+# Unlike BulkReporter, the page links the VERSIONED file, so there is no
+# unversioned symlink to repoint. A versioned name never changes content, so the
+# /dl/ prefix rule's 7-day cache is right for it, and nginx.conf needs no change.
+#
+# ⚠️ dl/ is shared with BulkReporter's live download. This workflow only ever
+# adds a file named BulkBackup-Setup-*.exe: no --delete, no symlink, no glob.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: BulkBackup release tag in acs-soft/bulk-backup, e.g. v1.0.1. The page is pointed at it, older or not.
+        required: true
+        type: string
+
+concurrency:
+  group: publish-backup-installer
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Read through env, never spliced into a script: a dispatch input is free text.
+  TAG: ${{ inputs.tag }}
+  SOURCE_REPO: acs-soft/bulk-backup
+  SITE: https://bulkreporter.ro
+  DL_DIR: /home/deployer/bulkreporter/dl
+  PAGE: tools/backup/index.html
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.asset.outputs.version }}
+      sha256: ${{ steps.asset.outputs.sha256 }}
+      prerelease: ${{ steps.asset.outputs.prerelease }}
+    steps:
+      - name: Find the installer asset
+        id: asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::'$TAG' is not a release tag (vX.Y.Z or vX.Y.Z-suffix)"
+            exit 1
+          fi
+          version="${TAG#v}"
+          name="BulkBackup-Setup-${version}.exe"
+
+          # The release may be created before its asset finishes uploading.
+          meta=''
+          for attempt in $(seq 1 40); do
+            release=$(gh api "repos/${SOURCE_REPO}/releases/tags/${TAG}" 2>/dev/null || true)
+            meta=$(printf '%s' "$release" | jq -c --arg n "$name" \
+              '. as $r | first(.assets[]? | select(.name == $n and .state == "uploaded"))
+                 | {size, digest, prerelease: $r.prerelease, draft: $r.draft}' 2>/dev/null || true)
+            [ -n "$meta" ] && break
+            echo "Attempt ${attempt}/40: ${name} is not uploaded to ${SOURCE_REPO}@${TAG} yet"
+            sleep 15
+          done
+          if [ -z "$meta" ]; then
+            echo "::error::${name} was never uploaded to ${SOURCE_REPO}@${TAG}"
+            exit 1
+          fi
+          if [ "$(printf '%s' "$meta" | jq -r '.draft')" = "true" ]; then
+            echo "::error::${TAG} is a draft release"
+            exit 1
+          fi
+
+          digest=$(printf '%s' "$meta" | jq -r '.digest // empty')
+          # The page shows this hash to visitors, so it must come from the release.
+          if ! [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+            echo "::error::${name} has no sha256 digest on the release (got '${digest}')"
+            exit 1
+          fi
+
+          {
+            echo "name=${name}"
+            echo "version=${version}"
+            echo "size=$(printf '%s' "$meta" | jq -r .size)"
+            echo "sha256=${digest#sha256:}"
+            echo "prerelease=$(printf '%s' "$meta" | jq -r '.prerelease // false')"
+          } >> "$GITHUB_OUTPUT"
+          echo "Found ${name}: ${meta}"
+
+      - name: Download and verify it
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NAME: ${{ steps.asset.outputs.name }}
+          SIZE: ${{ steps.asset.outputs.size }}
+          SHA256: ${{ steps.asset.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          gh release download "$TAG" --repo "$SOURCE_REPO" --pattern "$NAME" --dir out
+          actual=$(stat -c %s "out/$NAME")
+          if [ "$actual" != "$SIZE" ]; then
+            echo "::error::${NAME} is ${actual} bytes, the release says ${SIZE}"
+            exit 1
+          fi
+          echo "${SHA256}  out/${NAME}" | sha256sum -c -
+
+      # Verbatim from deploy.yml.
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/deploy_key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Copy it into dl/
+        env:
+          NAME: ${{ steps.asset.outputs.name }}
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          set -euo pipefail
+          ssh_opts="-i $HOME/.ssh/deploy_key -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+          ssh $ssh_opts "$TARGET" "test -d '$DL_DIR'" || {
+            echo "::error::${DL_DIR} does not exist on the server"
+            exit 1
+          }
+          # ⚠️ No --delete, ever: dl/ holds BulkReporter's installers too. rsync
+          # writes a temp file and renames it, so a same-name copy is atomic.
+          rsync -a --chmod=F644 -e "ssh $ssh_opts" "out/$NAME" "$TARGET:$DL_DIR/"
+
+      - name: Check what visitors get
+        env:
+          NAME: ${{ steps.asset.outputs.name }}
+          SIZE: ${{ steps.asset.outputs.size }}
+          SHA256: ${{ steps.asset.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          url="${SITE}/dl/${NAME}"
+          headers=''
+          length=''
+          for attempt in 1 2 3 4 5 6; do
+            headers=$(curl -fsSI "$url" | tr -d '\r') || headers=''
+            length=$(printf '%s\n' "$headers" | awk -F': *' 'tolower($1) == "content-length" { print $2 }')
+            [ "$length" = "$SIZE" ] && break
+            echo "Attempt ${attempt}: ${url} has Content-Length '${length}', want ${SIZE}"
+            sleep 15
+          done
+          if [ "$length" != "$SIZE" ]; then
+            echo "::error::${url} does not serve ${NAME}"
+            printf '%s\n' "$headers"
+            exit 1
+          fi
+          # A Content-Disposition filename would override the page's download name.
+          if printf '%s\n' "$headers" | grep -qi '^content-disposition:'; then
+            echo "::error::${url} sends Content-Disposition"
+            exit 1
+          fi
+          # The signed bytes must reach visitors untouched (no proxy recompression).
+          curl -fsS "$url" -o served.exe
+          echo "${SHA256}  served.exe" | sha256sum -c -
+          echo "OK ${url}"
+          printf '%s\n' "$headers" | grep -i '^cache-control:' || echo "(no Cache-Control)"
+
+  page:
+    needs: publish
+    # Visitors are never pointed at a prerelease.
+    if: needs.publish.outputs.prerelease != 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Point the page at this version
+        id: rewrite
+        env:
+          VERSION: ${{ needs.publish.outputs.version }}
+          SHA256: ${{ needs.publish.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          if [ ! -f "$PAGE" ]; then
+            echo "::notice::${PAGE} is not on main yet; nothing to point at ${VERSION}."
+            exit 0
+          fi
+          # Only this page, and only inside the BulkBackup markers: the root
+          # index.html carries BulkReporter's version, which its release job owns.
+          perl -0pi -e '
+            s/BulkBackup-Setup-\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?\.exe/BulkBackup-Setup-$ENV{VERSION}.exe/g;
+            s/(data-bb="version">)[^<]*/$1$ENV{VERSION}/g;
+            s/(data-bb="sha256">)[^<]*/$1$ENV{SHA256}/g;
+          ' "$PAGE"
+          grep -q "data-bb=\"version\">${VERSION}<" "$PAGE" || { echo "::error::no version marker in ${PAGE}"; exit 1; }
+          grep -q "data-bb=\"sha256\">${SHA256}<" "$PAGE" || { echo "::error::no sha256 marker in ${PAGE}"; exit 1; }
+          grep -q "/dl/BulkBackup-Setup-${VERSION}.exe" "$PAGE" || { echo "::error::no /dl/ link in ${PAGE}"; exit 1; }
+
+      - name: Commit if the page changed
+        id: commit
+        env:
+          VERSION: ${{ needs.publish.outputs.version }}
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "$PAGE" 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "The page already points at ${VERSION}."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore(backup): BulkBackup ${VERSION} pe /tools/backup"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # A push made with GITHUB_TOKEN does not raise deploy.yml's `push` event.
+  deploy:
+    needs: page
+    if: needs.page.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
