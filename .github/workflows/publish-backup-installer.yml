@@ -10,7 +10,7 @@ name: Publish BulkBackup installer to /dl
 #      its size and SHA-256 against the release's digest.
 #   2. Check that the live site serves it.
 #   3. Unless it is a prerelease: point tools/backup/index.html at that version
-#      (file name, version and SHA-256), commit to main and deploy.
+#      (file name and version), commit to main and deploy.
 #
 # Unlike BulkReporter, the page links the VERSIONED file, so there is no
 # unversioned symlink to repoint. A versioned name never changes content, so the
@@ -47,7 +47,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.asset.outputs.version }}
-      sha256: ${{ steps.asset.outputs.sha256 }}
       prerelease: ${{ steps.asset.outputs.prerelease }}
     steps:
       - name: Find the installer asset
@@ -84,7 +83,7 @@ jobs:
           fi
 
           digest=$(printf '%s' "$meta" | jq -r '.digest // empty')
-          # The page shows this hash to visitors, so it must come from the release.
+          # Both checks below verify the bytes against it, so it must be there.
           if ! [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
             echo "::error::${name} has no sha256 digest on the release (got '${digest}')"
             exit 1
@@ -190,24 +189,19 @@ jobs:
         id: rewrite
         env:
           VERSION: ${{ needs.publish.outputs.version }}
-          SHA256: ${{ needs.publish.outputs.sha256 }}
         run: |
           set -euo pipefail
           if [ ! -f "$PAGE" ]; then
             echo "::notice::${PAGE} is not on main yet; nothing to point at ${VERSION}."
             exit 0
           fi
-          # Upper case, as Windows' Get-FileHash prints it (the digest is lower case).
-          export SHA256="${SHA256^^}"
           # Only this page, and only inside the BulkBackup markers: the root
           # index.html carries BulkReporter's version, which its release job owns.
           perl -0pi -e '
             s/BulkBackup-Setup-\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?\.exe/BulkBackup-Setup-$ENV{VERSION}.exe/g;
             s/(data-bb="version">)[^<]*/$1$ENV{VERSION}/g;
-            s/(data-bb="sha256">)[^<]*/$1$ENV{SHA256}/g;
           ' "$PAGE"
           grep -q "data-bb=\"version\">${VERSION}<" "$PAGE" || { echo "::error::no version marker in ${PAGE}"; exit 1; }
-          grep -q "data-bb=\"sha256\">${SHA256}<" "$PAGE" || { echo "::error::no sha256 marker in ${PAGE}"; exit 1; }
           grep -q "/dl/BulkBackup-Setup-${VERSION}.exe" "$PAGE" || { echo "::error::no /dl/ link in ${PAGE}"; exit 1; }
 
       - name: Commit if the page changed
