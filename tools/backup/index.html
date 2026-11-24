@@ -9,10 +9,10 @@
 
         No analytics and no cookies on this page, so it needs no consent banner.
 
-        ⚠️ The download link, the version and the SHA-256 are rewritten by
+        ⚠️ The download link and the version are rewritten by
         .github/workflows/publish-backup-installer.yml: every
-        "BulkBackup-Setup-X.Y.Z.exe", and the text of every data-bb="version" /
-        data-bb="sha256" element. Keep each value inside its element, alone.
+        "BulkBackup-Setup-X.Y.Z.exe", and the text of every data-bb="version"
+        element. Keep the version inside its element, alone.
         No BulkBackup version ever goes into the root index.html.
     -->
     <title>BulkBackup: copii de siguranță programate pentru bazele de date Saga</title>
@@ -21,7 +21,7 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ro_RO">
     <meta property="og:title" content="BulkBackup: copii de siguranță programate pentru bazele de date Saga">
-    <meta property="og:description" content="Copii pentru toate firmele din Saga, făcute singure la ora aleasă, verificate și păstrate după regula aleasă.">
+    <meta property="og:description" content="Copii pentru toate firmele din Saga, făcute automat la ora aleasă, verificate și păstrate după regula aleasă.">
     <meta property="og:url" content="https://bulkreporter.ro/tools/backup">
     <meta property="og:image" content="https://bulkreporter.ro/tools/backup/images/stare.png">
     <link rel="icon" href="/tools/backup/favicon.ico" sizes="any">
@@ -151,7 +151,6 @@
         .download__facts { list-style: none; border-top: 1px solid var(--gray-300); margin-top: 32px; }
         .download__facts li { padding: 12px 0; border-bottom: 1px solid var(--gray-200); font-size: var(--text-sm); color: var(--gray-700); }
         .download__facts .k { display: block; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 2px; }
-        .hash { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--text-xs); word-break: break-all; color: var(--black); }
         .steps { counter-reset: step; list-style: none; }
         .steps li { counter-increment: step; position: relative; padding: 0 0 20px 44px; color: var(--gray-700); }
         .steps li::before {
@@ -206,7 +205,7 @@
             <div class="container hero__grid">
                 <div>
                     <div class="label">Copii de siguranță pentru Saga</div>
-                    <h1 style="margin-top: 16px;">Copii pentru toate firmele din Saga, făcute singure</h1>
+                    <h1 style="margin-top: 16px;">Copii pentru toate firmele din Saga, făcute automat</h1>
                     <div class="divider"></div>
                     <p class="hero__description">
                         BulkBackup rulează ca serviciu Windows pe calculatorul cu bazele de date Saga. La ora aleasă
@@ -236,7 +235,7 @@
                 </div>
                 <div class="features">
                     <div class="feature">
-                        <h3>Toate firmele, găsite singur</h3>
+                        <h3>Toate firmele, găsite automat</h3>
                         <p>Găsește instalările Saga de pe calculator și copiază fiecare firmă, plus baza principală Saga. O firmă nouă intră singură în copii; puteți scoate din listă firmele de care nu aveți nevoie.</p>
                     </div>
                     <div class="feature">
@@ -309,7 +308,7 @@
             <div class="container">
                 <div class="section__head">
                     <div class="label">Cerințe</div>
-                    <h2 style="margin-top: 12px;">Ce vă trebuie</h2>
+                    <h2 style="margin-top: 12px;">Ce e necesar</h2>
                 </div>
                 <ul class="list">
                     <li><strong>Windows 10 sau 11</strong> (sau Windows Server 2016 și mai nou), pe 64 de biți.</li>
@@ -326,7 +325,7 @@
                     <div class="label">Descărcare</div>
                     <h2 style="margin-top: 12px;">BulkBackup <span data-bb="version">1.0.1</span></h2>
                     <div class="divider"></div>
-                    <p>30 de zile gratuit, cu toate funcțiile. Pentru licență: <a href="mailto:contact@bulkreporter.ro">contact@bulkreporter.ro</a> sau <a href="tel:+40744827687">0744 827 687</a>.</p>
+                    <p>30 de zile gratuit, cu toate funcțiile.<br>Pentru licență: <a href="mailto:contact@bulkreporter.ro">contact@bulkreporter.ro</a></p>
                     <p style="margin-top: 28px;">
                         <a href="/dl/BulkBackup-Setup-1.0.1.exe" download="BulkBackup-Setup-1.0.1.exe" class="btn-primary">
                             Descarcă BulkBackup <span aria-hidden="true">&rarr;</span>
@@ -335,11 +334,6 @@
                     <ul class="download__facts">
                         <li><span class="k">Fișier</span>BulkBackup-Setup-1.0.1.exe</li>
                         <li><span class="k">Semnătură</span>Programul de instalare este semnat digital de ACS SOFT CONSULT SRL.</li>
-                        <li><span class="k">SHA-256</span><span class="hash" data-bb="sha256">F590FA4AD8E549E6762AF36CC79AE93F52AD8F71A4CB7844DCB855802893739D</span></li>
-                        <li><span class="k">Alte surse</span>
-                            <a href="https://github.com/acs-soft/bulk-backup/releases/latest/download/BulkBackup-Setup-1.0.1.exe">Descarcă de pe GitHub</a>
-                            &bull; <a href="https://github.com/acs-soft/bulk-backup/releases">Ce s-a schimbat în fiecare versiune</a>
-                        </li>
                     </ul>
                 </div>
                 <div>
