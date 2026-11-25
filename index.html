@@ -173,6 +173,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             --red-500: #DC2626;
             --red-600: #B91C1C;
 
+            /* #45: height of the trial banner inside the fixed header. A fallback per width; the
+               script at the end of <body> sets the measured height, so wrapping never hides content. */
+            --trial-banner-h: 36px;
+
             /* Grid */
             --grid-unit: 8px;
             --container-max: 1120px;
@@ -186,6 +190,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         html {
             font-size: 16px;
             scroll-behavior: smooth;
+            /* #45: in-page links land below the fixed header and the trial banner inside it. */
+            scroll-padding-top: calc(64px + var(--trial-banner-h));
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -269,6 +275,42 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             height: 64px;
         }
 
+        /* #45: thin banner for visitors whose trial expired. It sits inside the fixed header, so
+           the header grows by --trial-banner-h and the offsets that clear the header add it. Not
+           dismissible: a close button would need storage, and the line is short. */
+        .trial-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 36px;
+            padding: 6px var(--gutter);
+            background-color: var(--blue-700);
+            color: var(--white);
+            font-size: var(--text-sm);
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .trial-banner p {
+            margin: 0;
+            font-size: inherit;
+            line-height: inherit;
+            color: inherit;
+        }
+
+        .trial-banner a {
+            color: var(--white);
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            white-space: nowrap;
+        }
+
+        .trial-banner a:hover,
+        .trial-banner a:focus-visible {
+            text-decoration-thickness: 2px;
+        }
+
         .header__brand {
             display: flex;
             align-items: baseline;
@@ -348,7 +390,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
            HERO
            ======================================== */
         .hero {
-            padding-top: 140px;
+            padding-top: calc(140px + var(--trial-banner-h));
             padding-bottom: 64px;
             border-bottom: 1px solid var(--gray-200);
         }
@@ -1144,13 +1186,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         @media (max-width: 960px) {
             :root {
                 --gutter: 24px;
+                --trial-banner-h: 56px;
             }
 
             h1 { font-size: var(--text-2xl); }
             h2 { font-size: var(--text-xl); }
 
             .hero {
-                padding-top: 120px;
+                padding-top: calc(120px + var(--trial-banner-h));
                 padding-bottom: 72px;
             }
 
@@ -1205,6 +1248,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         @media (max-width: 640px) {
             :root {
                 --gutter: 20px;
+                --trial-banner-h: 76px;
             }
 
             h1 { font-size: var(--text-xl); }
@@ -1223,7 +1267,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 display: flex;
                 flex-direction: column;
                 position: absolute;
-                top: 64px;
+                top: 100%;   /* #45: below the whole header, trial banner included */
                 left: 0;
                 right: 0;
                 background-color: var(--white);
@@ -1233,7 +1277,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             }
 
             .hero {
-                padding-top: 104px;
+                padding-top: calc(104px + var(--trial-banner-h));
                 padding-bottom: 56px;
             }
 
@@ -1813,6 +1857,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
     <!-- ===== HEADER ===== -->
     <header class="header">
+        <!-- #45: for visitors whose trial expired before they could test the app. The address is
+             written out as well as linked: a mailto link does nothing on a PC without a mail program. -->
+        <div class="trial-banner" id="trialBanner" role="note">
+            <p>A expirat perioada de probă și nu ați reușit să testați aplicația? Scrieți-ne la <a href="mailto:contact@bulkreporter.ro?subject=Prelungirea%20perioadei%20de%20prob%C4%83">contact@bulkreporter.ro</a> și o prelungim.</p>
+        </div>
         <div class="container header__inner">
             <div class="header__brand">
                 <a href="#" class="header__logo">Bulk Reporter</a>
@@ -3302,6 +3351,23 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 close(false);
                 show(card);
             });
+        })();
+    </script>
+
+    <script>
+        // #45: the trial banner wraps to two or three lines on narrow screens. The CSS carries a
+        // fallback height per breakpoint; this sets the measured one, so the hero and in-page links
+        // always clear the fixed header. Nothing is stored.
+        (function () {
+            var banner = document.getElementById('trialBanner');
+            if (!banner) return;
+            function sync() {
+                document.documentElement.style.setProperty(
+                    '--trial-banner-h', banner.getBoundingClientRect().height + 'px');
+            }
+            sync();
+            if (window.ResizeObserver) new ResizeObserver(sync).observe(banner);
+            else window.addEventListener('resize', sync);
         })();
     </script>
 
